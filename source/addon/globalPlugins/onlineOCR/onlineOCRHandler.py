@@ -295,13 +295,13 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
             domain,
             url
         ])
-        msg = u"{0}\n{1}\n{2}\n{3}".format(
-            callback,
-            domain,
-            fullURL,
-            payloads
-        )
-        log.io(msg)
+        # msg = "{0}\n{1}\n{2}\n{3}".format(
+        #     callback,
+        #     domain,
+        #     fullURL,
+        #     payloads
+        # )
+        # log.io(msg)
         self.sendRequest(callback, fullURL, payloads)
 
     def sendRequest(self, callback, fullURL, payloads):

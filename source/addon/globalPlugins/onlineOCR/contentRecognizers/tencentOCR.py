@@ -2,10 +2,9 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
-
+from __future__ import unicode_literals
 from .. import onlineOCRHandler
 import addonHandler
-from contentRecog import LinesWordsResult, ContentRecognizer, RecogImageInfo
 import hashlib
 from six.moves.urllib_parse import urlencode
 from six import iterkeys
@@ -16,7 +15,7 @@ addonHandler.initTranslation()
 
 class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
-    name = "tencentOCR"
+    name = b"tencentOCR"
     api_domain = b"api.ai.qq.com"
     api_url = "fcgi-bin/ocr/ocr_generalocr"
 
@@ -56,13 +55,6 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
                 "text": items["itemstring"],
             }])
         return lineResult
-
-    # @staticmethod
-    # def request_signature(self, png_string):
-    #     url = "https://www.nvdacn.com/ocr/tencent.php"
-    #     payload = self.create_payload(png_string, use_nvda_cn=True)
-    #     json_data = self.json_endpoint(url, payload)
-    #     return json_data
 
     @staticmethod
     def calculate_signature(options, app_key):
@@ -137,26 +129,3 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         for items in item_list:
             lineResult.append(items["itemstring"])
         return u" ".join(lineResult)
-
-    # def recognize(self, pixels, imageInfo, onResult):
-    #     png_string = self.rgb_quad_to_png(pixels, imageInfo)
-    #     use_cn = True
-    #     if use_cn:
-    #         payload = self.request_signature(png_string)
-    #     else:
-    #         payload =
-    #     log.io(payload)
-    #     try:
-    #         json_data = self.json_endpoint(self.api_url, payload)
-    #     except Exception as e:
-    #         onResult(e)
-    #         return
-    #     log.io(json_data)
-    #     result = self.convert_to_line_result_format(
-    #         json_data
-    #     )
-    #     log.io(result)
-    #     onResult(LinesWordsResult(result, imageInfo))
-
-    def cancel(self):
-        pass

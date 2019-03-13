@@ -241,7 +241,7 @@ class AbstractEngine(baseObject.AutoPropertyObject):
     """
     #: The name of the engine; must be the original module file name.
     #: @type: str
-    name = "empty"
+    name = "empty"  # type: str
     #: A description of the engine.
     #: @type: str
     description = ""

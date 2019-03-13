@@ -2,9 +2,9 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
+from __future__ import unicode_literals
 from .. import onlineOCRHandler
 import addonHandler
-from contentRecog import LinesWordsResult, ContentRecognizer, RecogImageInfo
 import hashlib
 from six.moves.urllib_parse import urlencode
 from six import iterkeys
@@ -15,7 +15,7 @@ addonHandler.initTranslation()
 
 
 class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
-    name = "sougouOCR"
+    name = b"sougouOCR"
 
     description = _("Sougou AI OCR")
 
@@ -58,11 +58,13 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
     def get_domain(self):
         if self._use_own_api_key:
+            self.useHttps = False
             return "api.ai.sogou.com"
         else:
+            self.useHttps = True
             return self.nvda_cn_domain
 
-    useHttps = False
+    useHttps = True
 
     def get_url(self):
         if self._use_own_api_key:
@@ -99,17 +101,14 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def sendRequest(self, callback, fullURL, payloads):
         from ..winHttp import multipartFormData
         from threading import Thread
-
         if self._use_own_api_key:
             fileName = self.getImageFileName()
             paramName = fileName
             headers = {
                 "Authorization": self.getSignature(self._api_key, self._api_secret_key, "")
             }
-            fullURL = "https://api.cognitive.azure.cn/vision/v1.0/describe"
         else:
             headers = None
-            fullURL = "https://www.nvdacn.com/ocr/msdesc.php"
             paramName = 'foo'
             fileName = 'foo'
         self.networkThread = Thread(

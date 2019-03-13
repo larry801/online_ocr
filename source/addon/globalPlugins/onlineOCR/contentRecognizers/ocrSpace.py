@@ -2,6 +2,7 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
+from __future__ import unicode_literals
 from .. import onlineOCRHandler
 from logHandler import log
 from collections import OrderedDict
@@ -46,7 +47,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         log.io(lineResult)
         return lineResult
 
-    name = "ocrSpace"
+    name = b"ocrSpace"
 
     description = _("OCR Space")
 
@@ -56,6 +57,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         return [
             CustomContentRecognizer.AccessTypeSetting(),
             CustomContentRecognizer.LanguageSetting(),
+            # Translators: Label for OCR engine settings.
             CustomContentRecognizer.BooleanSetting("scale", _("Scale image for better quality")),
             CustomContentRecognizer.BooleanSetting("detectOrientation", _("Detect image orientation")),
             CustomContentRecognizer.BooleanSetting("isTable", _("Optimize for table recognition")),
@@ -124,7 +126,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         })
         return self.generate_string_settings(languages)
 
-    def create_payload(self, png_string, text_only=False):
+    def get_payload(self, png_string, text_only=False):
         base64_image = "data:image/png;base64," + png_string
         if text_only:
             isOverlayRequired = False
@@ -138,6 +140,8 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             "language": self._language,
             "isOverlayRequired": self.pyBool2json(isOverlayRequired)
         }
+        if self._use_own_api_key:
+            payload["apikey"] = self._api_key
         return payload
 
     def get_domain(self):
@@ -152,21 +156,16 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         else:
             return "ocr/ocrSpace.php"
 
-    def get_payload(self, base64Image):
-        if self._use_own_api_key:
-            return self.create_payload(base64Image)
-        else:
-            return self.create_payload(base64Image)
-
     def process_api_result(self, result):
         import json
         apiResult = json.loads(result)
         try:
             code = apiResult["OCRExitCode"]
             return self.codeToErrorMessage[code]
-        except:
+        except KeyError:
             return False
 
     codeToErrorMessage = {
         3: _(u"Image parsing failed."),
+        4: _(u"A fatal error occurs during parsing )."),
     }

@@ -3,7 +3,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
 
-
+from __future__ import unicode_literals
 from .. import onlineOCRHandler
 import addonHandler
 from logHandler import log
@@ -14,7 +14,7 @@ addonHandler.initTranslation()
 
 
 class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
-    name = "baiduOCR"
+    name = b"baiduOCR"
 
     description = _("Baidu OCR")
 
@@ -42,6 +42,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         return [
             CustomContentRecognizer.AccessTypeSetting(),
             CustomContentRecognizer.LanguageSetting(),
+            # Translators: Label for OCR engine settings.
             CustomContentRecognizer.BooleanSetting("detectDirection", _("&Detect image  direction")),
             CustomContentRecognizer.BooleanSetting("recognizeGranularity", _("&Get position of every character")),
             CustomContentRecognizer.BooleanSetting("accurate", _("&Use Accurate API(Slower)")),

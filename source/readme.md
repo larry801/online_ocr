@@ -5,8 +5,7 @@ This addon aims at enhancing the experience of OCR when using NVDA.
 Add more accurate online engines to NVDA.
 Add "Auto OCR" feature. Whenever navigator object changes, NVDA will automatically run OCR on current navigator object with Windows 10 OCR engine.
 
-The author of addon have registered account with free API quota and put them on www.nvdacn.com  to make this addon easier to use.
-If you find public quota is used up , you can register your own key. According to guide in readme.
+The author of addon have registered account with free API quota and put them on www.nvdacn.com  to make this addon easier to use.Registering your own key is highly recommended.
 
 Online engines relies on the use and presence of the following services.
 
@@ -17,6 +16,8 @@ https://ocr.space/ocrapi
 http://ai.qq.com
 
 http://ai.baidu.com
+
+http://ai.sogou.com/
 
 ## Hotkeys
 
