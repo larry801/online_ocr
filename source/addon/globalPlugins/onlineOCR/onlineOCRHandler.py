@@ -286,16 +286,22 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         if not imageContent:
             return
         payloads = self.get_payload(imageContent)
-
         if self.useHttps:
-            protocol = b"https:/"
+            protocol = "https:/"
         else:
-            protocol = b"http:/"
-        fullURL = b"/".join([
+            protocol = "http:/"
+        fullURL = "/".join([
             protocol,
             domain,
             url
         ])
+        msg = u"{0}\n{1}\n{2}\n{3}".format(
+            callback,
+            domain,
+            fullURL,
+            payloads
+        )
+        log.io(msg)
         self.sendRequest(callback, fullURL, payloads)
 
     def sendRequest(self, callback, fullURL, payloads):
@@ -317,26 +323,34 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         )
         self.networkThread.start()
 
+
     @staticmethod
     def extract_text(apiResult):
         pass
 
+
     def cancel(self):
         self.networkThread = None
+
 
     def terminate(self):
         pass
 
+
     def process_api_result(self, result):
         return ""
 
+
     _type_of_api_access = "free"
+
 
     def _get_accessType(self):
         return self._type_of_api_access
 
+
     def _set_accessType(self, type_of_api_access):
         self._type_of_api_access = type_of_api_access
+
 
     def _get_availableAccesstypes(self):
         accessTypes = OrderedDict({
@@ -346,12 +360,14 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         })
         return self.generate_string_settings(accessTypes)
 
+
     @classmethod
     def AccessTypeSetting(cls):
         return AbstractEngine.StringSettings(
             "accessType",
             _(u"API Access Type")
         )
+
 
     @classmethod
     def BalanceSetting(cls):
@@ -361,10 +377,13 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
             _(u"API Balance")
         )
 
+
     _balance = -1
+
 
     def _get_balance(self):
         return self._balance
+
 
     def _set_balance(self, balance):
         self._balance = balance
@@ -383,4 +402,3 @@ class CustomOCRHandler(AbstractEngineHandler):
 class CustomOCRPanel(AbstractEngineSettingsPanel):
     title = _(u"Online OCR")
     handler = CustomOCRHandler
-

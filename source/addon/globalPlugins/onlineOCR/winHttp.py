@@ -7,7 +7,8 @@ import addonHandler
 import certifi
 import urllib3.contrib.pyopenssl
 import ui
-
+from logHandler import log
+from six import string_types
 _ = lambda x: x
 addonHandler.initTranslation()
 urllib3.contrib.pyopenssl.inject_into_urllib3()
@@ -32,6 +33,8 @@ def multipartFormData(url, fileObject, callback, headers=None, paramName=None, f
     :param callback:
     :return:
     """
+    if isinstance(url, string_types):
+        url = url.encode('utf8')
     try:
         if headers:
             r = http.request(
@@ -51,13 +54,16 @@ def multipartFormData(url, fileObject, callback, headers=None, paramName=None, f
     except urllib3.exceptions.TimeoutError:
         ui.message(timeout_message)
         return
-    except Exception:
+    except Exception as e:
+        log.error(e)
         ui.message(internet_error_message)
         return
     callback(r.data)
 
 
 def postContent(callback, url, data, headers=None):
+    if isinstance(url, string_types):
+        url = url.encode('utf8')
     try:
         if headers:
             r = http.request(
@@ -73,7 +79,8 @@ def postContent(callback, url, data, headers=None):
     except urllib3.exceptions.TimeoutError:
         ui.message(internet_error_message)
         return
-    except Exception:
+    except Exception as e:
+        log.error(e)
         ui.message(internet_error_message)
         return
     callback(r.data)
