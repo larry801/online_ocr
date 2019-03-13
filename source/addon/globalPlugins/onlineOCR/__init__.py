@@ -6,7 +6,6 @@
 """onlineOCR:
 A global plugin that add online ocr to NVDA
 """
-import wx
 import addonHandler
 import globalPluginHandler
 import gui

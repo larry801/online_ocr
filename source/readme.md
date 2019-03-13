@@ -94,7 +94,8 @@ If you presses NVDA+Shift+R or NVDA+Windows+R, you are using endpoints without a
 Though it provides a quite gengerous free quota, its website is Chinese only and not quite accessible.
 
 ### Sougou OCR and Tencent AI OCR
-These two API are free to use with frequency limit.If you want to by pass the limit you can register your own api key.The website  of these two APIs are also Chinese only and not quite accessible.
+These two API are free to use with frequency limit.
+If you want to by pass the limit you can register your own api key.The website  of these two APIs are also Chinese only and not quite accessible.
 There is no information about language support in these api document
 According to my test Chinese and English and their mixture is surpported.
 There are no additional configuration for these API.

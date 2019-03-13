@@ -2,6 +2,7 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
+# urllib3 used in this file is Copyright (c) 2008-2019 Andrey Petrov and contributors under MIT license.
 from __future__ import unicode_literals
 from threading import Thread
 import os
