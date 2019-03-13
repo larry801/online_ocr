@@ -1,0 +1,718 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 'customOCR' '0.1.1-dev'\n"
+"Report-Msgid-Bugs-To: 'nvda-translations@freelists.org'\n"
+"POT-Creation-Date: 2019-03-08 15:35+0800\n"
+"PO-Revision-Date: 2019-03-08 15:35+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
+
+#: addon\globalPlugins\customOCR\__init__.py:22
+#: addon\globalPlugins\customOCR\customOCRHandler.py:387
+msgid "Custom OCR"
+msgstr "在线OCR"
+
+#: addon\globalPlugins\customOCR\__init__.py:45
+msgid "&User Info"
+msgstr "查看余额(&U)"
+
+#: addon\globalPlugins\customOCR\__init__.py:45
+#: addon\globalPlugins\customOCR\__init__.py:47
+#: addon\globalPlugins\customOCR\__init__.py:49
+msgid "NVDAStore Add-on settings"
+msgstr "NVDA插件商店设置"
+
+#: addon\globalPlugins\customOCR\__init__.py:47
+msgid "&Logout"
+msgstr "清除信息(&G)"
+
+#: addon\globalPlugins\customOCR\__init__.py:49
+msgid "&Login to NVDAStore "
+msgstr "填写付费OCR信息(&L) "
+
+#. self.registerMenu = subMenu_nvda_store.Append(wx.ID_ANY, _(u"&Register on NVDAStore "), _(u"NVDAStore Add-on settings"))
+#. gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, onRegisterDialog, self.registerMenu)
+#: addon\globalPlugins\customOCR\__init__.py:53
+msgid "N&VDAStore settings..."
+msgstr "付费OCR设置。。。"
+
+#: addon\globalPlugins\customOCR\__init__.py:62
+msgid ""
+"Recognizes the content of the current navigator object with Custom OCR "
+"engine.Then open a virtual result document."
+msgstr "使用自定义 ocr 引擎识别当前导航对象的内容。然后打开结果文档。"
+
+#: addon\globalPlugins\customOCR\__init__.py:72
+msgid ""
+"Recognizes the text of the current navigator object with Custom OCR engine."
+"Then read result."
+msgstr "使用自定义 ocr 引擎识别当前导航对象的文本。然后直接读出结果。"
+
+#: addon\globalPlugins\customOCR\__init__.py:82
+msgid ""
+"Recognizes the text in clipboard images with Custom OCR engine.Then read "
+"result."
+msgstr "使用自定义 ocr 引擎识别剪贴板内的图像。然后直接读出结果。"
+
+#: addon\globalPlugins\customOCR\__init__.py:116
+#: addon\globalPlugins\customOCR\__init__.py:152
+msgid "No image in clipboard"
+msgstr "剪贴板中没有图像"
+
+#: addon\globalPlugins\customOCR\__init__.py:118
+msgid ""
+"Recognizes image in clipboard with online OCR engine.Then open a virtual "
+"result document."
+msgstr "使用在线 ocr 引擎识别剪贴板图像。然后打开结果文档。"
+
+#. Translators: Toggle auto ocr
+#: addon\globalPlugins\customOCR\__init__.py:155
+msgid "Toggle auto ocr"
+msgstr "开关自动OCR"
+
+#. Translators: Reported when Windows 10 OCR is not available.
+#: addon\globalPlugins\customOCR\__init__.py:162
+msgid "Windows 10 OCR not available"
+msgstr "Windows 10 光学识别技术 不可用"
+
+#: addon\globalPlugins\customOCR\__init__.py:166
+msgid "Auto OCR Disabled"
+msgstr "自动 ocr 已禁用"
+
+#: addon\globalPlugins\customOCR\__init__.py:169
+msgid "Auto OCR Enabled"
+msgstr "自动 ocr 已启用"
+
+#. Translators: Label for a setting in voice settings dialog.
+#: addon\globalPlugins\customOCR\abstractEngine.py:253
+msgid "App &ID"
+msgstr "用户ID"
+
+#. Translators: Label for a setting in voice settings dialog.
+#: addon\globalPlugins\customOCR\abstractEngine.py:259
+msgid "API &Key"
+msgstr "API凭证(&K)"
+
+#. Translators: Label for a setting in voice settings dialog.
+#: addon\globalPlugins\customOCR\abstractEngine.py:265
+msgid "API &Secret Key"
+msgstr "API密钥(&S)"
+
+#. Translators: Label for a setting in voice settings dialog.
+#: addon\globalPlugins\customOCR\abstractEngine.py:271
+msgid "Recognition Language"
+msgstr "识别语言 (&L)"
+
+#: addon\globalPlugins\customOCR\abstractEngine.py:349
+msgid "Engine"
+msgstr "引擎"
+
+#. Translators: A label for the engines on the engine panel.
+#: addon\globalPlugins\customOCR\abstractEngine.py:357
+msgid "&Engines"
+msgstr "引擎(&E)"
+
+#. Translators: This is the label for the button used to change engines,
+#. it appears in the context of a engine group on the speech settings panel.
+#: addon\globalPlugins\customOCR\abstractEngine.py:374
+msgid "C&hange..."
+msgstr "修改(&H)..."
+
+#. Translators: This is the label for the synthesizer selection dialog
+#: addon\globalPlugins\customOCR\abstractEngine.py:429
+msgid "Select Engines"
+msgstr "选择引擎"
+
+#. Translators: This is a label for the select
+#. synthesizer combobox in the synthesizer dialog.
+#: addon\globalPlugins\customOCR\abstractEngine.py:439
+msgid "&Engines:"
+msgstr "引擎(&E):"
+
+#. Translators: This message is presented when
+#. NVDA is unable to load the selected engine.
+#: addon\globalPlugins\customOCR\abstractEngine.py:469
+#, python-format
+msgid "Could not load the %s engine."
+msgstr "无法加载 %s 引擎。"
+
+#: addon\globalPlugins\customOCR\abstractEngine.py:469
+msgid "Engine Error"
+msgstr "引擎加载出错"
+
+#. type: dict
+#. type: wx.Window
+#. Translators: This is the label for the voice settings panel.
+#: addon\globalPlugins\customOCR\abstractEngine.py:552
+msgid "Voice"
+msgstr "音库"
+
+#: addon\globalPlugins\customOCR\customOCRHandler.py:199
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:119
+msgid "Unknown error"
+msgstr "未知错误"
+
+#: addon\globalPlugins\customOCR\customOCRHandler.py:214
+msgid "Image height is too big"
+msgstr "图像高度太大"
+
+#: addon\globalPlugins\customOCR\customOCRHandler.py:218
+msgid "Image Width is too big"
+msgstr "图像宽度太大"
+
+#: addon\globalPlugins\customOCR\customOCRHandler.py:221
+msgid "Image size is too big"
+msgstr "图像大小太大"
+
+#: addon\globalPlugins\customOCR\customOCRHandler.py:248
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftDescribe.py:71
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftOCR.py:76
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:213
+#: addon\globalPlugins\customOCR\contentRecognizers\sougouOCR.py:110
+msgid "Recognition failed. Result is invalid."
+msgstr "识别失败。结果无效。"
+
+#: addon\globalPlugins\customOCR\customOCRHandler.py:249
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftDescribe.py:72
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftOCR.py:77
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:214
+#: addon\globalPlugins\customOCR\contentRecognizers\sougouOCR.py:111
+msgid "Recognition failed. Internet connection error."
+msgstr "识别失败。互联网连接错误。"
+
+#: addon\globalPlugins\customOCR\customOCRHandler.py:250
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftDescribe.py:73
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftOCR.py:78
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:215
+#: addon\globalPlugins\customOCR\contentRecognizers\sougouOCR.py:112
+msgid "Recognition result:"
+msgstr "识别结果："
+
+#. Translators: How to access online OCR API
+#: addon\globalPlugins\customOCR\customOCRHandler.py:329
+#: addon\globalPlugins\customOCR\customOCRHandler.py:336
+msgid "Use public free api quota"
+msgstr "使用公共免费 api 配额"
+
+#. Translators: How to access online OCR API
+#: addon\globalPlugins\customOCR\customOCRHandler.py:330
+#: addon\globalPlugins\customOCR\customOCRHandler.py:337
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:138
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:144
+msgid "Use api key registered by yourself"
+msgstr "使用您自己注册的 api 密钥"
+
+#: addon\globalPlugins\customOCR\customOCRHandler.py:331
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:139
+msgid "Use paid quota in store"
+msgstr "使用中文站商店中的付费配额"
+
+#: addon\globalPlugins\customOCR\customOCRHandler.py:345
+msgid "API Access Type:"
+msgstr "API 访问类型:"
+
+#. Translators: Label of OCR API balance control
+#: addon\globalPlugins\customOCR\customOCRHandler.py:353
+msgid "API Balance"
+msgstr "剩余OCR次数"
+
+#. Translators: Title of Login dialog
+#: addon\globalPlugins\customOCR\settingsGUI.py:24
+msgid "Login"
+msgstr "登录"
+
+#: addon\globalPlugins\customOCR\settingsGUI.py:35
+msgid "Username:"
+msgstr "用户名："
+
+#: addon\globalPlugins\customOCR\settingsGUI.py:43
+msgid "Password:"
+msgstr "密码："
+
+#. Translators: Label of button on Login dialog
+#: addon\globalPlugins\customOCR\settingsGUI.py:53
+msgid "Verify Secret Key"
+msgstr "验证密钥"
+
+#: addon\globalPlugins\customOCR\settingsGUI.py:74
+msgid "OCR key is valid"
+msgstr "OCR密钥有效"
+
+#: addon\globalPlugins\customOCR\settingsGUI.py:84
+msgid "Username or password is incorrect. Login failed"
+msgstr "用户名或密码不正确。登录失败"
+
+#: addon\globalPlugins\customOCR\settingsGUI.py:89
+msgid ""
+"Connection timeout please check your firewall settings and Internet "
+"connection."
+msgstr "连接超时, 请检查您的防火墙设置和互联网连接。"
+
+#: addon\globalPlugins\customOCR\settingsGUI.py:91
+msgid ""
+"Unknown error occurred. Login failed.\n"
+"{0}"
+msgstr ""
+"发生未知错误。登录失败。\n"
+"{0}"
+
+#. Translators: Message on cleaning OCR key
+#: addon\globalPlugins\customOCR\settingsGUI.py:136
+msgid "OCR key deleted"
+msgstr "OCR密钥已删除"
+
+#: addon\globalPlugins\customOCR\settingsGUI.py:146
+msgid "Balance"
+msgstr "余额"
+
+#. # Translators: Name of username TextCtrl
+#. self.userTextCtrl = settingsSizer.addLabeledControl(_("User Name"),
+#. ExpandoTextCtrl,
+#. style=wx.TE_READONLY)
+#. self.userTextCtrl.SetValue(conf["chinese_nvda_store"]["accountUserName"])
+#. Translators: Name of username TextCtrl
+#: addon\globalPlugins\customOCR\settingsGUI.py:160
+msgid "OCR API balance"
+msgstr "剩余OCR次数"
+
+#. Translators: Error message shown when accessing user info before login
+#: addon\globalPlugins\customOCR\settingsGUI.py:181
+msgid "Please fill in OCR key first."
+msgstr "请先填写 ocr 密钥。"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:19
+msgid "Baidu OCR"
+msgstr "百度OCR"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:48
+msgid "&Detect image  direction"
+msgstr "检测图像方向(&D)"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:49
+msgid "&Get position of every character"
+msgstr "获得每个字符的的位置(&G)"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:50
+msgid "&Use Accurate API(Slow and expensive)"
+msgstr "使用高精度API(识别速度慢)"
+
+#. Translators: Label of access token
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:53
+msgid "Access Token"
+msgstr "访问令牌"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:120
+msgid "Service temporarily unavailable"
+msgstr "服务暂时不可用"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:121
+msgid "Unsupported api endpoints"
+msgstr "不支持的 api 终结点"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:122
+msgid "Open api request limit reached"
+msgstr "已达到 api 请求限制"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:123
+msgid "No permission to access data"
+msgstr "没有访问数据的权限"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:124
+msgid "IAM Certification failed"
+msgstr ""
+"IAM\n"
+"认证失败"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:125
+msgid "Open api daily request limit reached"
+msgstr "达到每天的请求限制"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:126
+msgid "Open api qps request limit reached"
+msgstr "已达到打开 api qps 请求限制"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:127
+msgid "Open api total request limit reached"
+msgstr "已达到打开 api 总请求限制"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:128
+msgid "Invalid parameter"
+msgstr "无效参数"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:129
+msgid "Access token invalid or no longer valid"
+msgstr "访问令牌无效"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:130
+msgid "Access token expired"
+msgstr "访问令牌已过期"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:131
+msgid "internal error"
+msgstr "内部错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:132
+msgid "invalid param"
+msgstr "无效的参数"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:133
+msgid "not enough param"
+msgstr "没有足够的参数"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:134
+msgid "service not support"
+msgstr "服务不支持"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:135
+msgid "param too long"
+msgstr "参数太长"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:136
+msgid "appid not exist"
+msgstr "appid 不存在"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:137
+msgid "empty image"
+msgstr "空图像"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:138
+msgid "image format error"
+msgstr "图像格式错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:139
+msgid "image size error"
+msgstr "图像大小不合规"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:140
+msgid "recognize error"
+msgstr "识别错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:141
+msgid "recognize bank card error"
+msgstr "识别银行卡错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:142
+msgid "recognize ID card error"
+msgstr "识别身份证错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:143
+msgid "detect error"
+msgstr "检测错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:144
+msgid "structure failed"
+msgstr "图像结构有误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:145
+msgid "classify failed"
+msgstr "分类失败"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:146
+msgid "missing parameters"
+msgstr "缺少参数"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:147
+msgid "invalid parameter, appId doesn't own this template nor not launch"
+msgstr "无效参数, appid 内没有这个模板, 或者尚未开启模板"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:148
+msgid "batch processing error"
+msgstr "批量处理错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:149
+msgid "batch task limit reached"
+msgstr "已达到批处理任务限制"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:150
+msgid "target detect error"
+msgstr "目标检测错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:151
+msgid "target recognize error"
+msgstr "目标识别错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:152
+msgid "urls not exit"
+msgstr "网址不存在"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:153
+msgid "url format illegal"
+msgstr "网站格式有误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:154
+msgid "url download timeout"
+msgstr "网址下载超时"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:155
+msgid "url response invalid"
+msgstr "网站无响应"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:156
+msgid "url size error"
+msgstr "网址大小错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:157
+msgid "request id:  not exist"
+msgstr "请求 id: 不存在"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:158
+msgid "result type error"
+msgstr "结果类型错误"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:159
+msgid "image recognize error"
+msgstr "图像识别错误"
+
+#. Translators: Text language for OCR
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:232
+msgid "Chinese and English"
+msgstr "中英文混合"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:233
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:74
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:109
+msgid "English"
+msgstr "英文"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:234
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:85
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:119
+msgid "Portuguese"
+msgstr "葡萄牙语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:235
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:76
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:111
+msgid "French"
+msgstr "法语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:236
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:77
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:112
+msgid "German"
+msgstr "德语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:237
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:80
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:116
+msgid "Italian"
+msgstr "意大利语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:238
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:87
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:122
+msgid "Spanish"
+msgstr "西班牙语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:239
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:86
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:120
+msgid "Russian"
+msgstr "俄语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:240
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:81
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:117
+msgid "Japanese"
+msgstr "日语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\baiduOCR.py:241
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:82
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:115
+msgid "Korean"
+msgstr "韩语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftDescribe.py:20
+msgid "Microsoft Picture Recognition"
+msgstr "微软照片物体描述"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftDescribe.py:138
+msgid "Tags:"
+msgstr "标签："
+
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftDescribe.py:142
+msgid "Captions:"
+msgstr "物体："
+
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftOCR.py:17
+msgid "Microsoft OCR"
+msgstr "微软 ocr"
+
+#. Translators: Error message of Microsoft OCR
+#: addon\globalPlugins\customOCR\contentRecognizers\microsoftOCR.py:46
+msgid "Microsoft API error occurred. Recognition failed"
+msgstr "出现 microsoft api 错误。识别失败"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:19
+msgid "Paid Microsoft OCR"
+msgstr "付费微软 ocr"
+
+#. Translators: Text language for OCR
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:68
+msgid "Auto Detect"
+msgstr "自动检测"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:69
+msgid "Chinese Simplified"
+msgstr "简体中文"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:70
+msgid "Chinese Traditional"
+msgstr "繁体中文"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:71
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:106
+msgid "Czech"
+msgstr "捷克语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:72
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:107
+msgid "Danish"
+msgstr "丹麦语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:73
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:108
+msgid "Dutch"
+msgstr "荷兰语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:75
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:110
+msgid "Finnish"
+msgstr "芬兰语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:78
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:113
+msgid "Greek"
+msgstr "希腊语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:79
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:114
+msgid "Hungarian"
+msgstr "匈牙利语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:83
+msgid "Norwegian"
+msgstr "挪威语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:84
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:118
+msgid "Polish"
+msgstr "波兰语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:88
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:123
+msgid "Swedish"
+msgstr "瑞典语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:89
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:124
+msgid "Turkish"
+msgstr "土耳其语"
+
+#. Translators: Text language for OCR
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:90
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:101
+msgid "Arabic"
+msgstr "阿拉伯语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:91
+msgid "Romanian"
+msgstr "罗马尼亚语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:92
+msgid "SerbianCyrillic"
+msgstr "塞尔维亚语（西里尔字母）"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:93
+msgid "SerbianLatin"
+msgstr "塞尔维亚语（拉丁字母）"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:94
+msgid "Slovak"
+msgstr "斯洛伐克语"
+
+#. Translators: Error message of Microsoft Cognitive API
+#: addon\globalPlugins\customOCR\contentRecognizers\msPaid.py:165
+msgid "Your quota is not adequate"
+msgstr "你的OCR次数用完了"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:51
+msgid "OCR Space"
+msgstr "OCR空间"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:57
+msgid "Scale image for better quality"
+msgstr "缩放图像以获得更好的质量"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:58
+msgid "Detect image orientation"
+msgstr "检测图像方向(&D)"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:59
+msgid "Optimize for table recognition"
+msgstr "针对表格识别进行优化"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:102
+msgid "Bulgarian"
+msgstr "保加利亚语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:103
+msgid "Chinese(Simplified)"
+msgstr "简体中文"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:104
+msgid "Chinese(Traditional)"
+msgstr "繁体中文"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:105
+msgid "Croatian"
+msgstr "克罗地亚语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:121
+msgid "Slovenian"
+msgstr "斯洛文尼亚语"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\ocrSpace.py:172
+msgid "Image parsing failed."
+msgstr "图像分析失败。"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\sougouOCR.py:20
+msgid "Sougou OCR"
+msgstr "搜狗OCR"
+
+#. Translators: Error message of sougou API
+#: addon\globalPlugins\customOCR\contentRecognizers\sougouOCR.py:48
+msgid "Sougou API error occurred. Recognition failed"
+msgstr "搜狗 api 发生了错误。识别失败"
+
+#: addon\globalPlugins\customOCR\contentRecognizers\tencentOCR.py:23
+msgid " Tencent AI OCR"
+msgstr " 腾讯优图"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#. Add-on description: can span multiple lines with """ syntax """
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+#: buildVars.py:17 buildVars.py:20
+msgid "Add more OCR engines to NVDA"
+msgstr "向 nvda 添加更多在线 ocr 引擎"
+
+#~ msgid "Image height is too small"
+#~ msgstr "图像高度太小"
+
+#~ msgid "Image Width is too small"
+#~ msgstr "图像宽度太小"
+
+#~ msgid "Result is invalid. Recognition failed."
+#~ msgstr "结果无效。识别失败。"
