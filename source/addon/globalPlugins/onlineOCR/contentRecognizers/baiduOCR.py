@@ -41,16 +41,15 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def _get_supportedSettings(self):
         return [
             CustomContentRecognizer.AccessTypeSetting(),
-            CustomContentRecognizer.APIKeySetting(),
-            CustomContentRecognizer.APISecretSetting(),
-
             CustomContentRecognizer.LanguageSetting(),
             CustomContentRecognizer.BooleanSetting("detectDirection", _("&Detect image  direction")),
             CustomContentRecognizer.BooleanSetting("recognizeGranularity", _("&Get position of every character")),
-            CustomContentRecognizer.BooleanSetting("accurate", _("&Use Accurate API(Slow and expensive)")),
-            CustomContentRecognizer.ReadOnlySetting("access_token",
-                                                    # Translators: Label of access token
-                                                    _(u"Access Token"))
+            CustomContentRecognizer.BooleanSetting("accurate", _("&Use Accurate API(Slower)")),
+            # CustomContentRecognizer.ReadOnlySetting("access_token",
+            #                                         # Translators: Label of access token
+            #                                         _(u"Access Token"))
+            CustomContentRecognizer.APIKeySetting(),
+            CustomContentRecognizer.APISecretSetting(),
         ]
 
     _timeout = 100

@@ -17,7 +17,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
     @classmethod
     def check(cls):
-        return False
+        return True
 
     @staticmethod
     def extract_text(apiResult):
@@ -55,11 +55,11 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def _get_supportedSettings(self):
         return [
             CustomContentRecognizer.AccessTypeSetting(),
-            CustomContentRecognizer.APIKeySetting(),
+            CustomContentRecognizer.LanguageSetting(),
             CustomContentRecognizer.BooleanSetting("scale", _("Scale image for better quality")),
             CustomContentRecognizer.BooleanSetting("detectOrientation", _("Detect image orientation")),
             CustomContentRecognizer.BooleanSetting("isTable", _("Optimize for table recognition")),
-            CustomContentRecognizer.LanguageSetting(),
+            CustomContentRecognizer.APIKeySetting(),
         ]
 
     _isTable = None

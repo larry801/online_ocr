@@ -14,7 +14,7 @@ urllib3.contrib.pyopenssl.inject_into_urllib3()
 http = urllib3.PoolManager(
     cert_reqs='CERT_REQUIRED',
     ca_certs=certifi.where(),
-    timeout=urllib3.Timeout(connect=10, read=30)
+    timeout=urllib3.Timeout(connect=10, read=10)
 )
 # Translators: Message announced when network error occured
 internet_error_message = _(u"Recognition failed. Internet connection error.")
@@ -50,6 +50,7 @@ def multipartFormData(url, fileObject, callback, headers=None, paramName=None, f
                 })
     except urllib3.exceptions.TimeoutError:
         ui.message(timeout_message)
+        return
     except Exception:
         ui.message(internet_error_message)
         return
@@ -57,7 +58,6 @@ def multipartFormData(url, fileObject, callback, headers=None, paramName=None, f
 
 
 def postContent(callback, url, data, headers=None):
-    log.io("")
     try:
         if headers:
             r = http.request(
@@ -71,6 +71,9 @@ def postContent(callback, url, data, headers=None):
                 url,
                 fields=data)
     except urllib3.exceptions.TimeoutError:
+        ui.message(internet_error_message)
+        return
+    except Exception:
         ui.message(internet_error_message)
         return
     callback(r.data)

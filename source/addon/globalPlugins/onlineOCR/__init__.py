@@ -15,7 +15,6 @@ import config
 from onlineOCRHandler import CustomOCRPanel
 from scriptHandler import script
 from logHandler import log
-from .settingsGUI import onLoginDialog, onLogOut, onUserInfoDialog
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
