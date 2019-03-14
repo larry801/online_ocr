@@ -2,6 +2,7 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
+# This module uses a lot of code from NVDA core
 import pkgutil
 import baseObject
 from gui.settingsDialogs import SettingsPanel, SettingsDialog
@@ -165,7 +166,7 @@ class AbstractEngineHandler(object):
 
 class EngineSetting(object):
     """
-    Represents an engine setting such as voice or variant.
+    Represents an engine setting such as language or region
     """
     configSpec = "string(default=None)"
 
@@ -187,11 +188,14 @@ class TextInputEngineSetting(EngineSetting):
 
 
 class ReadOnlyEngineSetting(EngineSetting):
+    """
+    Represents a read only engine setting such as remaining API quota
+    """
     pass
 
 
 class NumericEngineSetting(EngineSetting):
-    """Represents a numeric synthesizer setting such as rate, volume or pitch."""
+    """Represents a numeric engine setting such as image quality."""
     configSpec = "integer(default=50,min=0,max=100)"
 
     def __init__(self, name, displayNameWithAccelerator, availableInEngineSettingsRing=True, minStep=1, normalStep=5,
@@ -214,7 +218,7 @@ class NumericEngineSetting(EngineSetting):
 
 
 class BooleanEngineSetting(EngineSetting):
-    """Represents a boolean synthesiser setting such as rate boost.
+    """Represents a boolean engine setting such as whether to detect language automatically.
     """
     configSpec = "boolean(default=False)"
 
@@ -240,46 +244,45 @@ class AbstractEngine(baseObject.AutoPropertyObject):
     @type supportedSettings: list or tuple of L{EngineSetting}
     """
     #: The name of the engine; must be the original module file name.
-    #: @type: str
     name = "empty"  # type: str
+
     #: A description of the engine.
-    #: @type: str
-    description = ""
+    description = ""  # type: str
 
     @classmethod
     def AppIDSetting(cls):
-        """Factory function for creating a language setting."""
+        """Factory function for creating a lsetting for App ID."""
         # Translators: Label for a setting in voice settings dialog.
         return TextInputEngineSetting("appID", _("App &ID"))
 
     @classmethod
     def APIKeySetting(cls):
-        """Factory function for creating a language setting."""
+        """Factory function for creating a setting for API key."""
         # Translators: Label for a setting in voice settings dialog.
         return TextInputEngineSetting("apiKey", _("API &Key"))
 
     @classmethod
     def APISecretSetting(cls):
-        """Factory function for creating a language setting."""
-        # Translators: Label for a setting in voice settings dialog.
+        """Factory function for creating a setting for API secret key."""
+        # Translators: Label for API secret key setting in settings dialog.
         return TextInputEngineSetting("apiSecret", _("API &Secret Key"))
 
     @classmethod
     def LanguageSetting(cls):
         """Factory function for creating a language setting."""
-        # Translators: Label for a setting in voice settings dialog.
+        # Translators: Label for a setting in engine settings dialog.
         return EngineSetting("language", _("Recognition Language"))
 
     @classmethod
     def NumericSettings(cls, name, label):
-        """Factory function for creating a language setting."""
-        # Translators: Label for a setting in voice settings dialog.
+        """Factory function for creating an Numeric setting."""
+        # Translators: Label for a setting in engine settings dialog.
         return NumericEngineSetting(name, label)
 
     @classmethod
     def StringSettings(cls, name, label):
         """Factory function for creating a language setting."""
-        # Translators: Label for a setting in voice settings dialog.
+        # Translators: Label for a setting in engine settings dialog.
         return EngineSetting(name, label)
 
     @classmethod
@@ -325,7 +328,6 @@ class AbstractEngine(baseObject.AutoPropertyObject):
         conf = config.conf[self.configSectionName][self.name]
         for setting in self.supportedSettings:
             conf[setting.name] = getattr(self, setting.name)
-        # config.conf.save()
 
     def loadSettings(self, onlyChanged=False):
         c = config.conf[self.configSectionName][self.name]
@@ -346,6 +348,7 @@ class AbstractEngineSettingsPanel(SettingsPanel):
     Settings panel of external services.
     handler must be specified before use.
     """
+    # Developers: Please also specify a comment for translators
     name = _("Engine")
     engineNameCtrl = None  # type: ExpandoTextCtrl
     engineSettingPanel = None  # type: SpecificEnginePanel
@@ -429,7 +432,7 @@ class EnginesSelectionDialog(SettingsDialog):
     engineNames = []  # type: list
     engineList = None  # type: wx.Choice
     handler = None
-    # Translators: This is the label for the synthesizer selection dialog
+    # Translators: This is the label for the engine selection dialog
     title = _("Select Engines")
 
     def __init__(self, parent, handler, multiInstanceAllowed=True):
@@ -439,7 +442,7 @@ class EnginesSelectionDialog(SettingsDialog):
     def makeSettings(self, settingsSizer):
         settingsSizerHelper = guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
         # Translators: This is a label for the select
-        # synthesizer combobox in the synthesizer dialog.
+        # engine combobox in the engine dialog.
         engineListLabelText = _("&Engines:")
         self.engineList = settingsSizerHelper.addLabeledControl(engineListLabelText, wx.Choice, choices=[])
         self.updateEngineList()
@@ -550,10 +553,14 @@ class VoiceSettingsSlider(wx.Slider):
 
 
 class SpecificEnginePanel(SettingsPanel):
+    """
+
+    """
+    _engine = None  # type: AbstractEngine
     sizerDict = None  # type: dict
     lastControl = None  # type: wx.Window
-    # Translators: This is the label for the voice settings panel.
-    title = _("Voice")
+    # Translators: This is the label for the settings panel.
+    title = _("Engine Settings")
     handler = None  # type: AbstractEngineHandler
 
     def __init__(self, parent, handler, ):
@@ -588,7 +595,8 @@ class SpecificEnginePanel(SettingsPanel):
         return sizer
 
     def makeStringSettingControl(self, setting):
-        """Same as L{makeSettingControl} but for string settings. Returns sizer with label and combobox."""
+        """Same as L{makeSettingControl} but for string settings.
+        Returns sizer with label and combobox."""
 
         labelText = "%s:" % setting.displayNameWithAccelerator
         engine = self.handler.get_current_engine()
@@ -610,7 +618,8 @@ class SpecificEnginePanel(SettingsPanel):
         return labeledControl.sizer
 
     def makeBooleanSettingControl(self, setting):
-        """Same as L{makeSettingControl} but for boolean settings. Returns checkbox."""
+        """Same as L{makeSettingControl} but for boolean settings.
+        Returns checkbox."""
         engine = self.handler.get_current_engine()
         checkbox = wx.CheckBox(self, wx.ID_ANY, label=setting.displayNameWithAccelerator)
         setattr(self, "%sCheckbox" % setting.name, checkbox)
@@ -630,9 +639,10 @@ class SpecificEnginePanel(SettingsPanel):
     def makeTextInputSettingControl(self, setting):
         """
         Same as L{makeSettingControl} but for TextInputSetting
+        Return a sizer with label and textCtrl
         :param setting:
         :type setting: TextInputEngineSetting
-        :return:
+        :return:  wx.BoxSizer
         """
         labelText = "%s:" % setting.displayNameWithAccelerator
         engine = self.handler.get_current_engine()
@@ -649,14 +659,16 @@ class SpecificEnginePanel(SettingsPanel):
 
     def makeReadOnlySettingsControl(self, setting):
         """
-        Same as L{makeSettingControl} but for ReadOnly
+        Same as L{makeSettingControl} but for L{ReadOnlyEngineSetting}
+        Returns ExpandoTextCtrl
         :param setting: setting to use
         :type setting: ReadOnlyEngineSetting
         :return:
         """
         labelText = "%s:" % setting.displayNameWithAccelerator
         engine = self.handler.get_current_engine()
-        labeledControl = guiHelper.LabeledControlHelper(self, labelText, ExpandoTextCtrl,
+        labeledControl = guiHelper.LabeledControlHelper(self, labelText,
+                                                        ExpandoTextCtrl,
                                                         style=wx.TE_READONLY)
         expandoTextCtrl = labeledControl.control
         setattr(self, "%sExpandoTextCtrl" % setting.name, expandoTextCtrl)
@@ -668,7 +680,7 @@ class SpecificEnginePanel(SettingsPanel):
 
     def onPanelActivated(self):
         engine = self.handler.get_current_engine()
-        if engine.name is not self._synth.name:
+        if engine.name is not self._engine.name:
             if gui._isDebug():
                 log.debug("refreshing voice panel")
             self.sizerDict.clear()
@@ -684,7 +696,7 @@ class SpecificEnginePanel(SettingsPanel):
 
     def updateVoiceSettings(self, changedSetting=None):
         """Creates, hides or updates existing GUI controls for all of supported settings."""
-        engine = self._synth = self.handler.get_current_engine()
+        engine = self._engine = self.handler.get_current_engine()
         log.info(engine)
         # firstly check already created options
         from six import iteritems
