@@ -3,7 +3,6 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
 # urllib3 used in this file is Copyright (c) 2008-2019 Andrey Petrov and contributors under MIT license.
-from __future__ import unicode_literals
 from threading import Thread
 import os
 import sys
@@ -11,6 +10,9 @@ from io import BytesIO
 import json
 from contentRecog import LinesWordsResult, ContentRecognizer, RecogImageInfo
 import base64
+import wx
+import config
+from gui import guiHelper
 
 try:
     from urllib import urlencode
@@ -18,6 +20,7 @@ except ImportError:
     from urllib.urllib_parse import urlencode
 from six import iterkeys
 from .abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine, BooleanEngineSetting
+import globalCommands
 import addonHandler
 from . import contentRecognizers
 from logHandler import log
@@ -36,6 +39,9 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     """
     Abstract base BaseRecognizer
     """
+
+    # Translators: Description of Online OCR Engine
+    description = ""
     nvda_cn_domain = "www.nvdacn.com"
     configSectionName = "onlineOCR"
     networkThread = None  # type: Thread
@@ -69,7 +75,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     def CopyToClipboardSetting(cls):
         return BaseRecognizer.BooleanSetting(
             "clipboard",
-            # Translators: Label in settings
+            # Translators: Label in settings dialog
             _(u"Copy result text to clipboard after recognition")
         )
 
@@ -85,9 +91,10 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     def pyBool2json(boolean):
         """
         Convert python boolean to "true" or "false"
-        :param boolean:
-        :type boolean: bool
-        :return:
+        @param boolean:
+        @type boolean: bool
+        @return:
+        @rtype: str
         """
         if boolean:
             return "true"
@@ -118,10 +125,11 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     @staticmethod
     def capture_again(imageInfo):
         """
-        Use ImageGrab instead of bitmap
+        Capture image using ImageGrab instead of bitmap
         @param imageInfo: Information about the image for recognition.
         @type imageInfo: L{RecogImageInfo}
-        @return: L{Image}
+        @return: Captured image
+        @rtype: L{Image}
         """
         from PIL import ImageGrab
         img = ImageGrab.grab(bbox=(
@@ -137,6 +145,13 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         return img
 
     def convert_to_line_result_format(self, apiResult):
+        """
+        Convert API result to NVDA compatible ones
+        @param apiResult:
+        @type apiResult: dict
+        @return: Recognition result
+        @rtype: L{LinesWordsResult}
+        """
         raise NotImplementedError
 
     @property
@@ -148,16 +163,18 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 
     def rgb_quad_to_png(self, pixels, imageInfo, resizeFactor=None):
         """
-        :param pixels: The pixels of the image as a two dimensional array of RGBQUADs.
+        @param pixels: The pixels of the image as a two dimensional array of RGBQUADs.
             For example, to get the red value for the coordinate (1, 2):
             pixels[2][1].rgbRed
             This can be treated as raw bytes in BGRA8 format;
             i.e. four bytes per pixel in the order blue, green, red, alpha.
             However, the alpha channel should be ignored.
-        :type pixels: Two dimensional array (y then x) of L{winGDI.RGBQUAD}
-        :param imageInfo: Information about the image for recognition.
-        :type imageInfo: L{RecogImageInfo}
-        :return: L{Image}
+        @type pixels: Two dimensional array (y then x) of L{winGDI.RGBQUAD}
+        @param imageInfo: Information about the image for recognition.
+        @type imageInfo: L{RecogImageInfo}
+        @rtype: L{Image}
+        @param resizeFactor:
+        @type resizeFactor:
         """
         width = imageInfo.recogWidth
         height = imageInfo.recogHeight
@@ -182,9 +199,9 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     def form_encode(options):
         """
         generate www-form
-        :param options: request parameters
-        :type options: dict
-        :return:
+        @param options: request parameters
+        @type options: dict
+        @return:
         """
         encoded_option = ""
         key_sequence = sorted(iterkeys(options), reverse=False)
@@ -207,15 +224,71 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     def get_domain(self):
         raise NotImplementedError
 
-    def get_payload(self, base64Image):
+    def getFullURL(self):
+        """
+
+        @return:
+        @rtype:
+        """
+        url = self.get_url()
+        domain = self.get_domain()
+        if self.useHttps:
+            protocol = "https:/"
+        else:
+            protocol = "http:/"
+        fullURL = "/".join([
+            protocol,
+            domain,
+            url
+        ])
+        return fullURL
+
+    def get_payload(self, image):
+        """
+        Get payload from image and engine settings
+        @param image: Image to convert
+        @type image: PIL.Image.Image
+        @return: A dictionary for urllib3
+        """
         raise NotImplementedError
 
-    def checkAndResizeImage(self, pixels, imageInfo):
+    def processCURLError(self, result):
         pass
 
+    resizeLimit = 5
+
+    def checkAndResizeImage(self, image):
+        """
+        Check Image Size to meet requirement of API
+        @param image:
+        @type image: PIL.Image.Image
+        @return: Resized image
+        @rtype: PIL.Image.Image or bool
+        """
+        if self.minWidth / image.width >= self.resizeLimit:
+            # Translators: Reported when image size is not valid
+            errorMsg = _(u"Image height is too big to recognize for this engine")
+
+    def getHTTPHeaders(self):
+        """
+        Generate HTTP Header for request
+        @return:
+        @rtype:
+        """
+        return {}
+
     def get_converted_image(self, pixels, imageInfo):
+        """
+        Convert RGBQUAD image to PIL format
+        @param pixels:
+        @type pixels:
+        @param imageInfo:
+        @return:
+        @rtype: PIL.Image.Image
+        """
         isImageValid = True
-        errorMsg = _(u"Unknown error")
+        # Translators: Reported when error occurred
+        errorMsg = _(u"Unknown error occurred")
         if self.minWidth > imageInfo or self.minHeight > imageInfo.screenHeight:
             resizeFactor = 5
         else:
@@ -241,10 +314,10 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     def recognize(self, pixels, imageInfo, onResult):
         """
         Setup data for recognition then send request
-        :param pixels:
-        :param imageInfo:
-        :param onResult: Result callback for result viewer
-        :return: None
+        @param pixels:
+        @param imageInfo:
+        @param onResult: Result callback for result viewer
+        @return: None
         """
 
         def callback(result):
@@ -281,110 +354,96 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
             # Translators: Error message
             ui.message(_(u"Only one recognition can be performed at a time."))
             return
-        url = self.get_url()
-        domain = self.get_domain()
+
         imageContent = self.get_converted_image(pixels, imageInfo)
         if not imageContent:
             return
         payloads = self.get_payload(imageContent)
-        if self.useHttps:
-            protocol = "https:/"
-        else:
-            protocol = "http:/"
-        fullURL = "/".join([
-            protocol,
-            domain,
-            url
-        ])
-        # msg = "{0}\n{1}\n{2}\n{3}".format(
-        #     callback,
-        #     domain,
-        #     fullURL,
-        #     payloads
-        # )
-        # log.io(msg)
-        self.sendRequest(callback, fullURL, payloads)
+        fullURL = self.getFullURL()
+        headers = self.getHTTPHeaders()
+        msg = "{0}\n{1}\n{2}\n{3}".format(
+            callback,
+            fullURL,
+            headers,
+            payloads,
+        )
+        log.io(msg)
+        self.sendRequest(callback, fullURL, payloads, headers)
 
-    def sendRequest(self, callback, fullURL, payloads):
+    def sendRequest(self, callback, fullURL, payloads, headers=None):
         """
         Send async network request
-        :param callback:
-        :param fullURL:
-        :param payloads:
-        :return:
+        @param headers: HTTP Headers
+        @type headers:  dict
+        @param callback:
+        @type callback:
+        @param fullURL: URL
+        @type fullURL: str
+        @param payloads: data for API
+        @type payloads: dict
         """
-        from . import winHttp
+        from .winHttp import postContent
         self.networkThread = Thread(
-            target=winHttp.postContent,
+            target=postContent,
             args=(
                 callback,
                 fullURL,
-                payloads
+                payloads,
+                headers
             )
         )
         self.networkThread.start()
 
-
-    @staticmethod
-    def extract_text(apiResult):
-        pass
-
-
     def cancel(self):
         self.networkThread = None
 
-
     def terminate(self):
-        pass
-
+        self.networkThread = None
 
     def process_api_result(self, result):
-        return ""
+        raise NotImplementedError
 
+    @staticmethod
+    def extract_text(apiResult):
+        raise NotImplementedError
 
     _type_of_api_access = "free"
-
 
     def _get_accessType(self):
         return self._type_of_api_access
 
-
     def _set_accessType(self, type_of_api_access):
         self._type_of_api_access = type_of_api_access
 
-
     def _get_availableAccesstypes(self):
         accessTypes = OrderedDict({
-            # Translators: How to access online OCR API
+            # Translators: Label for OCR engine settings.
             "free": _("Use public api quota"),
+            # Translators: Label for OCR engine settings.
             "own_key": _("Use api key registered by yourself"),
         })
         return self.generate_string_settings(accessTypes)
-
 
     @classmethod
     def AccessTypeSetting(cls):
         return AbstractEngine.StringSettings(
             "accessType",
+            # Translators: Label for OCR engine settings.
             _(u"API Access Type")
         )
-
 
     @classmethod
     def BalanceSetting(cls):
         return AbstractEngine.ReadOnlySetting(
             "balance",
-            # Translators: Label of OCR API balance control
-            _(u"API Balance")
+            # Translators: Label of OCR API quota balance control
+            _(u"API quota Balance")
         )
-
 
     _balance = -1
 
-
     def _get_balance(self):
         return self._balance
-
 
     def _set_balance(self, balance):
         self._balance = balance
@@ -398,8 +457,28 @@ class CustomOCRHandler(AbstractEngineHandler):
     enginePackage = contentRecognizers
     configSectionName = "onlineOCR"
     defaultEnginePriorityList = ["ocrSpace"]
+    configSpec = {
+        "engine": "string(default=auto)",
+        "copyToClipboard": "boolean(default=false)",
+        "[[__many__]]": 'accessType = option("free", "own_api", default="free")'
+    }
 
 
 class CustomOCRPanel(AbstractEngineSettingsPanel):
+    copyToClipboardCheckBox = None  # type: wx.CheckBox
     title = _(u"Online OCR")
     handler = CustomOCRHandler
+
+    def makeGeneralSettings(self, settingsSizer):
+        settingsSizerHelper = guiHelper.BoxSizerHelper(settingsSizer)
+
+        # Translators: This is the label for a checkbox in the
+        # online OCR settings panel.
+        copyToClipboardText = _("&Copy to clipboard")
+        self.copyToClipboardCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=copyToClipboardText))
+        self.copyToClipboardCheckBox.SetValue(
+            config.conf[self.handler.configSectionName]["copyToClipboard"])
+
+    def onSave(self):
+        super(CustomOCRPanel, self).onSave()
+        config.conf[self.handler.configSectionName]["copyToClipboard"] = self.copyToClipboardCheckBox.GetValue()

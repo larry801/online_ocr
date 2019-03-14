@@ -16,6 +16,7 @@ import config
 import addonHandler
 import inspect
 from logHandler import log
+from copy import deepcopy
 
 _ = lambda x: x
 addonHandler.initTranslation()
@@ -32,6 +33,7 @@ class AbstractEngineHandler(object):
     configSectionName
     engineClass
     engineClassName
+    configSpec
     You should also provide defaultEnginePriorityList if you need fallback behaviour like SynthEngine in NVDA.
     """
 
@@ -39,34 +41,30 @@ class AbstractEngineHandler(object):
     engineAddonName = None
     enginePackageName = None
     enginePackage = None
-    configSectionName = None
+    configSectionName = None  # type: str
     engineClass = None
     engineClassName = None
 
     currentEngine = None
     engine_class_list = None
     defaultEnginePriorityList = ['empty']
+    configSpec = {}  # type: dict
 
     @classmethod
     def initialize(cls):
+        config.addConfigDirsToPythonPackagePath(cls.enginePackage)
+        config.post_configProfileSwitch.register(cls.handlePostConfigProfileSwitch)
         cls.init_config()
-        cls.get_engine_list()
-        try:
-            engine_name = config.conf[cls.configSectionName]["engine"]
-            cls.set_current_engine(engine_name)
-        except:
-            pass
+        cls.getEngineList()
+        engine_name = config.conf[cls.configSectionName]["engine"]
+        cls.setCurrentEngine(engine_name)
 
     @classmethod
     def init_config(cls):
-        try:
-            conf = config.conf[cls.configSectionName]
-        except KeyError:
-            config.conf[cls.configSectionName] = {}
-            config.conf[cls.configSectionName]["engine"] = cls.defaultEnginePriorityList[0]
+        config.conf.spec[cls.configSectionName] = cls.configSpec
 
     @classmethod
-    def get_engine_list(cls):
+    def getEngineList(cls):
         cls.init_config()
         if cls.engine_list:
             return cls.engine_list
@@ -79,7 +77,7 @@ class AbstractEngineHandler(object):
             if name.startswith('_'):
                 continue
             try:
-                engine = cls.get_engine(name)
+                engine = cls.getEngine(name)
             except:
                 log.error("Error while importing  %s" % name, exc_info=True)
                 continue
@@ -100,7 +98,7 @@ class AbstractEngineHandler(object):
         return cls.engine_list
 
     @classmethod
-    def set_current_engine(cls, name, isFallback=False):
+    def setCurrentEngine(cls, name, isFallback=False):
         if name == 'auto':
             name = cls.defaultEnginePriorityList[0]
         if cls.currentEngine:
@@ -111,7 +109,7 @@ class AbstractEngineHandler(object):
         else:
             prevEngineName = None
         try:
-            new_engine = cls.get_engine_instance(name)
+            new_engine = cls.getEngineInstance(name)
             cls.currentEngine = new_engine
             if not isFallback:
                 config.conf[cls.configSectionName]["engine"] = name
@@ -121,7 +119,7 @@ class AbstractEngineHandler(object):
             log.error("setSynth", exc_info=True)
             if prevEngineName:
                 # There was a previous engine, so switch back to that one.
-                cls.set_current_engine(prevEngineName, isFallback=True)
+                cls.setCurrentEngine(prevEngineName, isFallback=True)
             else:
                 # There was no previous engine, so fallback to the next available default synthesizer that has not been tried yet.
                 try:
@@ -130,21 +128,23 @@ class AbstractEngineHandler(object):
                     nextIndex = 0
                 if nextIndex < len(cls.defaultEnginePriorityList):
                     newName = cls.defaultEnginePriorityList[nextIndex]
-                    cls.set_current_engine(newName, isFallback=True)
+                    cls.setCurrentEngine(newName, isFallback=True)
             return False
 
     @classmethod
-    def get_engine_instance(cls, name):
-        new_engine = cls.get_engine(str(name))()
+    def getEngineInstance(cls, name):
+        newEngine = cls.getEngine(str(name))()
         if config.conf[cls.configSectionName].isSet(name):
-            new_engine.loadSettings()
+            newEngine.loadSettings()
         else:
             config.conf[cls.configSectionName][name] = {}
-            new_engine.saveSettings()
-        return new_engine
+            c = config.conf[cls.configSectionName][newEngine.name]
+            c.spec = newEngine.getConfigSpec()
+            newEngine.saveSettings()
+        return newEngine
 
     @classmethod
-    def get_engine(cls, name):
+    def getEngine(cls, name):
         engine_module = cls.import_class(cls.enginePackageName, name)
         for items in dir(engine_module):
             obj = getattr(engine_module, items)
@@ -152,7 +152,7 @@ class AbstractEngineHandler(object):
                 return obj
 
     @classmethod
-    def get_current_engine(cls):
+    def getCurrentEngine(cls):
         return cls.currentEngine
 
     @classmethod
@@ -160,8 +160,13 @@ class AbstractEngineHandler(object):
         imported_module = __import__(module_name, globals(), locals(), [class_name])
         return getattr(imported_module, class_name)
 
-    def handle_post_config_profile_switch(self):
-        pass
+    @classmethod
+    def handlePostConfigProfileSwitch(cls):
+        conf = config.conf[cls.configSectionName]
+        if conf["engine"] != cls.currentEngine.name:
+            cls.setCurrentEngine(conf["engine"])
+            return
+        cls.currentEngine.loadSettings(onlyChanged=True)
 
 
 class EngineSetting(object):
@@ -246,8 +251,10 @@ class AbstractEngine(baseObject.AutoPropertyObject):
     #: The name of the engine; must be the original module file name.
     name = "empty"  # type: str
 
-    #: A description of the engine.
+    # Translators: A description of the engine.
     description = ""  # type: str
+
+    configSectionName = None
 
     @classmethod
     def AppIDSetting(cls):
@@ -300,9 +307,9 @@ class AbstractEngine(baseObject.AutoPropertyObject):
     def generate_string_settings(settings_dict):
         """
         Generate StringSettings from dict
-        :type settings_dict: dict
-        :param settings_dict:
-        :return:
+        @type settings_dict: dict
+        @param settings_dict:
+        @return:
         """
         return {x: StringParameterInfo(x, settings_dict[x]) for x in settings_dict.keys()}
 
@@ -313,14 +320,14 @@ class AbstractEngine(baseObject.AutoPropertyObject):
     def cancel(self):
         """
         Cancel current operation.
-        :return:
+        @return:
         """
         pass
 
     def terminate(self):
         """
         Clean up resources before exit.
-        :return:
+        @return:
         """
         pass
 
@@ -341,6 +348,21 @@ class AbstractEngine(baseObject.AutoPropertyObject):
             if onlyChanged and getattr(self, s.name) == val:
                 continue
             setattr(self, s.name, val)
+
+    def getConfigSpec(self):
+        spec = deepcopy(config.confspec[self.configSpecName]["__many__"])
+        for setting in self.supportedSettings:
+            spec[setting.name] = setting.configSpec
+        return spec
+
+    def isSupported(self, settingName):
+        """Checks whether given setting is supported by the engine.
+        @rtype: l{bool}
+        """
+        for s in self.supportedSettings:
+            if s.name == settingName:
+                return True
+        return False
 
 
 class AbstractEngineSettingsPanel(SettingsPanel):
@@ -370,7 +392,7 @@ class AbstractEngineSettingsPanel(SettingsPanel):
         # by default it renders as a single line. Standard TextCtrl with TE_MULTILINE has two lines,
         # and a vertical scroll bar. This is not necessary for the single line of text we wish to
         # display here.
-        engineDesc = self.handler.get_current_engine().description
+        engineDesc = self.handler.getCurrentEngine().description
         self.engineNameCtrl = ExpandoTextCtrl(self, size=(self.scaleSize(250), -1), value=engineDesc,
                                               style=wx.TE_READONLY)
         self.engineNameCtrl.Bind(wx.EVT_CHAR_HOOK, self._enterTriggersOnChangeEngine)
@@ -406,7 +428,7 @@ class AbstractEngineSettingsPanel(SettingsPanel):
             self.Thaw()
 
     def updateCurrentEngine(self):
-        engine_description = self.handler.get_current_engine().description
+        engine_description = self.handler.getCurrentEngine().description
         self.engineNameCtrl.SetValue(engine_description)
 
     def onPanelActivated(self):
@@ -459,7 +481,7 @@ class EnginesSelectionDialog(SettingsDialog):
         self.engineList.Clear()
         self.engineList.AppendItems(options)
         try:
-            index = self.engineNames.index(handler.get_current_engine().name)
+            index = self.engineNames.index(handler.getCurrentEngine().name)
             self.engineList.SetSelection(index)
         except:
             pass
@@ -470,13 +492,13 @@ class EnginesSelectionDialog(SettingsDialog):
             # The list of engines has not been populated yet, so we didn't change anything in this panel
             return
         newEngineName = self.engineNames[self.engineList.GetSelection()]
-        if not handler.get_engine(newEngineName):
+        if not handler.getEngine(newEngineName):
             # Translators: This message is presented when
             # NVDA is unable to load the selected engine.
             gui.messageBox(_("Could not load the %s engine.") % newEngineName, _("Engine Error"),
                            wx.OK | wx.ICON_WARNING, self)
             return
-        handler.set_current_engine(newEngineName)
+        handler.setCurrentEngine(newEngineName)
         if self.IsModal():
             # Hack: we need to update the engine in our parent window before closing.
             # Otherwise, NVDA will report the old engine even though the new engine is reflected visually.
@@ -579,7 +601,7 @@ class SpecificEnginePanel(SettingsPanel):
         @returns: WXSizer containing newly created controls.
         @rtype: L{wx.BoxSizer}
         """
-        engine = self.handler.get_current_engine()
+        engine = self.handler.getCurrentEngine()
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         label = wx.StaticText(self, wx.ID_ANY, label="%s:" % setting.displayNameWithAccelerator)
         slider = VoiceSettingsSlider(self, wx.ID_ANY, minValue=0, maxValue=100)
@@ -599,7 +621,7 @@ class SpecificEnginePanel(SettingsPanel):
         Returns sizer with label and combobox."""
 
         labelText = "%s:" % setting.displayNameWithAccelerator
-        engine = self.handler.get_current_engine()
+        engine = self.handler.getCurrentEngine()
         setattr(self, "_%ss" % setting.name, getattr(engine, "available%ss" % setting.name.capitalize()).values())
         l = getattr(self, "_%ss" % setting.name)
         labeledControl = guiHelper.LabeledControlHelper(self, labelText, wx.Choice, choices=[x.name for x in l])
@@ -620,11 +642,11 @@ class SpecificEnginePanel(SettingsPanel):
     def makeBooleanSettingControl(self, setting):
         """Same as L{makeSettingControl} but for boolean settings.
         Returns checkbox."""
-        engine = self.handler.get_current_engine()
+        engine = self.handler.getCurrentEngine()
         checkbox = wx.CheckBox(self, wx.ID_ANY, label=setting.displayNameWithAccelerator)
         setattr(self, "%sCheckbox" % setting.name, checkbox)
         checkbox.Bind(wx.EVT_CHECKBOX,
-                      lambda evt: setattr(self.handler.get_current_engine(), setting.name, evt.IsChecked()))
+                      lambda evt: setattr(self.handler.getCurrentEngine(), setting.name, evt.IsChecked()))
         value = getattr(engine, setting.name)
         if value == u"False" or value == "False":
             value = False
@@ -640,12 +662,12 @@ class SpecificEnginePanel(SettingsPanel):
         """
         Same as L{makeSettingControl} but for TextInputSetting
         Return a sizer with label and textCtrl
-        :param setting:
-        :type setting: TextInputEngineSetting
-        :return:  wx.BoxSizer
+        @param setting:
+        @type setting: TextInputEngineSetting
+        @return:  wx.BoxSizer
         """
         labelText = "%s:" % setting.displayNameWithAccelerator
-        engine = self.handler.get_current_engine()
+        engine = self.handler.getCurrentEngine()
         labeledControl = guiHelper.LabeledControlHelper(self, labelText, wx.TextCtrl)
         textCtrl = labeledControl.control
         setattr(self, "%sTextCtrl" % setting.name, textCtrl)
@@ -661,12 +683,12 @@ class SpecificEnginePanel(SettingsPanel):
         """
         Same as L{makeSettingControl} but for L{ReadOnlyEngineSetting}
         Returns ExpandoTextCtrl
-        :param setting: setting to use
-        :type setting: ReadOnlyEngineSetting
-        :return:
+        @param setting: setting to use
+        @type setting: ReadOnlyEngineSetting
+        @return:
         """
         labelText = "%s:" % setting.displayNameWithAccelerator
-        engine = self.handler.get_current_engine()
+        engine = self.handler.getCurrentEngine()
         labeledControl = guiHelper.LabeledControlHelper(self, labelText,
                                                         ExpandoTextCtrl,
                                                         style=wx.TE_READONLY)
@@ -679,7 +701,7 @@ class SpecificEnginePanel(SettingsPanel):
         return labeledControl.sizer
 
     def onPanelActivated(self):
-        engine = self.handler.get_current_engine()
+        engine = self.handler.getCurrentEngine()
         if engine.name is not self._engine.name:
             if gui._isDebug():
                 log.debug("refreshing voice panel")
@@ -696,7 +718,7 @@ class SpecificEnginePanel(SettingsPanel):
 
     def updateVoiceSettings(self, changedSetting=None):
         """Creates, hides or updates existing GUI controls for all of supported settings."""
-        engine = self._engine = self.handler.get_current_engine()
+        engine = self._engine = self.handler.getCurrentEngine()
         log.info(engine)
         # firstly check already created options
         from six import iteritems
@@ -756,7 +778,7 @@ class SpecificEnginePanel(SettingsPanel):
         self.settingsSizer.Layout()
 
     def onDiscard(self):
-        engine = self.handler.get_current_engine()
+        engine = self.handler.getCurrentEngine()
         # unbind change events for string settings as wx closes combo boxes on cancel
         for setting in engine.supportedSettings:
             if isinstance(setting, (NumericEngineSetting, BooleanEngineSetting, TextInputEngineSetting)):
@@ -767,5 +789,5 @@ class SpecificEnginePanel(SettingsPanel):
         super(SpecificEnginePanel, self).onDiscard()
 
     def onSave(self):
-        engine = self.handler.get_current_engine()
+        engine = self.handler.getCurrentEngine()
         engine.saveSettings()
