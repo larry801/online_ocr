@@ -18,6 +18,8 @@ You can use CTRL semicolon Enable or disable "Auto OCR".
 
 ## Online OCR
 
+The author of addon have registered account with free API quota and set up a proxy server on www.nvdacn.com to make this addon easier to test at frist. Test quota is limited and may be cancelled by API provider anytime.
+It is highly recommended to register your own key according to guide in each engine.
 
 Online engines rely on the use and presence of the following services.
 

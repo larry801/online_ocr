@@ -391,6 +391,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         width = imageInfo.recogWidth
         height = imageInfo.recogHeight
         img = Image.frombytes("RGBX", (width, height), pixels, "raw", "BGRX")
+        img.convert("RGB")
         return img
 
     def recognize(self, pixels, imageInfo, onResult):
