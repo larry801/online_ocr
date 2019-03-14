@@ -6,6 +6,7 @@
 """onlineOCR:
 A global plugin that add online ocr to NVDA
 """
+from __future__ import unicode_literals
 import addonHandler
 import globalPluginHandler
 import gui
@@ -20,7 +21,7 @@ from PIL import ImageGrab, Image
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
-category_name = _("Online OCR")
+category_name = _(u"Online OCR")
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
@@ -79,6 +80,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     # Translators: OCR command name in input gestures dialog
     clipboard_ocr_msg = _("Recognizes the text in clipboard images with Custom OCR engine.Then read result.")
 
+    # Translators: Reported when PIL cannot grab image from clipboard
+    noImageMessage = _(u"No image in clipboard")
+
     @script(description=clipboard_ocr_msg,
             category=category_name,
             gestures=["kb:NVDA+windows+r"])
@@ -108,8 +112,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 win32clipboard.CloseClipboard()
             except RuntimeError as e:
                 log.error(e)
-                ui.message(_(u"No image in clipboard"))
+                ui.message(self.noImageMessage)
 
+    # Translators: OCR command name in input gestures dialog
     full_clipboard_ocr_msg = _("Recognizes image in clipboard with online OCR engine.Then open a virtual result document.")
 
     # Translators: Clipboard OCR description
@@ -142,9 +147,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 win32clipboard.CloseClipboard()
             except RuntimeError as e:
                 log.error(e)
-                ui.message(_(u"No image in clipboard"))
+                ui.message(self.noImageMessage)
 
-    # Translators: Toggle auto ocr
+    # Translators: OCR command name in input gestures dialog
     @script(description=_("Toggle auto ocr"),
             category=category_name, gestures=["kb:control+;"])
     def script_toggleAutoOCR(self, gesture):

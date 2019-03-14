@@ -17,6 +17,7 @@ addonHandler.initTranslation()
 class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     name = b"sougouOCR"
 
+    # Translators: Description of Online OCR Engine
     description = _("Sougou AI OCR")
 
     def _get_supportedSettings(self):
@@ -43,19 +44,6 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         except:
             return False
 
-    def get_converted_image(self, pixels, imageInfo):
-        from PIL import ImageGrab
-        img = ImageGrab.grab(bbox=(
-            imageInfo.screenLeft,
-            imageInfo.screenTop,
-            imageInfo.screenLeft + imageInfo.recogWidth,
-            imageInfo.screenTop + imageInfo.recogHeight
-        ))
-        from io import BytesIO
-        jpg_buffer = BytesIO()
-        img.save(jpg_buffer, "jpeg")
-        return jpg_buffer.getvalue()
-
     def get_domain(self):
         if self._use_own_api_key:
             self.useHttps = False
@@ -76,10 +64,10 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def calculate_signature(options, app_key):
         """
         generate signature for API
-        :param app_key: API secret key
-        :param options: request parameters
-        :type options: dict
-        :return:
+        @param app_key: API secret key
+        @param options: request parameters
+        @type options: dict
+        @return:
         """
         encoded_option = ""
         key_sequence = sorted(iterkeys(options), reverse=False)
@@ -95,34 +83,39 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         md5.update(encoded_option)
         return md5.hexdigest()
 
-    def get_payload(self, base64Image):
-        return base64Image
-
-    def sendRequest(self, callback, fullURL, payloads):
-        from ..winHttp import multipartFormData
-        from threading import Thread
+    def getHTTPHeaders(self):
         if self._use_own_api_key:
-            fileName = self.getImageFileName()
-            paramName = fileName
-            headers = {
+            return {
                 "Authorization": self.getSignature(self._api_key, self._api_secret_key, "")
             }
         else:
-            headers = None
+            return {}
+
+    def serializeImage(self, PILImage):
+        from io import BytesIO
+        import ui
+        imgBuf = BytesIO()
+        PILImage.save(imgBuf, "JPEG")
+        imageContent = imgBuf.getvalue()
+        if len(imageContent) > self.maxSize:
+            # Translators: Reported when error occurred during image serialization
+            errorMsg = _(u"Image content size is too big")
+            ui.message(errorMsg)
+            return False
+        else:
+            return imageContent
+
+    def getPayload(self, jpegBytes):
+        if self._use_own_api_key:
+            fileName = self.getImageFileName()
+            paramName = fileName
+        else:
             paramName = 'foo'
             fileName = 'foo'
-        self.networkThread = Thread(
-            target=multipartFormData,
-            args=(
-                fullURL,
-                payloads,
-                callback,
-                headers,
-                paramName,
-                fileName
-            )
-        )
-        self.networkThread.start()
+        payloads = {
+            paramName: (fileName, jpegBytes)
+        }
+        return payloads
 
     def convert_to_line_result_format(self, apiResult):
         def extractCoordinate(coord):

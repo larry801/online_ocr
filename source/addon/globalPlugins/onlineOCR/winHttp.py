@@ -17,51 +17,13 @@ http = urllib3.PoolManager(
     ca_certs=certifi.where(),
     timeout=urllib3.Timeout(connect=10, read=10)
 )
-# Translators: Message announced when network error occured
+# Translators: Message announced when network error occurred
 internet_error_message = _(u"Recognition failed. Internet connection error.")
+# Translators: Message announced when network error occurred
 timeout_message = _(u"Recognition failed. Internet connection timeout")
 
 
-def multipartFormData(url, fileObject, callback, headers=None, paramName=None, fileName=None):
-    """
-    POST multipart formData
-    :param fileName:
-    :param paramName:
-    :param headers:
-    :param url:
-    :param fileObject:
-    :param callback:
-    :return:
-    """
-    if isinstance(url, string_types):
-        url = url.encode('utf8')
-    try:
-        if headers:
-            r = http.request(
-                'POST',
-                url,
-                fields={
-                    paramName: (fileName, fileObject),
-                },
-                headers=headers)
-        else:
-            r = http.request(
-                'POST',
-                url,
-                fields={
-                    paramName: (fileName, fileObject),
-                })
-    except urllib3.exceptions.TimeoutError:
-        ui.message(timeout_message)
-        return
-    except Exception as e:
-        log.error(e)
-        ui.message(internet_error_message)
-        return
-    callback(r.data)
-
-
-def postContent(callback, url, data, headers=None):
+def postContent(callback, url, data, headers=None, method='POST'):
     if isinstance(url, string_types):
         url = url.encode('utf8')
     try:
@@ -77,10 +39,11 @@ def postContent(callback, url, data, headers=None):
                 url,
                 fields=data)
     except urllib3.exceptions.TimeoutError:
-        ui.message(internet_error_message)
+        ui.message(timeout_message)
         return
     except Exception as e:
         log.error(e)
         ui.message(internet_error_message)
         return
+    log.io(r.data)
     callback(r.data)

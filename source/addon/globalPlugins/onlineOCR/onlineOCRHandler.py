@@ -3,6 +3,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
 # urllib3 used in this file is Copyright (c) 2008-2019 Andrey Petrov and contributors under MIT license.
+from __future__ import unicode_literals
 from threading import Thread
 import os
 import sys
@@ -42,6 +43,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 
     # Translators: Description of Online OCR Engine
     description = ""
+
     nvda_cn_domain = "www.nvdacn.com"
     configSectionName = "onlineOCR"
     networkThread = None  # type: Thread
@@ -68,6 +70,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     minWidth = 50
 
     maxWidth = 4096
+
+    maxPixels = 10000000
 
     maxSize = 4 * 1024 * 1024  # 4 mega bytes
 
@@ -233,29 +237,48 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         url = self.get_url()
         domain = self.get_domain()
         if self.useHttps:
-            protocol = "https:/"
+            protocol = b"https:/"
         else:
-            protocol = "http:/"
-        fullURL = "/".join([
+            protocol = b"http:/"
+        fullURL = b"/".join([
             protocol,
             domain,
             url
         ])
         return fullURL
 
-    def get_payload(self, image):
+    def getPayload(self, image):
         """
         Get payload from image and engine settings
-        @param image: Image to convert
-        @type image: PIL.Image.Image
+        @param image: ImageContent to convert
+        @type image: str
         @return: A dictionary for urllib3
         """
         raise NotImplementedError
 
+    # noinspection PyBroadException
     def processCURLError(self, result):
-        pass
+        """
+        process error message from php curl
+        @param result:
+        @type result:
+        @return:
+        @rtype: bool or str
+        """
+        import json
+        apiResult = json.loads(result)
+        try:
+            code = apiResult["errmsg"]
+            if code in range(1, 61):
+                log.error(result)
+                # Translators: Reported when error occurred during image conversion
+                errorMessage = _(u"Error occurred on Proxy server. Please try again or use your own API key instead")
+                return errorMessage
+        except (KeyError, ValueError):
+            return False
 
-    resizeLimit = 5
+    resizeUpperLimit = 5
+    resizeLowerLimit = 0.2
 
     def checkAndResizeImage(self, image):
         """
@@ -265,9 +288,88 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         @return: Resized image
         @rtype: PIL.Image.Image or bool
         """
-        if self.minWidth / image.width >= self.resizeLimit:
-            # Translators: Reported when image size is not valid
-            errorMsg = _(u"Image height is too big to recognize for this engine")
+        isImageValid = True
+        width = image.width
+        height = image.height
+        msg = u"Original size\nwidth:\n{w}\nheight:\n{h}".format(
+            w=width,
+            h=height
+        )
+        if width >= height:
+            aspectRatio = width / height
+        else:
+            aspectRatio = height / width
+        widthStatus = 0
+        heightStatus = 0
+        if aspectRatio > (self.maxHeight / self.minWidth):
+            isImageValid = False
+            # Translators: Reported when error occurred during image resizing
+            errorMsg = _(u"Image aspect ratio is too big. Cannot resize properly for this engine.")
+        else:
+            if self.minWidth <= width <= self.maxWidth:
+                widthResizeFactor = 1
+            elif width < self.minWidth:
+                widthResizeFactor = (float(self.minWidth) / width) + 1
+            else:
+                widthResizeFactor = (float(self.maxWidth) / width) + 1
+            if self.minHeight <= height <= self.maxHeight:
+                heightResizeFactor = 1
+            elif height < self.minHeight:
+                heightResizeFactor = (float(self.minHeight) / height) + 1
+            else:
+                heightResizeFactor = (float(self.maxHeight) / height) + 1
+            msg += u"widthResizeFactor:\n{0}\nheightResizeFactor:\n{1}".format(
+                widthResizeFactor,
+                heightResizeFactor
+            )
+            # Translators: Reported when error occurred during image conversion
+            errorMsg = _(u"Error occurred when converting images")
+
+            if widthResizeFactor >= self.resizeUpperLimit:
+                # Translators: Reported when image size is not valid
+                errorMsg = _(u"Image width is too big for this engine")
+                isImageValid = False
+
+            if heightResizeFactor <= self.resizeLowerLimit:
+                isImageValid = False
+                # Translators: Reported when error occurred during image conversion
+                errorMsg = _(u"Image height is too small for this engine")
+
+            if widthResizeFactor >= self.resizeUpperLimit:
+                # Translators: Reported when image size is not valid
+                errorMsg = _(u"Image width is too big for this engine")
+                isImageValid = False
+            if heightResizeFactor <= self.resizeLowerLimit:
+                isImageValid = False
+                # Translators: Reported when error occurred during image conversion
+                errorMsg = _(u"Image height is too small for this engine")
+        resizeFactor = max(widthResizeFactor, heightResizeFactor)
+        if isImageValid:
+            image = image.resize((
+                int(width * resizeFactor),
+                int(height * resizeFactor)
+            ))
+            width = image.width
+            height = image.height
+            msg += u"\nSize after resizing\nwidth:\n{w}\nheight:\n{h}".format(
+                w=width,
+                h=height
+            )
+            log.io(msg)
+            if width * height > self.maxPixels:
+                isImageValid = False
+                # Translators: Reported when error occurred during image resizing
+                errorMsg = _(u"Image has too many pixels.")
+                ui.message(errorMsg)
+                return False
+            else:
+                return image
+        else:
+            log.io(msg)
+            ui.message(errorMsg)
+            return False
+
+
 
     def getHTTPHeaders(self):
         """
@@ -286,30 +388,10 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         @return:
         @rtype: PIL.Image.Image
         """
-        isImageValid = True
-        # Translators: Reported when error occurred
-        errorMsg = _(u"Unknown error occurred")
-        if self.minWidth > imageInfo or self.minHeight > imageInfo.screenHeight:
-            resizeFactor = 5
-        else:
-            resizeFactor = None
-        imageContent = self.rgb_quad_to_png(pixels, imageInfo, resizeFactor)
-
-        if self.maxHeight < imageInfo.screenHeight:
-            isImageValid = False
-            errorMsg = _(u"Image height is too big")
-
-        if self.maxWidth < imageInfo.screenWidth:
-            isImageValid = False
-            errorMsg = _(u"Image Width is too big")
-        if len(imageContent) > self.maxSize:
-            isImageValid = False
-            errorMsg = _(u"Image size is too big")
-        if isImageValid:
-            return base64.standard_b64encode(imageContent)
-        else:
-            ui.message(errorMsg)
-            return False
+        width = imageInfo.recogWidth
+        height = imageInfo.recogHeight
+        img = Image.frombytes("RGBX", (width, height), pixels, "raw", "BGRX")
+        return img
 
     def recognize(self, pixels, imageInfo, onResult):
         """
@@ -321,23 +403,31 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         """
 
         def callback(result):
+            self.networkThread = None
+            # Translators: Reported when api result is invalid
             failed_message = _(u"Recognition failed. Result is invalid.")
+            # Translators: Message added before recognition result
+            # when user do not use result viewer
             result_prefix = _(u"Recognition result:")
             log.io(result)
+            if not self._use_own_api_key:
+                curl_error_message = self.processCURLError(result)  # type: str
+                if curl_error_message:
+                    ui.message(curl_error_message)
+                    return
             api_error_message = self.process_api_result(result)  # type: str
             if api_error_message:
                 ui.message(api_error_message)
                 return
             try:
                 result = self.convert_to_json(result)
-            except Exception as e:
-                log.error(e)
-                log.error(result)
+            except ValueError as e:
                 ui.message(failed_message)
                 return
+
             try:
                 resultText = result_prefix + self.extract_text(result)
-                if self._clipboard:
+                if config.conf[self.configSectionName]["copyToClipboard"]:
                     import api
                     api.copyToClip(resultText)
                 if self.text_result:
@@ -348,20 +438,23 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
                 log.error(e)
                 log.error(result)
                 ui.message(failed_message)
-            self.networkThread = None
 
         if self.networkThread:
             # Translators: Error message
-            ui.message(_(u"Only one recognition can be performed at a time."))
+            ui.message(_(u"There is another recognition ongoing. Please wait."))
             return
-
-        imageContent = self.get_converted_image(pixels, imageInfo)
+        PILImage = self.get_converted_image(pixels, imageInfo)
+        PILImage = self.checkAndResizeImage(PILImage)
+        if PILImage is False:
+            ui.message(PILImage)
+            return
+        imageContent = self.serializeImage(PILImage)
         if not imageContent:
             return
-        payloads = self.get_payload(imageContent)
+        payloads = self.getPayload(imageContent)
         fullURL = self.getFullURL()
         headers = self.getHTTPHeaders()
-        msg = "{0}\n{1}\n{2}\n{3}".format(
+        msg = u"{0}\n{1}\n{2}\n{3}".format(
             callback,
             fullURL,
             headers,
@@ -448,6 +541,25 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     def _set_balance(self, balance):
         self._balance = balance
 
+    def serializeImage(self, PILImage):
+        """
+
+        @param PILImage:
+        @type PILImage:
+        @return:
+        @rtype: bool or str
+        """
+        imgBuf = BytesIO()
+        PILImage.save(imgBuf, "PNG")
+        imageContent = imgBuf.getvalue()
+        if len(imageContent) > self.maxSize:
+            # Translators: Reported when error occurred during image serialization
+            errorMsg = _(u"Image content size is too big")
+            ui.message(errorMsg)
+            return False
+        else:
+            return base64.standard_b64encode(imageContent)
+
 
 class CustomOCRHandler(AbstractEngineHandler):
     engineClass = BaseRecognizer
@@ -460,7 +572,7 @@ class CustomOCRHandler(AbstractEngineHandler):
     configSpec = {
         "engine": "string(default=auto)",
         "copyToClipboard": "boolean(default=false)",
-        "[[__many__]]": 'accessType = option("free", "own_api", default="free")'
+        "[__many__]": 'accessType = option("free", "own_api", default="free")'
     }
 
 
@@ -469,12 +581,10 @@ class CustomOCRPanel(AbstractEngineSettingsPanel):
     title = _(u"Online OCR")
     handler = CustomOCRHandler
 
-    def makeGeneralSettings(self, settingsSizer):
-        settingsSizerHelper = guiHelper.BoxSizerHelper(settingsSizer)
-
+    def makeGeneralSettings(self, settingsSizerHelper):
         # Translators: This is the label for a checkbox in the
         # online OCR settings panel.
-        copyToClipboardText = _("&Copy to clipboard")
+        copyToClipboardText = _("&Copy result to clipboard after recognition")
         self.copyToClipboardCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=copyToClipboardText))
         self.copyToClipboardCheckBox.SetValue(
             config.conf[self.handler.configSectionName]["copyToClipboard"])

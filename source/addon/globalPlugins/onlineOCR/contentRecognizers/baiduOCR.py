@@ -16,6 +16,7 @@ addonHandler.initTranslation()
 class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     name = b"baiduOCR"
 
+    # Translators: Description of Online OCR Engine
     description = _("Baidu OCR")
 
     _access_token = ""
@@ -32,7 +33,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
     _api_secret_key = " "
 
-    _lang = "CHN_ENG"
+    _language = "CHN_ENG"
 
     minHeight = 15
 
@@ -44,7 +45,9 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             CustomContentRecognizer.LanguageSetting(),
             # Translators: Label for OCR engine settings.
             CustomContentRecognizer.BooleanSetting("detectDirection", _("&Detect image  direction")),
+            # Translators: Label for OCR engine settings.
             CustomContentRecognizer.BooleanSetting("recognizeGranularity", _("&Get position of every character")),
+            # Translators: Label for OCR engine settings.
             CustomContentRecognizer.BooleanSetting("accurate", _("&Use Accurate API(Slower)")),
             # CustomContentRecognizer.ReadOnlySetting("access_token",
             #                                         # Translators: Label of access token
@@ -116,46 +119,87 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             return False
 
     codeToErrorMessage = {
+        # Translators: Error message of Baidu OCR engine.
         1: _(u"Unknown error"),
+        # Translators: Error message of Baidu OCR engine.
         2: _(u"Service temporarily unavailable"),
+        # Translators: Error message of Baidu OCR engine.
         3: _(u"Unsupported api endpoints"),
+        # Translators: Error message of Baidu OCR engine.
         4: _(u"Open api request limit reached"),
+        # Translators: Error message of Baidu OCR engine.
         6: _(u"No permission to access data"),
+        # Translators: Error message of Baidu OCR engine.
         14: _(u"IAM Certification failed"),
+        # Translators: Error message of Baidu OCR engine.
         17: _(u"Open api daily request limit reached"),
+        # Translators: Error message of Baidu OCR engine.
         18: _(u"Open api qps request limit reached"),
+        # Translators: Error message of Baidu OCR engine.
         19: _(u"Open api total request limit reached"),
+        # Translators: Error message of Baidu OCR engine.
         100: _(u"Invalid parameter"),
+        # Translators: Error message of Baidu OCR engine.
         110: _(u"Access token invalid or no longer valid"),
+        # Translators: Error message of Baidu OCR engine.
         111: _(u"Access token expired"),
+        # Translators: Error message of Baidu OCR engine.
         282000: _(u"internal error"),
+        # Translators: Error message of Baidu OCR engine.
         216100: _(u"invalid param"),
+        # Translators: Error message of Baidu OCR engine.
         216101: _(u"not enough param"),
+        # Translators: Error message of Baidu OCR engine.
         216102: _(u"service not support"),
+        # Translators: Error message of Baidu OCR engine.
         216103: _(u"param too long"),
+        # Translators: Error message of Baidu OCR engine.
         216110: _(u"appid not exist"),
+        # Translators: Error message of Baidu OCR engine.
         216200: _(u"empty image"),
+        # Translators: Error message of Baidu OCR engine.
         216201: _(u"image format error"),
+        # Translators: Error message of Baidu OCR engine.
         216202: _(u"image size error"),
+        # Translators: Error message of Baidu OCR engine.
         216630: _(u"recognize error"),
+        # Translators: Error message of Baidu OCR engine.
         216631: _(u"recognize bank card error"),
+        # Translators: Error message of Baidu OCR engine.
         216633: _(u"recognize ID card error"),
+        # Translators: Error message of Baidu OCR engine.
         216634: _(u"detect error"),
+        # Translators: Error message of Baidu OCR engine.
         272000: _(u"structure failed"),
+        # Translators: Error message of Baidu OCR engine.
         272001: _(u"classify failed"),
+        # Translators: Error message of Baidu OCR engine.
         282003: _(u"missing parameters"),
+        # Translators: Error message of Baidu OCR engine.
         282004: _(u"invalid parameter, appId doesn't own this template nor not launch"),
+        # Translators: Error message of Baidu OCR engine.
         282005: _(u"batch processing error"),
+        # Translators: Error message of Baidu OCR engine.
         282006: _(u"batch task limit reached"),
+        # Translators: Error message of Baidu OCR engine.
         282102: _(u"target detect error"),
+        # Translators: Error message of Baidu OCR engine.
         282103: _(u"target recognize error"),
+        # Translators: Error message of Baidu OCR engine.
         282110: _(u"urls not exit"),
+        # Translators: Error message of Baidu OCR engine.
         282111: _(u"url format illegal"),
+        # Translators: Error message of Baidu OCR engine.
         282112: _(u"url download timeout"),
+        # Translators: Error message of Baidu OCR engine.
         282113: _(u"url response invalid"),
+        # Translators: Error message of Baidu OCR engine.
         282114: _(u"url size error"),
+        # Translators: Error message of Baidu OCR engine.
         282808: _(u"request id:  not exist"),
+        # Translators: Error message of Baidu OCR engine.
         282809: _(u"result type error"),
+        # Translators: Error message of Baidu OCR engine.
         282810: _(u"image recognize error"),
     }
 
@@ -198,14 +242,14 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
                 url = "ocr/baidu.php"
         return url
 
-    def get_payload(self, base64Image):
+    def getPayload(self, image):
         if self.text_result:
-            return self.create_simple_payload(base64Image)
+            return self.create_simple_payload(image)
         else:
-            return self.create_payload(base64Image)
+            return self.create_payload(image)
 
     def _get_language(self):
-        return self._lang
+        return self._language
 
     _detectLanguage = False
 
@@ -224,7 +268,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         self._detectDirection = detectDirection
 
     def _set_language(self, language):
-        self._lang = language
+        self._language = language
 
     def _get_availableLanguages(self):
         languages = OrderedDict({
@@ -251,7 +295,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             "image": png_string,
             "detect_direction": self.pyBool2json(self._detectDirection),
             "detect_language": self.pyBool2json(self._detectLanguage),
-            "language_type": self._lang,
+            "language_type": self._language,
             "recognize_granularity": recognize_granularity,
             "vertexes_location": self.pyBool2json(self._recognizeGranularity),
             "probability": "false",
@@ -263,7 +307,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             "image": png_string,
             "detect_direction": self.pyBool2json(self._detectDirection),
             "detect_language": self.pyBool2json(self._detectLanguage),
-            "language_type": self._lang,
+            "language_type": self._language,
             "probability": "false",
         }
         return payload

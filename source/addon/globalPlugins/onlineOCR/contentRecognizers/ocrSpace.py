@@ -49,6 +49,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
     name = b"ocrSpace"
 
+    # Translators: Description of Online OCR Engine
     description = _("OCR Space")
 
     _api_key = ""
@@ -59,7 +60,9 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             CustomContentRecognizer.LanguageSetting(),
             # Translators: Label for OCR engine settings.
             CustomContentRecognizer.BooleanSetting("scale", _("Scale image for better quality")),
+            # Translators: Label for OCR engine settings.
             CustomContentRecognizer.BooleanSetting("detectOrientation", _("Detect image orientation")),
+            # Translators: Label for OCR engine settings.
             CustomContentRecognizer.BooleanSetting("isTable", _("Optimize for table recognition")),
             CustomContentRecognizer.APIKeySetting(),
         ]
@@ -100,33 +103,56 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         languages = OrderedDict({
             # Translators: Text language for OCR
             "ara": _("Arabic"),
+            # Translators: Text language for OCR
             "bul": _("Bulgarian"),
+            # Translators: Text language for OCR
             "chs": _("Chinese(Simplified)"),
+            # Translators: Text language for OCR
             "cht": _("Chinese(Traditional)"),
+            # Translators: Text language for OCR
             "hrv": _("Croatian"),
+            # Translators: Text language for OCR
             "cze": _("Czech"),
+            # Translators: Text language for OCR
             "dan": _("Danish"),
+            # Translators: Text language for OCR
             "dut": _("Dutch"),
+            # Translators: Text language for OCR
             "eng": _("English"),
+            # Translators: Text language for OCR
             "fin": _("Finnish"),
+            # Translators: Text language for OCR
             "fre": _("French"),
+            # Translators: Text language for OCR
             "ger": _("German"),
+            # Translators: Text language for OCR
             "gre": _("Greek"),
+            # Translators: Text language for OCR
             "hun": _("Hungarian"),
+            # Translators: Text language for OCR
             "kor": _("Korean"),
+            # Translators: Text language for OCR
             "ita": _("Italian"),
+            # Translators: Text language for OCR
             "jpn": _("Japanese"),
+            # Translators: Text language for OCR
             "pol": _("Polish"),
+            # Translators: Text language for OCR
             "por": _("Portuguese"),
+            # Translators: Text language for OCR
             "rus": _("Russian"),
+            # Translators: Text language for OCR
             "slv": _("Slovenian"),
+            # Translators: Text language for OCR
             "spa": _("Spanish"),
+            # Translators: Text language for OCR
             "swe": _("Swedish"),
+            # Translators: Text language for OCR
             "tur": _("Turkish")
         })
         return self.generate_string_settings(languages)
 
-    def get_payload(self, png_string, text_only=False):
+    def getPayload(self, png_string, text_only=False):
         base64_image = "data:image/png;base64," + png_string
         if text_only:
             isOverlayRequired = False
@@ -138,7 +164,8 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             "isTable": self.pyBool2json(self._isTable),
             "detectOrientation": self.pyBool2json(self._detectOrientation),
             "language": self._language,
-            "isOverlayRequired": self.pyBool2json(isOverlayRequired)
+            "isOverlayRequired": self.pyBool2json(isOverlayRequired),
+            "scale": self.pyBool2json(self._scale),
         }
         if self._use_own_api_key:
             payload["apikey"] = self._api_key
@@ -146,8 +173,10 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
     def get_domain(self):
         if self._use_own_api_key:
+            self.useHttps = True
             return self.api_domain
         else:
+            self.useHttps = True
             return self.nvda_cn_domain
 
     def get_url(self):
@@ -166,6 +195,8 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             return False
 
     codeToErrorMessage = {
+        # Translators: Report when API error occurred
         3: _(u"Image parsing failed."),
+        # Translators: Report when API error occurred
         4: _(u"A fatal error occurs during parsing )."),
     }

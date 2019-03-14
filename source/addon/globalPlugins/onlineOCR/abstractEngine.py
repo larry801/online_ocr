@@ -3,6 +3,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
 # This module uses a lot of code from NVDA core
+from __future__ import unicode_literals
 import pkgutil
 import baseObject
 from gui.settingsDialogs import SettingsPanel, SettingsDialog
@@ -251,7 +252,6 @@ class AbstractEngine(baseObject.AutoPropertyObject):
     #: The name of the engine; must be the original module file name.
     name = "empty"  # type: str
 
-    # Translators: A description of the engine.
     description = ""  # type: str
 
     configSectionName = None
@@ -350,7 +350,7 @@ class AbstractEngine(baseObject.AutoPropertyObject):
             setattr(self, s.name, val)
 
     def getConfigSpec(self):
-        spec = deepcopy(config.confspec[self.configSpecName]["__many__"])
+        spec = deepcopy(config.confspec[self.configSectionName]["__many__"])
         for setting in self.supportedSettings:
             spec[setting.name] = setting.configSpec
         return spec
@@ -376,7 +376,7 @@ class AbstractEngineSettingsPanel(SettingsPanel):
     engineSettingPanel = None  # type: SpecificEnginePanel
     handler = AbstractEngineHandler  # type: AbstractEngineHandler
 
-    def makeGeneralSettings(self, settingsSizer):
+    def makeGeneralSettings(self, settingsSizerHelper ):
         pass
 
     def makeSettings(self, settingsSizer):
@@ -398,7 +398,7 @@ class AbstractEngineSettingsPanel(SettingsPanel):
         self.engineNameCtrl.Bind(wx.EVT_CHAR_HOOK, self._enterTriggersOnChangeEngine)
 
         # Translators: This is the label for the button used to change engines,
-        # it appears in the context of a engine group on the speech settings panel.
+        # it appears in the context of a engine group on the Online OCR settings panel.
         changeEngineBtn = wx.Button(self, label=_("C&hange..."))
         engineGroup.addItem(
             guiHelper.associateElements(
@@ -409,7 +409,7 @@ class AbstractEngineSettingsPanel(SettingsPanel):
         changeEngineBtn.Bind(wx.EVT_BUTTON, self.onChangeEngine)
         self.engineSettingPanel = SpecificEnginePanel(self, self.handler)
         settingsSizerHelper.addItem(self.engineSettingPanel)
-        self.makeGeneralSettings(settingsSizer)
+        self.makeGeneralSettings(settingsSizerHelper)
 
     def _enterTriggersOnChangeEngine(self, evt):
         if evt.KeyCode == wx.WXK_RETURN:
@@ -495,7 +495,10 @@ class EnginesSelectionDialog(SettingsDialog):
         if not handler.getEngine(newEngineName):
             # Translators: This message is presented when
             # NVDA is unable to load the selected engine.
-            gui.messageBox(_("Could not load the %s engine.") % newEngineName, _("Engine Error"),
+            gui.messageBox(_("Could not load the %s engine.") % newEngineName,
+                           # Translators: Title of the message box presented when
+                           # NVDA is unable to load the selected engine.
+                           _("Engine Error"),
                            wx.OK | wx.ICON_WARNING, self)
             return
         handler.setCurrentEngine(newEngineName)
@@ -719,7 +722,6 @@ class SpecificEnginePanel(SettingsPanel):
     def updateVoiceSettings(self, changedSetting=None):
         """Creates, hides or updates existing GUI controls for all of supported settings."""
         engine = self._engine = self.handler.getCurrentEngine()
-        log.info(engine)
         # firstly check already created options
         from six import iteritems
         for name, sizer in iteritems(self.sizerDict):

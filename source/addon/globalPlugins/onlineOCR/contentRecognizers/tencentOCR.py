@@ -19,7 +19,8 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     api_domain = b"api.ai.qq.com"
     api_url = "fcgi-bin/ocr/ocr_generalocr"
 
-    description = _(u" Tencent AI OCR")
+    # Translators: Description of Online OCR Engine
+    description = _(u"Tencent AI OCR")
 
     maxSize = 1024 * 1024
 
@@ -60,10 +61,11 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def calculate_signature(options, app_key):
         """
         generate signature for API
-        :param app_key: API secret key
-        :param options: request parameters
-        :type options: dict
-        :return:
+        @param app_key: API secret key
+        @param options: request parameters
+        @type options: dict
+        @return: signatrue
+        @rtype: str
         """
         encoded_option = ""
         key_sequence = sorted(iterkeys(options), reverse=False)
@@ -111,14 +113,14 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         else:
             return "ocr/tencent.php"
 
-    def get_payload(self, base64Image):
+    def getPayload(self, image):
         if self._use_own_api_key:
-            return self.create_payload(base64Image,
+            return self.create_payload(image,
                                        app_id=self._appID,
                                        app_secret=self._api_secret_key,
                                        use_nvda_cn=False)
         else:
-            return self.create_payload(base64Image, use_nvda_cn=True)
+            return self.create_payload(image, use_nvda_cn=True)
 
     @staticmethod
     def extract_text(apiResult):
