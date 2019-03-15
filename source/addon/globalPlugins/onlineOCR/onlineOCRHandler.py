@@ -369,8 +369,6 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
             ui.message(errorMsg)
             return False
 
-
-
     def getHTTPHeaders(self):
         """
         Generate HTTP Header for request
@@ -573,7 +571,6 @@ class CustomOCRHandler(AbstractEngineHandler):
     configSpec = {
         "engine": "string(default=auto)",
         "copyToClipboard": "boolean(default=false)",
-        "[__many__]": 'accessType = option("free", "own_api", default="free")'
     }
 
 

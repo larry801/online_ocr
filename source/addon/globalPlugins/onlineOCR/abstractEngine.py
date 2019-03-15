@@ -350,14 +350,14 @@ class AbstractEngine(baseObject.AutoPropertyObject):
             setattr(self, s.name, val)
 
     def getConfigSpec(self):
-        spec = deepcopy(config.confspec[self.configSectionName]["__many__"])
+        spec = deepcopy(config.confspec[self.configSectionName][b"__many__"])
         for setting in self.supportedSettings:
             spec[setting.name] = setting.configSpec
         return spec
 
     def isSupported(self, settingName):
         """Checks whether given setting is supported by the engine.
-        @rtype: l{bool}
+        @rtype: L{bool}
         """
         for s in self.supportedSettings:
             if s.name == settingName:
