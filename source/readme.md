@@ -2,7 +2,7 @@
 
 Author: Larry Wang
 NVDA compatibility: from 2018.3 to 2019.1
-Download [development version](https://github.com/larry801/online_ocr/releases/download/0.4/onlineOCR-0.4-dev.nvda-addon)  
+Download [development version](https://github.com/larry801/online_ocr/releases/download/0.3/onlineOCR-0.3-dev.nvda-addon)  
 
 This addon aims at adding more accurate online engines to NVDA.
 
@@ -207,8 +207,6 @@ This engine can also get position of every character
 
 Here are its settings:
 
-
-
 Get position of every character allows you to do more precise operation on some inaccessible application. Enabling this will make recognition slightly slower.
 
 Use Accurate API 
@@ -238,5 +236,9 @@ There is no information about language support in these API document
 According to my test Chinese and English and their mixture is supported.
 There is no additional configuration for these API.
 
+## Update Log
 
-### For developers this addon 
+### 0.3 
+Add detail documentation on how to get API key of Microsoft Azure OCR
+Fix issue about new installation.
+Removed auto OCR since this feature is problematic and may confuse with online engines. Auto OCR will be a seperate addon, when it is stable enough.
