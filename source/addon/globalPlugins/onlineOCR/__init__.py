@@ -18,6 +18,8 @@ from scriptHandler import script
 from logHandler import log
 import ui
 from PIL import ImageGrab, Image
+from contentRecog import recogUi, RecognitionResult, uwpOcr
+
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
@@ -38,18 +40,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         pixels = image.tobytes("raw", "BGRX")
         return pixels, imageInfo
 
-    def event_becomeNavigatorObject(self, obj, nextHandler, isFocus=False):
-        if self.autoOCREnabled:
-            from contentRecog import recogUi, uwpOcr
-            recogUi.recognizeNavigatorObject(uwpOcr.UwpOcr())
-        nextHandler()
-
     def __init__(self):
         super(GlobalPlugin, self).__init__()
         if globalVars.appArgs.secure:
             return
         if config.isAppX:
             return
+        self.lastNavigatorObject = None
         self.autoOCREnabled = False
         from . import onlineOCRHandler
         onlineOCRHandler.CustomOCRHandler.initialize()
@@ -57,7 +54,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(CustomOCRPanel)
 
     # Translators: OCR command name in input gestures dialog
-    full_ocr_msg = _("Recognizes the content of the current navigator object with Custom OCR engine.Then open a virtual result document.")
+    full_ocr_msg = _(
+        "Recognizes the content of the current navigator object with Custom OCR engine.Then open a virtual result document.")
 
     # Translators: OCR command name in input gestures dialog
     @script(description=full_ocr_msg, category=category_name, gestures=["kb:NVDA+alt+shift+r"])
@@ -115,7 +113,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 ui.message(self.noImageMessage)
 
     # Translators: OCR command name in input gestures dialog
-    full_clipboard_ocr_msg = _("Recognizes image in clipboard with online OCR engine.Then open a virtual result document.")
+    full_clipboard_ocr_msg = _(
+        "Recognizes image in clipboard with online OCR engine.Then open a virtual result document.")
 
     # Translators: Clipboard OCR description
     @script(description=full_clipboard_ocr_msg,
@@ -148,22 +147,3 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             except RuntimeError as e:
                 log.error(e)
                 ui.message(self.noImageMessage)
-
-    # Translators: OCR command name in input gestures dialog
-    @script(description=_("Toggle auto ocr"),
-            category=category_name, gestures=["kb:control+;"])
-    def script_toggleAutoOCR(self, gesture):
-        import winVersion
-        import ui
-        if not winVersion.isUwpOcrAvailable():
-            # Translators: Reported when Windows 10 OCR is not available.
-            ui.message(_("Windows 10 OCR not available"))
-            return
-        if self.autoOCREnabled:
-            self.autoOCREnabled = False
-            # Translators: Reported when auto OCR is disabled
-            ui.message(_(u"Auto OCR Disabled"))
-        else:
-            self.autoOCREnabled = True
-            # Translators: Reported when auto OCR is enabled
-            ui.message(_(u"Auto OCR Enabled"))
