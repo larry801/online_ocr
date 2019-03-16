@@ -11,6 +11,7 @@ install:
 
 
 build_script:
+  - cd source
   - scons
   - scons pot
 
