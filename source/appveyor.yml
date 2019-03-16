@@ -16,10 +16,10 @@ build_script:
   - scons pot
 
 artifacts:
-  - path: '*.nvda-addon'
+  - path: 'source\*.nvda-addon'
     name: addon
     type: application/x-nvda-addon
-  - path: '*.pot'
+  - path: 'source\*.pot'
     type: application/x-pot
 deploy:
   release: $(APPVEYOR_REPO_TAG_NAME)
