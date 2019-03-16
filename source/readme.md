@@ -2,19 +2,9 @@
 
 Author: Larry Wang
 NVDA compatibility: from 2018.3 to 2019.1
-Download [development version 0.2](https://github.com/larry801/online_ocr/releases/download/0.2/onlineOCR-0.2-dev.nvda-addon)  
+Download [development version](https://github.com/larry801/online_ocr/releases/download/0.3/onlineOCR-0.3-dev.nvda-addon)  
 
-This addon aims at enhancing the experience of OCR when using NVDA.
-There are two main features.
-
-Add "Auto OCR" feature.
-Add more accurate online engines to NVDA.
-
-## Auto OCR
-
-Whenever you use object navigation commands to change current navigator object, NVDA will automatically run OCR on current navigator object with Windows 10 OCR engine.
-
-You can use CTRL semicolon Enable or disable "Auto OCR".
+This addon aims at adding more accurate online engines to NVDA.
 
 ## Online OCR
 
@@ -28,6 +18,7 @@ https://www.nvdacn.com
 https://ocr.space/ocrapi
 
 https://azure.microsoft.com/en-us/services/cognitive-services/
+
 http://ai.qq.com
 
 http://ai.baidu.com
@@ -110,7 +101,7 @@ If set to true, the OCR logic makes sure that the parsed text result is always r
 If you want to use your own key, you also need to specify API Key.
 
 You can get your own free API key by registering on
-https://ocr.space/ocrapi
+[OCR space](https://ocr.space/ocrapi)
 Here is a simple guide.
 Find the link "Register for free API key"
 Click on it and you will find a form to fill in.
@@ -161,13 +152,43 @@ Language: Text language for recognition. Auto detection by default.
 Detect image orientation:
 If set to true, the API autorotates the image correctly.
 
-If you use your own key, you also need to specify these settings.
+If you use your own key, you should get a subscription key for using Microsoft Computer Vision API from the link below:
+Step 1: Create an account.
+
+https://azure.microsoft.com/en-ua/try/cognitive-services/
+
+Please note that the key has to be created for the Computer Vision API. The first "GET API key" button you encounter with single key navigation. Currently Microsoft provides the option to create a trial key for 7 days. You can also sign up for a free azure account for more trail. Signing up requires a credit card. If you already have a subscription account you can skip this step.
+
+Step 2: Deploy Cognitive Services
+Now you have an azure account. 
+First login on  [Azure Portal](https://portal.azure.com)
+Wait until you get the message Portal is Ready you are logged into azure portal.
+Find the link called All resources after All services
+button and activate it.
+Wait until you get the message Blade All resources is ready , your focus will be an editbox,then press shift+tab find a menu item called add and activate it.
+
+Wait until you get the message Search the Marketplace,
+Type Cognitive Services and press down arrow.
+Wait until you get the message List of options Cognitive Services one of five, then press enter.
+Wait until you get the message Blade Cognitive Services is ready press tab or b to find a button named Create activate it.
+Wait until you get the message Blade Create is ready, your focus will be an editbox, type a name for this resource. Note that Your resource name can only include alphanumeric characters, ‘_,-’, and can’t end with ’_’ or ’-‘.
+I choose NVDAOCR.
+Press tab to go to Subscription combobox. Usually you can leave it as is.
+Press tab to go to Location combobox. Choose one close to your current location. Be sure to remember this since location is required in engine configuration.
+Press tab to go to Pricing tie combobox. Usually a free tie like F0 is adequate.If that is not enough you can choose other tier after reading full pricing details in View full pricing details link.
+Press tab to go to Create new Resource group  editbox. You should create one if you do not have any Resource group.Press tab  find Create new button. 
+Then press tab go to Create Button to create this rescource.
+Wait until you get the message Deployment succeeded.
+Then find Go to resource button sometimes you need go up to activate Notifications button before you can find Go to resource button.
+Wait until you get the message Blade Quick Start is busy.
+Find the link named keys, then activate it.
+Wait until you get the message Blade Manage keys is ready.
+Find edit box named key 1 or key 2. The content of that edit box is the API key required in engine configuration.Press Ctrl-C to copy it for engine configuration
+Then you can fill in these two settings required if you use your own API key.
 Azure resource Region: 
 The region you choose when deploying Cognitive Services in Azure Portal.
 API key:
 The key you get after successfully deploying Cognitive Services in Azure Portal, KEY 2 is recommended.
-
-
 
 ### Baidu OCR
 This one is also a paid API with free quota provided by Baidu.
@@ -218,3 +239,4 @@ According to my test Chinese and English and their mixture is supported.
 There is no additional configuration for these API.
 
 
+### For developers this addon 
