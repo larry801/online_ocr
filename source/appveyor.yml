@@ -2,13 +2,17 @@ version: "{branch}-{build}"
 environment:
  PY_PYTHON: 2.7-32
 install:
+  - py -m pip install --upgrade pip
+  - py -m pip install --upgrade six
+  - py -m pip install --upgrade setuptools
+  - py -m pip install --upgrade wheel
   - py -m pip install markdown
-  - py -m pip install scons --egg
-  
+  - py -m pip install scons
+
 
 build_script:
-  - PY scons.py
-  - PY scons.py pot
+  - scons
+  - scons pot
 
 artifacts:
   - path: '*.nvda-addon'
@@ -20,9 +24,8 @@ deploy:
   release: $(APPVEYOR_REPO_TAG_NAME)
   description: $(APPVEYOR_REPO_TAG_NAME)
   provider: GitHub
-  #Replace the secure text here with an encrypted github token (Google "appVeyor encrypted environment variables" for more info).
   auth_token:
-    secure: D6nDTGin+O15mi48HCwAAu4gXJyUMxQd31t84RdWEFlfzYfgbu4FTH2VLC6l46Fy
+    secure: uK31tp+xqv78Wvxvl5nRI6vBL97we6/8qQHA2YK5mRn2Q40tkikzZbOm9r+otdpR
   artifact: addon
   draft: false
   prerelease: false

@@ -34,8 +34,8 @@ class AbstractEngineHandler(object):
     configSectionName
     engineClass
     engineClassName
-    configSpec
-    You should also provide defaultEnginePriorityList if you need fallback behaviour like SynthEngine in NVDA.
+    configSpec: config specification for settings which remain the same for all engines like symbolLevel
+    You should also provide defaultEnginePriorityList if you need fallback behaviour like SynthDriver in NVDA.
     """
 
     engine_list = None
@@ -66,7 +66,6 @@ class AbstractEngineHandler(object):
 
     @classmethod
     def getEngineList(cls):
-        cls.init_config()
         if cls.engine_list:
             return cls.engine_list
         else:
@@ -117,7 +116,7 @@ class AbstractEngineHandler(object):
             log.info("Loaded engine %s" % name)
             return True
         except:
-            log.error("setSynth", exc_info=True)
+            log.error("setCurrentEngine", exc_info=True)
             if prevEngineName:
                 # There was a previous engine, so switch back to that one.
                 cls.setCurrentEngine(prevEngineName, isFallback=True)
@@ -256,6 +255,9 @@ class AbstractEngine(baseObject.AutoPropertyObject):
 
     configSectionName = None
 
+    # config specification for settings used by every engine like Caps beep of a synthDriver
+    engineConfigSpec = {}
+
     @classmethod
     def AppIDSetting(cls):
         """Factory function for creating a lsetting for App ID."""
@@ -350,7 +352,10 @@ class AbstractEngine(baseObject.AutoPropertyObject):
             setattr(self, s.name, val)
 
     def getConfigSpec(self):
-        spec = deepcopy(config.confspec[self.configSectionName][b"__many__"])
+        # Unlike NVDA speech synth settings,
+        # Specify config specification of each engine in
+        # engineConfigSpec rather than "__many__"
+        spec = self.engineConfigSpec
         for setting in self.supportedSettings:
             spec[setting.name] = setting.configSpec
         return spec
