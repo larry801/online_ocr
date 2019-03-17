@@ -60,7 +60,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     # Translators: OCR command name in input gestures dialog
     @script(description=full_ocr_msg,
             category=category_name,
-            gestures=["kb:NVDA+shift+r"])
+            gestures=["kb:control+shift+NVDA+r"])
     def script_recognizeWithCustomOcr(self, gesture):
         from contentRecog import recogUi
         engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
@@ -121,8 +121,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     else:
                         raise RuntimeError
                     win32clipboard.CloseClipboard()
-                except RuntimeError as e:
-                    log.error(e)
+                except (RuntimeError, TypeError) as e:
+                    log.io(e)
                     ui.message(self.noImageMessage)
         elif repeatCount >= 1:
             engine.text_result = False

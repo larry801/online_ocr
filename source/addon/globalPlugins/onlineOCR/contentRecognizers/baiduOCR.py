@@ -292,23 +292,23 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         else:
             recognize_granularity = "big"
         payload = {
-            "image": png_string,
-            "detect_direction": self.pyBool2json(self._detectDirection),
-            "detect_language": self.pyBool2json(self._detectLanguage),
-            "language_type": self._language,
-            "recognize_granularity": recognize_granularity,
-            "vertexes_location": self.pyBool2json(self._recognizeGranularity),
-            "probability": "false",
+            b"image": png_string,
+            b"detect_direction": self.pyBool2json(self._detectDirection),
+            b"detect_language": self.pyBool2json(self._detectLanguage),
+            b"language_type": self._language,
+            b"recognize_granularity": recognize_granularity,
+            b"vertexes_location": self.pyBool2json(self._recognizeGranularity),
+            b"probability": "false",
         }
         return payload
 
     def create_simple_payload(self, png_string):
         payload = {
-            "image": png_string,
-            "detect_direction": self.pyBool2json(self._detectDirection),
-            "detect_language": self.pyBool2json(self._detectLanguage),
-            "language_type": self._language,
-            "probability": "false",
+            b"image": png_string,
+            b"detect_direction": self.pyBool2json(self._detectDirection),
+            b"detect_language": self.pyBool2json(self._detectLanguage),
+            b"language_type": self._language,
+            b"probability": "false",
         }
         return payload
 

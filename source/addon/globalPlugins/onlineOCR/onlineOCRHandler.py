@@ -99,12 +99,12 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         @param boolean:
         @type boolean: bool
         @return:
-        @rtype: str
+        @rtype: bytes
         """
         if boolean:
-            return "true"
+            return b"true"
         else:
-            return "false"
+            return b"false"
 
     def _get_supportedSettings(self):
         raise NotImplementedError

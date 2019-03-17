@@ -159,16 +159,16 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         else:
             isOverlayRequired = True
         payload = {
-            "base64Image": base64_image,
-            "filetype": "PNG",
-            "isTable": self.pyBool2json(self._isTable),
-            "detectOrientation": self.pyBool2json(self._detectOrientation),
-            "language": self._language,
-            "isOverlayRequired": self.pyBool2json(isOverlayRequired),
-            "scale": self.pyBool2json(self._scale),
+            b"base64Image": base64_image,
+            b"filetype": "PNG",
+            b"isTable": self.pyBool2json(self._isTable),
+            b"detectOrientation": self.pyBool2json(self._detectOrientation),
+            b"language": self._language,
+            b"isOverlayRequired": self.pyBool2json(isOverlayRequired),
+            b"scale": self.pyBool2json(self._scale),
         }
         if self._use_own_api_key:
-            payload["apikey"] = self._api_key
+            payload[b"apikey"] = self._api_key
         return payload
 
     def get_domain(self):

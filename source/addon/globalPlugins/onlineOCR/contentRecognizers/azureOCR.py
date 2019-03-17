@@ -109,11 +109,11 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
     def getPayload(self, jpegBytes):
         if self._use_own_api_key:
-            fileName = 'ocr.png'
+            fileName = b'ocr.png'
             paramName = fileName
         else:
-            paramName = 'foo'
-            fileName = 'foo'
+            paramName = b'foo'
+            fileName = b'foo'
         payloads = {
             paramName: (fileName, jpegBytes)
         }

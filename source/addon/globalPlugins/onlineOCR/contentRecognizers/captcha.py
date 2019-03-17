@@ -102,12 +102,12 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             return "ocr/captchaDecode.php"
 
     def getPayload(self, image):
-        fileName = "captcha"
+        fileName = b"captcha"
         if self._use_own_api_key:
             payload = {
-                "key": self._api_key,
-                "method": "solve",
-                "captcha": (fileName, image),
+                b"key": self._api_key,
+                b"method": b"solve",
+                b"captcha": (fileName, image),
             }
         else:
             payload = {
@@ -118,7 +118,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def getHTTPHeaders(self):
         if self._use_own_api_key:
             return {
-                "Content-type": "x-www-form-urlencoded"
+                "Content-type": "application/x-www-form-urlencoded"
             }
 
     def refreshBalance(self):

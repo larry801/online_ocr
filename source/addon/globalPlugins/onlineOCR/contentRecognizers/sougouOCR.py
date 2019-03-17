@@ -110,8 +110,8 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             fileName = self.getImageFileName()
             paramName = fileName
         else:
-            paramName = 'foo'
-            fileName = 'foo'
+            paramName = b'foo'
+            fileName = b'foo'
         payloads = {
             paramName: (fileName, jpegBytes)
         }

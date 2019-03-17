@@ -84,20 +84,20 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def create_payload(self, png_string, app_id="", app_secret="", use_nvda_cn=True):
         if use_nvda_cn:
             options = {
-                "image": png_string
+                b"image": png_string
             }
         else:
             import time
             import random
             options = {
-                "app_id": app_id,
-                "time_stamp": int(time.time()),
-                "nonce_str": str(random.randint(10000, 99999)),
-                "image": png_string
+                b"app_id": app_id,
+                b"time_stamp": int(time.time()),
+                b"nonce_str": str(random.randint(10000, 99999)),
+                b"image": png_string
             }
             sign = self.calculate_signature(options, app_secret)
             sign = sign.upper()
-            options["sign"] = sign
+            options[b"sign"] = sign
         log.io(options)
         return options
 

@@ -234,6 +234,12 @@ There is no additional configuration for these API.
 
 ## Update Log
 
+### 0.4
+
+Fix installation error when config path contains non-ascii characters
+Change gesture to avoid collison with golden cursor.
+Change default engine to Microsoft azure because it is able to detect text language automatically.
+
 ### 0.3 
 Add detail documentation on how to get API key of Microsoft Azure OCR
 Fix issue about new installation.
