@@ -13,25 +13,26 @@ from contentRecog import LinesWordsResult, ContentRecognizer, RecogImageInfo
 import base64
 import wx
 import config
-from gui import guiHelper
-
-try:
-    from urllib import urlencode
-except ImportError:
-    from urllib.urllib_parse import urlencode
 from six import iterkeys
 from .abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine, BooleanEngineSetting
-import globalCommands
 import addonHandler
 from . import contentRecognizers
 from logHandler import log
 import ui
 from collections import OrderedDict
-
-Base_Dir = os.path.dirname(os.path.dirname(__file__))
-sys.path.insert(0, os.path.join(Base_Dir, "_contrib"))
+try:
+    from urllib import urlencode
+except ImportError:
+    from urllib.urllib_parse import urlencode
+from six import binary_type
+BaseDir = os.path.dirname(os.path.dirname(__file__))
+if isinstance(BaseDir, binary_type):
+    # In Python2
+    sys.path.insert(0, os.path.join(BaseDir,  b"_contrib"))
+else:
+    # In Python3
+    sys.path.insert(0, os.path.join(BaseDir,  "_contrib"))
 from PIL import Image
-
 _ = lambda x: x
 addonHandler.initTranslation()
 
@@ -265,9 +266,9 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
         @return:
         @rtype: bool or str
         """
-        import json
-        apiResult = json.loads(result)
         try:
+            import json
+            apiResult = json.loads(result)
             code = apiResult["errmsg"]
             if code in range(1, 61):
                 log.error(result)
@@ -567,7 +568,7 @@ class CustomOCRHandler(AbstractEngineHandler):
     enginePackageName = "contentRecognizers"
     enginePackage = contentRecognizers
     configSectionName = "onlineOCR"
-    defaultEnginePriorityList = ["ocrSpace"]
+    defaultEnginePriorityList = ["azureOCR"]
     configSpec = {
         "engine": "string(default=auto)",
         "copyToClipboard": "boolean(default=false)",

@@ -5,8 +5,6 @@
 from __future__ import unicode_literals
 from .. import onlineOCRHandler
 import addonHandler
-from logHandler import log
-from collections import OrderedDict
 
 _ = lambda x: x  # type: callable
 addonHandler.initTranslation()
@@ -22,14 +20,43 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         @return:
         @rtype: bool or str
         """
+        if len(result) <= 0:
+            if self._use_own_api_key:
+                # Translators: Error message
+                return _(u"Result is empty.Your API quota is used up.")
+            else:
+                # Translators: Error message
+                return _(u"Result is empty.Test quota is used up.")
         groups = result.split('|')
         if groups[1] == "ERROR":
             return groups[2]
         else:
             return False
 
+    @staticmethod
+    def extract_text(apiResult):
+        """
+        Extract text result from API response
+        @param apiResult:
+        @type apiResult: str
+        @return:
+        @rtype: str
+        """
+        groups = apiResult.split('|')
+        return groups[2]
+
     def convert_to_line_result_format(self, apiResult):
-        pass
+        return [[{
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1,
+            "text": self.extract_text(apiResult),
+        }]]
+
+    @staticmethod
+    def convert_to_json(data):
+        return data
 
     def get_domain(self):
         if self._use_own_api_key:
@@ -43,10 +70,27 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         return [
             CustomContentRecognizer.AccessTypeSetting(),
             CustomContentRecognizer.APIKeySetting(),
-            CustomContentRecognizer.BalanceSetting(),
+            # CustomContentRecognizer.BalanceSetting(),
         ]
 
+    def serializeImage(self, PILImage):
+        from io import BytesIO
+        import ui
+        imgBuf = BytesIO()
+        PILImage.save(imgBuf, "PNG")
+        imageContent = imgBuf.getvalue()
+        if len(imageContent) > self.maxSize:
+            # Translators: Reported when error occurred during image serialization
+            errorMsg = _(u"Image content size is too big")
+            ui.message(errorMsg)
+            return False
+        else:
+            return imageContent
     name = b"captcha"
+
+    @classmethod
+    def check(cls):
+        return False
 
     # Translators: Description of Online OCR Engine
     description = _("Captcha Solving")
@@ -58,7 +102,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
             return "ocr/captchaDecode.php"
 
     def getPayload(self, image):
-        fileName = "captcha.png"
+        fileName = "captcha"
         if self._use_own_api_key:
             payload = {
                 "key": self._api_key,
@@ -70,3 +114,32 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
                 "captcha": (fileName, image),
             }
         return payload
+
+    def getHTTPHeaders(self):
+        if self._use_own_api_key:
+            return {
+                "Content-type": "x-www-form-urlencoded"
+            }
+
+    def refreshBalance(self):
+
+        def callback(response):
+            self._balance = response
+
+        if self._use_own_api_key:
+            self.sendRequest(
+                callback,
+                b"http://api.captchadecoder.com/decode",
+                {
+                    "key": self._api_key,
+                    "method": "balance",
+                }
+            )
+        else:
+            self.sendRequest(
+                callback,
+                b"https://www.nvdacn.com/ocr/captchaBalace.php",
+                {
+                    "method": "balance",
+                }
+            )

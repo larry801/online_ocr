@@ -2,7 +2,7 @@
 
 Author: Larry Wang
 NVDA compatibility: from 2018.3 to 2019.1
-Download [development version](https://github.com/larry801/online_ocr/releases/download/0.3/onlineOCR-0.3-dev.nvda-addon)  
+Download [development version](https://github.com/larry801/online_ocr/download/0.4/onlineOCR-0.4-dev.nvda-addon)  
 
 This addon aims at adding more accurate online engines to NVDA.
 
@@ -29,13 +29,9 @@ The author of addon have registered account with free API quota and put them on 
 
 ### Keyboard commands
 
-NVDA+Shift+R Recognize current navigator object with online OCR engine and read results directly
+NVDA+Shift+R Recognize current navigator object with online OCR engine Then read result.If pressed twice, open a virtual result document.
 
-NVDA+ALT+Shift+R Recognize current navigator object with online OCR engine and open a result viewer like Windows 10 OCR
-
-NVDA+Windows+R Recognizes the text in clipboard images with Custom OCR engine and read results directly
-
-NVDA+Alt+Windows+R Recognizes image in clipboard with online OCR engine. Then open a result viewer like Windows 10 OCR
+NVDA+Alt+R Recognizes image in clipboard with online OCR engine. Then read result.If pressed twice, open a virtual result document.
 
 ### Engine Configuration
 

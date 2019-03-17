@@ -9,6 +9,7 @@ import urllib3.contrib.pyopenssl
 import ui
 from logHandler import log
 from six import string_types
+
 _ = lambda x: x
 addonHandler.initTranslation()
 urllib3.contrib.pyopenssl.inject_into_urllib3()
@@ -20,24 +21,23 @@ http = urllib3.PoolManager(
 # Translators: Message announced when network error occurred
 internet_error_message = _(u"Recognition failed. Internet connection error.")
 # Translators: Message announced when network error occurred
-timeout_message = _(u"Recognition failed. Internet connection timeout")
+timeout_message = _(u"Internet connection timeout.Recognition failed. ")
 
 
-def postContent(callback, url, data, headers=None, method='POST'):
-    if isinstance(url, string_types):
-        url = url.encode('utf8')
+def doHTTPRequest(callback, method, url, **kwargs):
+    """
+    Call this method in a separate thread to avoid blocking.
+    @param callback:
+    @type callback:
+    @param method:
+    @type method:
+    @param url:
+    @type url:
+    """
     try:
-        if headers:
-            r = http.request(
-                'POST',
-                url,
-                fields=data,
-                headers=headers)
-        else:
-            r = http.request(
-                'POST',
-                url,
-                fields=data)
+        if isinstance(url, string_types):
+            url = url.encode('utf8')
+        r = http.request(method, url, **kwargs)
     except urllib3.exceptions.TimeoutError:
         ui.message(timeout_message)
         return
@@ -47,3 +47,8 @@ def postContent(callback, url, data, headers=None, method='POST'):
         return
     log.io(r.data)
     callback(r.data)
+
+
+def postContent(callback, url, data, headers=None):
+    doHTTPRequest(callback, 'POST', url, fields=data,
+                  headers=headers)
