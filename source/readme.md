@@ -253,9 +253,11 @@ According to my test Chinese and English and their mixture is supported.
 There is no additional configuration for these API.
 
 ## Update Log
+
 ### 0.6
-Added proxy settings for people work in a coperate environment.
-Added 
+Added proxy settings for people with access of Internet behind a specific proxy.
+Added serveral general options.
+Fix unicode decode error due to sending unicode url to urllib3.
 
 ### 0.5
 Fix unicode error if OCR engine upload image file directly instead of base64 encode.
