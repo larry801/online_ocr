@@ -2,7 +2,7 @@
 
 Author: Larry Wang
 NVDA compatibility: from 2018.3 to 2019.1
-Download [development version](https://github.com/larry801/online_ocr/download/0.5/onlineOCR-0.5-dev.nvda-addon)  
+Download [development version](https://github.com/larry801/online_ocr/download/0.6/onlineOCR-0.6-dev.nvda-addon)  
 
 This addon aims at adding more accurate online engines to NVDA.
 
@@ -45,6 +45,18 @@ If enabled, recognition result will be copyed to clipboard after recognition.
 Swap the effect of repeated gesture with none repeated ones:
 By default a virtual result document is shown only if you press the corresponding gesture twice, if you use that frequently you can enable this option so that you only need to press once to get a result viewer.
 
+Enable more verbose logging for debug purpose:
+
+Some logs are essential for debugging but affects performace and takes up a lot of space. Only turn this on if specifically instructed to by the addon author or an NVDA developer.
+
+Proxy type:
+Which type of proxy you are using. If you do not know what is a proxy just leave it as is.
+
+Proxy address:
+Full url of your proxy. If you do not know what is a proxy just leave it as is.
+
+The following settings means the same in all engines, describle them here to save space.
+
 API Access Type:
 This controls how you get access to the corresponding API endpoints.
 
@@ -56,6 +68,8 @@ APP ID, API key or API Secret Key:
 If you want to use quota from your own account corresponding access tokens is required. Some engines only need API key.
 Some engines require two tokens.
 These are only valid if you choose "use your own API key" in API Access type.
+
+## Engines
 
 There are five engines available.
 

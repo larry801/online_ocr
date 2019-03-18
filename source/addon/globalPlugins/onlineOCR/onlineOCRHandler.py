@@ -634,7 +634,8 @@ class CustomOCRPanel(AbstractEngineSettingsPanel):
             if name == curType:
                 self.proxyTypeList.SetSelection(index)
                 break
-
+        # Translators: The label for a TextCtrl in the
+        # online OCR settings panel.
         proxyAddressLabelText = _(u"Proxy &Address")
         self.proxyAddressTextCtrl = settingsSizerHelper.addLabeledControl(proxyAddressLabelText,
                                                                           wx.TextCtrl)
