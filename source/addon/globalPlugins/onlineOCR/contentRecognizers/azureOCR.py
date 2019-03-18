@@ -103,9 +103,9 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
     def get_url(self):
         if self._use_own_api_key:
-            return "vision/v1.0/ocr"
+            return b"vision/v1.0/ocr"
         else:
-            return "ocr/msocr.php"
+            return b"ocr/msocr.php"
 
     def getPayload(self, jpegBytes):
         if self._use_own_api_key:
@@ -143,7 +143,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def _set_detectDirection(self, detectDirection):
         self._detectDirection = detectDirection
 
-    _language = "unk"
+    _language = b"unk"
 
     def _get_language(self):
         return self._language
@@ -154,65 +154,65 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def _get_availableLanguages(self):
         languages = OrderedDict({
             # Translators: Text language for OCR
-            "unk": _(u"Auto Detect"),
+            b"unk": _(u"Auto Detect"),
             # Translators: Text language for OCR
-            "zh-Hans": _(u"Chinese Simplified"),
+            b"zh-Hans": _(u"Chinese Simplified"),
             # Translators: Text language for OCR
-            "zh-Hant": _(u"Chinese Traditional"),
+            b"zh-Hant": _(u"Chinese Traditional"),
             # Translators: Text language for OCR
-            "cs": _(u"Czech"),
+            b"cs": _(u"Czech"),
             # Translators: Text language for OCR
-            "da": _(u"Danish"),
+            b"da": _(u"Danish"),
             # Translators: Text language for OCR
-            "nl": _(u"Dutch"),
+            b"nl": _(u"Dutch"),
             # Translators: Text language for OCR
-            "en": _(u"English"),
+            b"en": _(u"English"),
             # Translators: Text language for OCR
-            "fi": _(u"Finnish"),
+            b"fi": _(u"Finnish"),
             # Translators: Text language for OCR
-            "fr": _(u"French"),
+            b"fr": _(u"French"),
             # Translators: Text language for OCR
-            "de": _(u"German"),
+            b"de": _(u"German"),
             # Translators: Text language for OCR
-            "el": _(u"Greek"),
+            b"el": _(u"Greek"),
             # Translators: Text language for OCR
-            "hu": _(u"Hungarian"),
+            b"hu": _(u"Hungarian"),
             # Translators: Text language for OCR
-            "it": _(u"Italian"),
+            b"it": _(u"Italian"),
             # Translators: Text language for OCR
-            "ja": _(u"Japanese"),
+            b"ja": _(u"Japanese"),
             # Translators: Text language for OCR
-            "ko": _(u"Korean"),
+            b"ko": _(u"Korean"),
             # Translators: Text language for OCR
             "nb": _(u"Norwegian"),
             # Translators: Text language for OCR
-            "pl": _(u"Polish"),
+            b"pl": _(u"Polish"),
             # Translators: Text language for OCR
-            "pt": _(u"Portuguese"),
+            b"pt": _(u"Portuguese"),
             # Translators: Text language for OCR
-            "ru": _(u"Russian"),
+            b"ru": _(u"Russian"),
             # Translators: Text language for OCR
-            "es": _(u"Spanish"),
+            b"es": _(u"Spanish"),
             # Translators: Text language for OCR
-            "sv": _(u"Swedish"),
+            b"sv": _(u"Swedish"),
             # Translators: Text language for OCR
-            "tr": _(u"Turkish"),
+            b"tr": _(u"Turkish"),
             # Translators: Text language for OCR
-            "ar": _(u"Arabic"),
+            b"ar": _(u"Arabic"),
             # Translators: Text language for OCR
-            "ro": _(u"Romanian"),
+            b"ro": _(u"Romanian"),
             # Translators: Text language for OCR
-            "sr-Cyrl": _(u"Cyrillic Serbian"),
+            b"sr-Cyrl": _(u"Cyrillic Serbian"),
             # Translators: Text language for OCR
-            "sr-Latn": _(u"Latin Serbian"),
+            b"sr-Latn": _(u"Latin Serbian"),
             # Translators: Text language for OCR
-            "sk": _(u"Slovak"),
+            b"sk": _(u"Slovak"),
         })
         return self.generate_string_settings(languages)
 
     def getFullURL(self):
         url = super(CustomContentRecognizer, self).getFullURL()
-        queryString = "?language={0}&detectOrientation={1}".format(
+        queryString = b"?language={0}&detectOrientation={1}".format(
             self._language,
             self.pyBool2json(self._detectDirection)
         )
@@ -222,7 +222,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         from io import BytesIO
         import ui
         imgBuf = BytesIO()
-        PILImage.save(imgBuf, "JPEG")
+        PILImage.save(imgBuf, "PNG")
         imageContent = imgBuf.getvalue()
         if len(imageContent) > self.maxSize:
             # Translators: Reported when error occurred during image serialization

@@ -47,7 +47,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
     def get_domain(self):
         if self._use_own_api_key:
             self.useHttps = False
-            return "api.ai.sogou.com"
+            return b"api.ai.sogou.com"
         else:
             self.useHttps = True
             return self.nvda_cn_domain
@@ -56,9 +56,9 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
     def get_url(self):
         if self._use_own_api_key:
-            return "pub/ocr"
+            return b"pub/ocr"
         else:
-            return "ocr/sougou.php"
+            return b"ocr/sougou.php"
 
     @staticmethod
     def calculate_signature(options, app_key):
