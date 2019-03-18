@@ -65,11 +65,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         from contentRecog import recogUi
         engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
         repeatCount = scriptHandler.getLastScriptRepeatCount()
+        textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
         if repeatCount == 0:
-            engine.text_result = True
+            engine.text_result = textResultWhenRepeatGesture
             recogUi.recognizeNavigatorObject(engine)
         elif repeatCount == 1:
-            engine.text_result = False
+            engine.text_result = textResultWhenRepeatGesture
 
     # # Translators: OCR command name in input gestures dialog
     # textMsg = _("Recognizes the text of the current navigator object with captcha engine.Then read result.If pressed twice, open a virtual result document.")
@@ -98,8 +99,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def script_recognizeClipboardTextWithCustomOcr(self, gesture):
         engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
         repeatCount = scriptHandler.getLastScriptRepeatCount()
+        textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
         if repeatCount == 0:
-            engine.text_result = True
+            engine.text_result = textResultWhenRepeatGesture
             from PIL import ImageGrab, Image
             clipboardImage = ImageGrab.grabclipboard()
             if clipboardImage:
@@ -125,4 +127,4 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     log.io(e)
                     ui.message(self.noImageMessage)
         elif repeatCount >= 1:
-            engine.text_result = False
+            engine.text_result = textResultWhenRepeatGesture

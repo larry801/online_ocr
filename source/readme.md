@@ -31,13 +31,19 @@ The author of addon have registered account with free API quota and put them on 
 
 NVDA+Shift+R Recognize current navigator object with online OCR engine Then read result.If pressed twice, open a virtual result document.
 
-NVDA+Alt+R Recognizes image in clipboard with online OCR engine. Then read result.If pressed twice, open a virtual result document.
+Control+Shift+NVDA+R Recognizes image in clipboard with online OCR engine. Then read result.If pressed twice, open a virtual result document.
 
 ### Engine Configuration
 
 You can choose recognition engines and configure them in detail in *Online OCR* category in NVDA settings dialog.
 
 The following settings are applicable to all engines.
+
+Copy result to clipboard after recognition:
+If enabled, recognition result will be copyed to clipboard after recognition.
+
+Swap the effect of repeated gesture with none repeated ones:
+By default a virtual result document is shown only if you press the corresponding gesture twice, if you use that frequently you can enable this option so that you only need to press once to get a result viewer.
 
 API Access Type:
 This controls how you get access to the corresponding API endpoints.
@@ -233,6 +239,14 @@ According to my test Chinese and English and their mixture is supported.
 There is no additional configuration for these API.
 
 ## Update Log
+### 0.6
+Added proxy settings for people work in a coperate environment.
+Added 
+
+### 0.5
+Fix unicode error if OCR engine upload image file directly instead of base64 encode.
+Change gesture of recognizing clipboard to Control+Shift+NVDA+R 
+since NVDA+shift+r is used in Word and Excel to define row headers in tables, or to delete the definitions when pressed twice.
 
 ### 0.4
 

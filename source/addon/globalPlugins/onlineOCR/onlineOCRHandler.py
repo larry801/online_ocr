@@ -20,19 +20,22 @@ from . import contentRecognizers
 from logHandler import log
 import ui
 from collections import OrderedDict
+
 try:
     from urllib import urlencode
 except ImportError:
     from urllib.urllib_parse import urlencode
 from six import binary_type
+
 BaseDir = os.path.dirname(os.path.dirname(__file__))
 if isinstance(BaseDir, binary_type):
     # In Python2
-    sys.path.insert(0, os.path.join(BaseDir,  b"_contrib"))
+    sys.path.insert(0, os.path.join(BaseDir, "_contrib".encode("mbcs")))
 else:
     # In Python3
-    sys.path.insert(0, os.path.join(BaseDir,  "_contrib"))
+    sys.path.insert(0, os.path.join(BaseDir, "_contrib"))
 from PIL import Image
+
 _ = lambda x: x
 addonHandler.initTranslation()
 
@@ -45,7 +48,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
     # Translators: Description of Online OCR Engine
     description = ""
 
-    nvda_cn_domain = "www.nvdacn.com"
+    nvda_cn_domain = b"www.nvdacn.com"
     configSectionName = "onlineOCR"
     networkThread = None  # type: Thread
     useHttps = True
@@ -216,7 +219,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
             })
             encoded_option += query
         payload = encoded_option[1:]
-        log.io(payload)
+        if config.conf["onlineOCR"]["verboseDebugLogging"]:
+            log.io(payload)
         return payload
 
     @staticmethod
@@ -319,7 +323,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
                 heightResizeFactor = (float(self.minHeight) / height) + 1
             else:
                 heightResizeFactor = (float(self.maxHeight) / height) + 1
-            msg += u"widthResizeFactor:\n{0}\nheightResizeFactor:\n{1}".format(
+            msg += u"\nwidthResizeFactor:\n{0}\nheightResizeFactor:\n{1}".format(
                 widthResizeFactor,
                 heightResizeFactor
             )
@@ -460,7 +464,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
             headers,
             payloads,
         )
-        log.io(msg)
+        if config.conf["onlineOCR"]["verboseDebugLogging"]:
+            log.io(msg)
         self.sendRequest(callback, fullURL, payloads, headers)
 
     def sendRequest(self, callback, fullURL, payloads, headers=None):
@@ -572,13 +577,30 @@ class CustomOCRHandler(AbstractEngineHandler):
     configSpec = {
         "engine": "string(default=auto)",
         "copyToClipboard": "boolean(default=false)",
+        "swapRepeatedCountEffect": "boolean(default=false)",
+        "verboseDebugLogging": "boolean(default=false)",
+        "proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
+        "proxyAddress": 'string(default="")',
     }
 
 
 class CustomOCRPanel(AbstractEngineSettingsPanel):
+    proxyAddressTextCtrl = None  # type: wx.TextCtrl
+    swapRepeatedCountEffectCheckBox = None  # type: wx.CheckBox
+    verboseDebugLoggingCheckBox = None  # type: wx.CheckBox
+    proxyTypeList = None  # type: wx.Choice
     copyToClipboardCheckBox = None  # type: wx.CheckBox
     title = _(u"Online OCR")
     handler = CustomOCRHandler
+
+    PROXY_TYPES = [
+        # Translators: One of the proxy types in online OCR settings panel.
+        ("noProxy", _(u"Do not use proxy")),
+        # Translators: One of the proxy types in online OCR settings panel.
+        ("http", _(u"Use HTTP proxy")),
+        # Translators: One of the proxy types  in online OCR settings panel.
+        ("socks", _(u"Use socks proxy")),
+    ]
 
     def makeGeneralSettings(self, settingsSizerHelper):
         # Translators: This is the label for a checkbox in the
@@ -587,7 +609,75 @@ class CustomOCRPanel(AbstractEngineSettingsPanel):
         self.copyToClipboardCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=copyToClipboardText))
         self.copyToClipboardCheckBox.SetValue(
             config.conf[self.handler.configSectionName]["copyToClipboard"])
+        # Translators: This is the label for a checkbox in the
+        # online OCR settings panel.
+        swapRepeatedCountEffectText = _("&Swap the effect of repeated gesture with none repeated ones.")
+        self.swapRepeatedCountEffectCheckBox = settingsSizerHelper.addItem(
+            wx.CheckBox(self, label=swapRepeatedCountEffectText))
+        self.swapRepeatedCountEffectCheckBox.SetValue(
+            config.conf[self.handler.configSectionName]["swapRepeatedCountEffect"])
+        # Translators: This is the label for a checkbox in the
+        # online OCR settings panel.
+        verboseDebugLoggingText = _("&Enable more verbose logging for debug purpose")
+        self.verboseDebugLoggingCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=verboseDebugLoggingText))
+        self.verboseDebugLoggingCheckBox.SetValue(
+            config.conf[self.handler.configSectionName]["verboseDebugLogging"])
+        # Translators: The label for a list in the
+        # online OCR settings panel.
+        proxyTypeText = _("Proxy &Type")
+        proxyTypeChoices = [
+            desc for (name, desc) in self.PROXY_TYPES
+        ]
+        self.proxyTypeList = settingsSizerHelper.addLabeledControl(proxyTypeText, wx.Choice, choices=proxyTypeChoices)
+        curType = config.conf[self.handler.configSectionName]["proxyType"]
+        for index, (name, desc) in enumerate(self.PROXY_TYPES):
+            if name == curType:
+                self.proxyTypeList.SetSelection(index)
+                break
+
+        proxyAddressLabelText = _(u"Proxy &Address")
+        self.proxyAddressTextCtrl = settingsSizerHelper.addLabeledControl(proxyAddressLabelText,
+                                                                          wx.TextCtrl)
+        self.proxyAddressTextCtrl.SetValue(config.conf[self.handler.configSectionName]["proxyAddress"])
 
     def onSave(self):
         super(CustomOCRPanel, self).onSave()
         config.conf[self.handler.configSectionName]["copyToClipboard"] = self.copyToClipboardCheckBox.GetValue()
+        config.conf[self.handler.configSectionName]["verboseDebugLogging"] = self.verboseDebugLoggingCheckBox.GetValue()
+        config.conf[self.handler.configSectionName]["swapRepeatedCountEffect"] = self.swapRepeatedCountEffectCheckBox.GetValue()
+        config.conf[self.handler.configSectionName]["proxyType"] = self.PROXY_TYPES[self.proxyTypeList.GetSelection()][
+            0]
+        config.conf[self.handler.configSectionName]["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
+
+    def isValid(self):
+        oldProxy = config.conf[self.handler.configSectionName]["proxyAddress"]
+        oldProxyType = config.conf[self.handler.configSectionName]["proxyType"]
+        newProxyType = self.PROXY_TYPES[
+            self.proxyTypeList.GetSelection()
+        ][0]
+        if newProxyType != u"noProxy":
+            # Translators: Reported when save proxy settings in online ocr panel
+            ui.message(_(u"Checking your proxy settings"))
+            config.conf[self.handler.configSectionName]["proxyType"] = newProxyType
+            config.conf[self.handler.configSectionName]["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
+            from .winHttp import httpConnectionPool, refreshConnectionPool
+            try:
+                refreshConnectionPool()
+                r = httpConnectionPool.request(
+                    b'GET',
+                    b"http://www.example.com"
+                )
+                return True
+            except Exception as e:
+                config.conf[self.handler.configSectionName]["proxyType"] = oldProxyType
+                config.conf[self.handler.configSectionName]["proxyAddress"] = oldProxy
+                refreshConnectionPool()
+                import gui
+                gui.messageBox(
+                    # Translators: Reported when proxy verification fails in online ocr settings panel
+                    caption=_(u"Proxy is not valid"),
+                    message=_(e),
+                )
+                return False
+        else:
+            return True
