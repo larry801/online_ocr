@@ -102,7 +102,7 @@ def doHTTPRequest(callback, method, url, **kwargs):
     except urllib3.exceptions.TimeoutError:
         ui.message(timeout_message)
         return
-    except Exception as e:
+    except urllib3.exceptions.HTTPError as e:
         log.error(e)
         ui.message(internet_error_message)
         return
