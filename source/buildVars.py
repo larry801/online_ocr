@@ -19,7 +19,7 @@ addon_info = {
     # Translators: Long description to be shown for this add-on on add-on information from add-ons manager
     "addon_description": _("Add online OCR engines to NVDA"),
     # version
-    "addon_version": "0.6-dev",
+    "addon_version": "0.7",
     # Author(s)
     "addon_author": "Larry Wang <larry.wang.801@gmail.com>",
     # URL for the add-on documentation support
@@ -30,7 +30,7 @@ addon_info = {
     "addon_docFileName": "readme.html",
     "addon_minimumNVDAVersion": "2018.3.0",
     "addon_lastTestedNVDAVersion": "2019.1.0",
-    "addon_updateChannel": "dev",
+    "addon_updateChannel": "stable",
 }
 
 import os.path
