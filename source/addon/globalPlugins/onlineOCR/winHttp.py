@@ -75,7 +75,7 @@ httpConnectionPool = getConnectionPool()
 
 def refreshConnectionPool():
     if oldProxyType == config.conf["onlineOCR"]["proxyType"] \
-            and oldProxyAddress == config.conf["onlineOCR"]["proxyType"]:
+            and oldProxyAddress == config.conf["onlineOCR"]["proxyAddress"]:
         pass
     else:
         global httpConnectionPool
@@ -94,8 +94,10 @@ def doHTTPRequest(callback, method, url, **kwargs):
     """
     refreshConnectionPool()
     try:
-        if isinstance(url, unicode):
-            url = url.decode('utf8')
+        # Unicode URL cause urllib3 to decode raw image data as if they were unicode.
+        if isinstance(url, string_types):
+            if not isinstance(url, str):
+                url = url.decode('utf8')
         r = httpConnectionPool.request(method, url, **kwargs)
     except urllib3.exceptions.TimeoutError:
         ui.message(timeout_message)
