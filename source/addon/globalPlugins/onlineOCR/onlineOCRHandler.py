@@ -350,7 +350,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
                 isImageValid = False
                 # Translators: Reported when error occurred during image conversion
                 errorMsg = _(u"Image height is too small for this engine")
-        resizeFactor = max(widthResizeFactor, heightResizeFactor)
+        resizeFactor = int(max(widthResizeFactor, heightResizeFactor))
         if isImageValid:
             image = image.resize((
                 int(width * resizeFactor),
@@ -432,7 +432,11 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
                 return
 
             try:
-                resultText = result_prefix + self.extract_text(result)
+                ocrResult = self.extract_text(result)
+                if ocrResult.isspace():
+                    # Translators: Reported when recognition result is empty
+                    ocrResult = _(u"blank. There may be no text on this image.")
+                resultText = result_prefix + ocrResult
                 if config.conf[self.configSectionName]["copyToClipboard"]:
                     import api
                     api.copyToClip(resultText)
