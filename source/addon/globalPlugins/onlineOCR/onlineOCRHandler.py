@@ -5,6 +5,7 @@
 # urllib3 used in this file is Copyright (c) 2008-2019 Andrey Petrov and contributors under MIT license.
 from __future__ import unicode_literals
 from threading import Thread
+import gui
 import os
 import sys
 from io import BytesIO
@@ -34,6 +35,7 @@ if isinstance(BaseDir, binary_type):
 else:
     # In Python3
     sys.path.insert(0, os.path.join(BaseDir, "_contrib"))
+log.io(sys.path)
 from PIL import Image
 
 _ = lambda x: x
@@ -664,19 +666,31 @@ class CustomOCRPanel(AbstractEngineSettingsPanel):
             from .winHttp import httpConnectionPool, refreshConnectionPool
             try:
                 refreshConnectionPool()
+                log.io(httpConnectionPool)
                 r = httpConnectionPool.request(
                     b'GET',
                     b"http://www.example.com"
+                )
+                msg = u"pool:\n{0}\nHeaders:\n{1}\nResponse:\n{2}".format(
+                    httpConnectionPool,
+                    r.headers,
+                    r.data,
+                )
+                log.io(msg)
+                gui.messageBox(
+                    # Translators: Reported when proxy verification fails in online ocr settings panel
+                    caption=_(u"Proxy is valid, , settings is saved."),
+                    message=_(r.data),
                 )
                 return True
             except Exception as e:
                 config.conf[self.handler.configSectionName]["proxyType"] = oldProxyType
                 config.conf[self.handler.configSectionName]["proxyAddress"] = oldProxy
                 refreshConnectionPool()
-                import gui
+
                 gui.messageBox(
                     # Translators: Reported when proxy verification fails in online ocr settings panel
-                    caption=_(u"Proxy is not valid"),
+                    caption=_(u"Proxy is not valid, please check your proxy type and address."),
                     message=_(e),
                 )
                 return False

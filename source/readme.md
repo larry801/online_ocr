@@ -54,7 +54,7 @@ Which type of proxy you are using. If you do not know what is a proxy just leave
 
 Proxy address:
 Full url of your proxy. If you do not know what is a proxy just leave it as is.
-
+If you choose to use proxy your porxy will be verified before saving , after verification, there will be a prompt to tell you result.
 The following settings means the same in all engines, describle them here to save space.
 
 API Access Type:
