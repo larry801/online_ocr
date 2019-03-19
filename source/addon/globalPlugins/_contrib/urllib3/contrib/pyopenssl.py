@@ -421,10 +421,6 @@ class PyOpenSSLContext(object):
         self._ctx.set_cipher_list(ciphers)
 
     def load_verify_locations(self, cafile=None, capath=None, cadata=None):
-        if cafile is not None:
-            cafile = cafile.encode('utf-8')
-        if capath is not None:
-            capath = capath.encode('utf-8')
         self._ctx.load_verify_locations(cafile, capath)
         if cadata is not None:
             self._ctx.load_verify_locations(BytesIO(cadata))
