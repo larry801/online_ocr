@@ -2,7 +2,7 @@
 
 Author: Larry Wang
 NVDA compatibility: from 2018.3 to 2019.1
-Download [development version](https://github.com/larry801/online_ocr/download/0.7-dev/onlineOCR-0.7-dev.nvda-addon)  
+Download [development version](https://github.com/larry801/online_ocr/download/0.8-dev/onlineOCR-0.8-dev.nvda-addon)
 
 This addon aims at adding more accurate online engines to NVDA.
 
@@ -253,6 +253,11 @@ According to my test Chinese and English and their mixture is supported.
 There is no additional configuration for these API.
 
 ## Update Log
+
+### 0.8
+
+Add friendly notice if recognition result is empty.
+Fix another place do not work well with non ascii config path
 
 ### 0.6
 Added proxy settings for people with access of Internet behind a specific proxy.
