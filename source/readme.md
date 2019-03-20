@@ -259,10 +259,20 @@ There is no additional configuration for these API.
 
 ## Update Log
 
+### 0.9
+
+Fix double press gesture no effect issue.
+Revised document to reflect changes in code.
+Clarified what kind of clipboard image is supported and how to copy image for recognition. 
+
+Fixed the clipboard recognition cannot open result viewer issue.
+Added support to recognize copied local image file path in clipboard.
+
+
 ### 0.8
 
-Add friendly notice if recognition result is empty.
-Fix another place do not work well with non ascii config path
+Added friendly notice if recognition result is empty.
+Fixed another place do not work well with non ascii config path
 
 ### 0.6
 Added proxy settings for people with access of Internet behind a specific proxy.
