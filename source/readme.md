@@ -2,7 +2,7 @@
 
 Author: Larry Wang
 NVDA compatibility: from 2018.3 to 2019.1
-Download [development version](https://github.com/larry801/online_ocr/download/0.9-dev/onlineOCR-0.9-dev.nvda-addon)
+Download [development version](https://github.com/larry801/online_ocr/releases/download/0.9-dev/onlineOCR-0.9-dev.nvda-addon)
 
 This addon aims at adding more accurate online engines to NVDA.
 
@@ -38,8 +38,6 @@ First is an actual image(CF_DIB), you can put that into clipboard by taking a sc
 Second is a file copied in  explorer.(CF_HDROP)
 If it is not an image or there is only text in clipboard.This addon will tell you, No image in clipboard.
 
-Third is a path or url of an image. This addon will try to open or download that image file 
-If none of above 
 ### Engine Configuration
 
 You can choose recognition engines and configure them in detail in *Online OCR* category in NVDA settings dialog.
