@@ -12,134 +12,134 @@ addonHandler.initTranslation()
 
 class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
-    def process_api_result(self, result):
-        """
+	def process_api_result(self, result):
+		"""
 
-        @param result: raw API result from urllib3
-        @type result: str
-        @return:
-        @rtype: bool or str
-        """
-        if len(result) <= 0:
-            if self._use_own_api_key:
-                # Translators: Error message
-                return _(u"Result is empty.Your API quota is used up.")
-            else:
-                # Translators: Error message
-                return _(u"Result is empty.Test quota is used up.")
-        groups = result.split('|')
-        if groups[1] == "ERROR":
-            return groups[2]
-        else:
-            return False
+		@param result: raw API result from urllib3
+		@type result: str
+		@return:
+		@rtype: bool or str
+		"""
+		if len(result) <= 0:
+			if self._use_own_api_key:
+				# Translators: Error message
+				return _(u"Result is empty.Your API quota is used up.")
+			else:
+				# Translators: Error message
+				return _(u"Result is empty.Test quota is used up.")
+		groups = result.split('|')
+		if groups[1] == "ERROR":
+			return groups[2]
+		else:
+			return False
 
-    @staticmethod
-    def extract_text(apiResult):
-        """
-        Extract text result from API response
-        @param apiResult:
-        @type apiResult: str
-        @return:
-        @rtype: str
-        """
-        groups = apiResult.split('|')
-        return groups[2]
+	@staticmethod
+	def extract_text(apiResult):
+		"""
+		Extract text result from API response
+		@param apiResult:
+		@type apiResult: str
+		@return:
+		@rtype: str
+		"""
+		groups = apiResult.split('|')
+		return groups[2]
 
-    def convert_to_line_result_format(self, apiResult):
-        return [[{
-            "x": 0,
-            "y": 0,
-            "width": 1,
-            "height": 1,
-            "text": self.extract_text(apiResult),
-        }]]
+	def convert_to_line_result_format(self, apiResult):
+		return [[{
+			"x": 0,
+			"y": 0,
+			"width": 1,
+			"height": 1,
+			"text": self.extract_text(apiResult),
+		}]]
 
-    @staticmethod
-    def convert_to_json(data):
-        return data
+	@staticmethod
+	def convert_to_json(data):
+		return data
 
-    def get_domain(self):
-        if self._use_own_api_key:
-            self.useHttps = False
-            return "api.captchadecoder.com"
-        else:
-            self.useHttps = True
-            return self.nvda_cn_domain
+	def get_domain(self):
+		if self._use_own_api_key:
+			self.useHttps = False
+			return "api.captchadecoder.com"
+		else:
+			self.useHttps = True
+			return self.nvda_cn_domain
 
-    def _get_supportedSettings(self):
-        return [
-            CustomContentRecognizer.AccessTypeSetting(),
-            CustomContentRecognizer.APIKeySetting(),
-            # CustomContentRecognizer.BalanceSetting(),
-        ]
+	def _get_supportedSettings(self):
+		return [
+			CustomContentRecognizer.AccessTypeSetting(),
+			CustomContentRecognizer.APIKeySetting(),
+			# CustomContentRecognizer.BalanceSetting(),
+		]
 
-    def serializeImage(self, PILImage):
-        from io import BytesIO
-        import ui
-        imgBuf = BytesIO()
-        PILImage.save(imgBuf, "PNG")
-        imageContent = imgBuf.getvalue()
-        if len(imageContent) > self.maxSize:
-            # Translators: Reported when error occurred during image serialization
-            errorMsg = _(u"Image content size is too big")
-            ui.message(errorMsg)
-            return False
-        else:
-            return imageContent
-    name = b"captcha"
+	def serializeImage(self, PILImage):
+		from io import BytesIO
+		import ui
+		imgBuf = BytesIO()
+		PILImage.save(imgBuf, "PNG")
+		imageContent = imgBuf.getvalue()
+		if len(imageContent) > self.maxSize:
+			# Translators: Reported when error occurred during image serialization
+			errorMsg = _(u"Image content size is too big")
+			ui.message(errorMsg)
+			return False
+		else:
+			return imageContent
+	name = b"captcha"
 
-    @classmethod
-    def check(cls):
-        return False
+	@classmethod
+	def check(cls):
+		return False
 
-    # Translators: Description of Online OCR Engine
-    description = _("Captcha Solving")
+	# Translators: Description of Online OCR Engine
+	description = _("Captcha Solving")
 
-    def get_url(self):
-        if self._use_own_api_key:
-            return "decode"
-        else:
-            return "ocr/captchaDecode.php"
+	def get_url(self):
+		if self._use_own_api_key:
+			return "decode"
+		else:
+			return "ocr/captchaDecode.php"
 
-    def getPayload(self, image):
-        fileName = b"captcha"
-        if self._use_own_api_key:
-            payload = {
-                b"key": self._api_key,
-                b"method": b"solve",
-                b"captcha": (fileName, image),
-            }
-        else:
-            payload = {
-                "captcha": (fileName, image),
-            }
-        return payload
+	def getPayload(self, image):
+		fileName = b"captcha"
+		if self._use_own_api_key:
+			payload = {
+				b"key": self._api_key,
+				b"method": b"solve",
+				b"captcha": (fileName, image),
+			}
+		else:
+			payload = {
+				"captcha": (fileName, image),
+			}
+		return payload
 
-    def getHTTPHeaders(self):
-        if self._use_own_api_key:
-            return {
-                "Content-type": "application/x-www-form-urlencoded"
-            }
+	def getHTTPHeaders(self):
+		if self._use_own_api_key:
+			return {
+				"Content-type": "application/x-www-form-urlencoded"
+			}
 
-    def refreshBalance(self):
+	def refreshBalance(self):
 
-        def callback(response):
-            self._balance = response
+		def callback(response):
+			self._balance = response
 
-        if self._use_own_api_key:
-            self.sendRequest(
-                callback,
-                b"http://api.captchadecoder.com/decode",
-                {
-                    "key": self._api_key,
-                    "method": "balance",
-                }
-            )
-        else:
-            self.sendRequest(
-                callback,
-                b"https://www.nvdacn.com/ocr/captchaBalace.php",
-                {
-                    "method": "balance",
-                }
-            )
+		if self._use_own_api_key:
+			self.sendRequest(
+				callback,
+				b"http://api.captchadecoder.com/decode",
+				{
+					"key": self._api_key,
+					"method": "balance",
+				}
+			)
+		else:
+			self.sendRequest(
+				callback,
+				b"https://www.nvdacn.com/ocr/captchaBalace.php",
+				{
+					"method": "balance",
+				}
+			)
