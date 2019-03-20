@@ -81,6 +81,18 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         md5.update(encoded_option)
         return md5.hexdigest()
 
+    def process_api_result(self, result):
+        import json
+        apiResult = json.loads(result)
+        try:
+            if apiResult["ret"] != 0:
+                # Translators: Error message of Tencent API
+                return _(u"Error occurred on API endpoint")
+            else:
+                return False
+        except KeyError:
+            return False
+
     def getFullURL(self):
         fullURL = super(CustomContentRecognizer, self).getFullURL()
         from six import binary_type
