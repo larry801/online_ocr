@@ -14,6 +14,7 @@ import globalVars
 import config
 from onlineOCRHandler import CustomOCRPanel
 from contentRecog import RecogImageInfo
+from contentRecog.recogUi import _recogOnResult
 from scriptHandler import script
 from logHandler import log
 import ui
@@ -73,7 +74,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             engine.text_result = not textResultWhenRepeatGesture
 
     # Translators: OCR command name in input gestures dialog
-    clipboard_ocr_msg = _("Recognizes the text in clipboard images with online OCR engine.Then read result.If pressed twice, open a virtual result document.")
+    clipboard_ocr_msg = _(
+        "Recognizes the text in clipboard images with online OCR engine.Then read result.If pressed twice, open a virtual result document.")
 
     # Translators: Reported when PIL cannot grab image from clipboard
     noImageMessage = _(u"No image in clipboard")
@@ -87,30 +89,66 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
         if repeatCount == 0:
             engine.text_result = textResultWhenRepeatGesture
-            # CF_DIB
-            clipboardImage = ImageGrab.grabclipboard()
+            clipboardImage = self.getImageFromClipboard()
             if clipboardImage:
                 imageInfo = RecogImageInfo(0, 0, clipboardImage.width, clipboardImage.height, 1)
                 pixels = clipboardImage.tobytes("raw", "BGRX")
-                engine.recognize(pixels, imageInfo, None)
+                # Translators: Reporting when content recognition (e.g. OCR) begins.
+                ui.message(_("Recognizing"))
+                engine.recognize(pixels, imageInfo, _recogOnResult)
             else:
-                import win32clipboard
-                try:
-                    win32clipboard.OpenClipboard()
-                    rawData = win32clipboard.GetClipboardData(win32clipboard.CF_HDROP)
-                    log.info(rawData)
-                    if isinstance(rawData, tuple):
-                        clipboardImage = Image.open(rawData[0])
-                        imageInfo = RecogImageInfo(0, 0, clipboardImage.width, clipboardImage.height, 1)
-                        clipboardImage = clipboardImage.convert("RGB")
-                        pixels = clipboardImage.tobytes("raw", "BGRX")
-                        engine.recognize(pixels, imageInfo, None)
-                    else:
-                        raise RuntimeError
-                except (RuntimeError, TypeError) as e:
-                    log.io(e)
-                    ui.message(self.noImageMessage)
-                finally:
-                    win32clipboard.CloseClipboard()
+                ui.message(self.noImageMessage)
         elif repeatCount >= 1:
             engine.text_result = not textResultWhenRepeatGesture
+
+    @staticmethod
+    def enumerateClipboardFormat():
+        import win32clipboard
+        formats = []
+        win32clipboard.OpenClipboard(None)
+        fmt = 0
+        while True:
+            fmt = win32clipboard.EnumClipboardFormats(fmt)
+            if fmt == 0:
+                break
+            formats.append(fmt)
+        return formats
+
+    @classmethod
+    def getImageFromClipboard(cls):
+        import win32clipboard
+        clipboardImage = None
+        formats = cls.enumerateClipboardFormat()
+        if win32clipboard.CF_DIB in formats:
+            return ImageGrab.grabclipboard()
+        elif win32clipboard.CF_HDROP in formats:
+            try:
+                win32clipboard.OpenClipboard()
+                rawData = win32clipboard.GetClipboardData(win32clipboard.CF_HDROP)
+                log.info(rawData)
+                if isinstance(rawData, tuple):
+                    clipboardImage = Image.open(rawData[0])
+                    clipboardImage = clipboardImage.convert("RGB")
+            except TypeError as e:
+                log.io(e)
+            finally:
+                win32clipboard.CloseClipboard()
+                return clipboardImage
+        elif win32clipboard.CF_TEXT in formats:
+            # TODO extract url or file path from text then grab an image from it.
+            try:
+                from api import getClipData
+                import os
+                text = getClipData()
+                if os.path.exists(text):
+                    clipboardImage = Image.open(text)
+                else:
+                    # Translators: Reported when text in clipboard is not a valid path
+                    ui.message(_(u"Text in clipboard is not a valid path"))
+            except IOError:
+                # Translators: Reported when cannot get content of the path specified
+                ui.message(_("Cannot read the file specified in clipboard"))
+            finally:
+                return clipboardImage
+        else:
+            return None
