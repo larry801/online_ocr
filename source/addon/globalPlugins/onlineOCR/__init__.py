@@ -70,22 +70,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             engine.text_result = textResultWhenRepeatGesture
             recogUi.recognizeNavigatorObject(engine)
         elif repeatCount == 1:
-            engine.text_result = textResultWhenRepeatGesture
-
-    # # Translators: OCR command name in input gestures dialog
-    # textMsg = _("Recognizes the text of the current navigator object with captcha engine.Then read result.If pressed twice, open a virtual result document.")
-    #
-    # @script(description=textMsg, category=category_name,
-    #         gestures=["kb:NVDA+shift+c"])
-    # def script_recognizeCaptcha(self, gesture):
-    #     from contentRecog import recogUi
-    #     engine = onlineOCRHandler.CustomOCRHandler.getEngineInstance(b"captcha")
-    #     repeatCount = scriptHandler.getLastScriptRepeatCount()
-    #     if repeatCount == 0:
-    #         engine.text_result = True
-    #         recogUi.recognizeNavigatorObject(engine)
-    #     elif repeatCount >= 1:
-    #         engine.text_result = False
+            engine.text_result = not textResultWhenRepeatGesture
 
     # Translators: OCR command name in input gestures dialog
     clipboard_ocr_msg = _("Recognizes the text in clipboard images with online OCR engine.Then read result.If pressed twice, open a virtual result document.")
@@ -102,7 +87,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
         if repeatCount == 0:
             engine.text_result = textResultWhenRepeatGesture
-            from PIL import ImageGrab, Image
+            # CF_DIB
             clipboardImage = ImageGrab.grabclipboard()
             if clipboardImage:
                 imageInfo = RecogImageInfo(0, 0, clipboardImage.width, clipboardImage.height, 1)
@@ -118,13 +103,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         clipboardImage = Image.open(rawData[0])
                         imageInfo = RecogImageInfo(0, 0, clipboardImage.width, clipboardImage.height, 1)
                         clipboardImage = clipboardImage.convert("RGB")
-                        pixels = clipboardImage.tobytes("raw", "RGBX")
+                        pixels = clipboardImage.tobytes("raw", "BGRX")
                         engine.recognize(pixels, imageInfo, None)
                     else:
                         raise RuntimeError
-                    win32clipboard.CloseClipboard()
                 except (RuntimeError, TypeError) as e:
                     log.io(e)
                     ui.message(self.noImageMessage)
+                finally:
+                    win32clipboard.CloseClipboard()
         elif repeatCount >= 1:
-            engine.text_result = textResultWhenRepeatGesture
+            engine.text_result = not textResultWhenRepeatGesture

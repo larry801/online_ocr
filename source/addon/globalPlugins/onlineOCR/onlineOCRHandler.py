@@ -28,13 +28,30 @@ except ImportError:
     from urllib.urllib_parse import urlencode
 from six import binary_type
 
-BaseDir = os.path.dirname(os.path.dirname(__file__))
-if isinstance(BaseDir, binary_type):
-    # In Python2
-    sys.path.insert(0, os.path.join(BaseDir, "_contrib".encode("mbcs")))
-else:
-    # In Python3
-    sys.path.insert(0, os.path.join(BaseDir, "_contrib"))
+
+def safeJoin(a, b):
+    """
+    join pathes safely without unicode error
+    @param a:
+    @type a: str
+    @param b:
+    @type b: unicode
+    @return:
+    @rtype:
+    """
+    if isinstance(a, binary_type):
+        # In Python2
+        return os.path.join(a, b.encode("mbcs"))
+    else:
+        # In Python3
+        return os.path.join(a, b)
+
+
+contribPath = safeJoin(
+    os.path.dirname(os.path.dirname(__file__)),
+    u"_contrib",
+)
+sys.path.insert(0, contribPath)
 log.io(sys.path)
 from PIL import Image
 
@@ -591,6 +608,7 @@ class CustomOCRHandler(AbstractEngineHandler):
 
 
 class CustomOCRPanel(AbstractEngineSettingsPanel):
+    testEngineButton = None  # type: wx.Button
     proxyAddressTextCtrl = None  # type: wx.TextCtrl
     swapRepeatedCountEffectCheckBox = None  # type: wx.CheckBox
     verboseDebugLoggingCheckBox = None  # type: wx.CheckBox
