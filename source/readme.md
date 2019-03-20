@@ -288,7 +288,7 @@ since NVDA+Shift+R is used in Word and Excel to define row headers in tables, or
 ### 0.4
 
 Fix installation error when config path contains non-ascii characters
-Change gesture to avoid Collison with golden cursor.
+Change gesture to avoid collision with golden cursor.
 Change default engine to Microsoft azure because it can detect text language automatically.
 
 ### 0.3 
