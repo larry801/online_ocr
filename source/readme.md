@@ -8,7 +8,7 @@ This addon aims at adding more accurate online engines to NVDA.
 
 ## Online OCR
 
-The author of addon have registered account with free API quota and set up a proxy server on www.nvdacn.com to make this addon easier to test at frist. Test quota is limited and may be cancelled by API provider anytime.
+The author of addon have registered account with free API quota and set up a proxy server on www.nvdacn.com to make this addon easier to test at first. Test quota is limited and may be cancelled by API provider anytime.
 It is highly recommended to register your own key according to guide in each engine.
 
 Online engines rely on the use and presence of the following services.
@@ -29,14 +29,15 @@ The author of addon have registered account with free API quota and put them on 
 
 ### Keyboard commands
 
-Control+Shift+NVDA+R Recognize current navigator object with online OCR engine Then read result.If pressed twice, open a virtual result document.
+Control+Shift+NVDA+R Recognize current navigator object with online OCR engine Then read result. If pressed twice, open a virtual result document.
 
-NVDA+Alt+R Recognizes image in clipboard with online OCR engine. Then read result.If pressed twice, open a virtual result document.
+NVDA+Alt+R Recognizes image in clipboard with online OCR engine. Then read result. If pressed twice, open a virtual result document.
 It accepts two kinds of content.
-First is an actual image(CF_DIB), you can put that into clipboard by taking a screenshot with PrintScreen key or copy image in a browser.
+First is an actual image(CF_DIB), you can put that into clipboard by taking a screenshot with Print Screen key or copy image in a browser.
 
 Second is a file copied in  explorer.(CF_HDROP)
-If it is not an image or there is only text in clipboard.This addon will tell you, No image in clipboard.
+If it is not an image. This addon will tell you, No image in clipboard.
+If there is only text in clipboard, this addon will try to use it as a path of local file. If it is not a path, this addon will tell you: Text in clipboard is not a valid path. If the corresponding file is not an image this addon will tell you: The file specified in clipboard is not an image.
 
 ### Engine Configuration
 
@@ -48,19 +49,19 @@ Copy result to clipboard after recognition:
 If enabled, recognition result will be copied to clipboard after recognition.
 
 Swap the effect of repeated gesture with none repeated ones:
-By default a virtual result document is shown only if you press the corresponding gesture twice, if you use that frequently you can enable this option so that you only need to press once to get a result viewer.
+By default, a virtual result document is shown only if you press the corresponding gesture twice, if you use that frequently you can enable this option so that you only need to press once to get a result viewer.
 
 Enable more verbose logging for debug purpose:
 
-Some logs are essential for debugging but affects performace and takes up a lot of space. Only turn this on if specifically instructed to by the addon author or an NVDA developer.
+Some logs are essential for debugging but affects performance and takes up a lot of space. Only turn this on if specifically instructed to by the addon author or an NVDA developer.
 
 Proxy type:
-Which type of proxy you are using. If you do not know what is a proxy just leave it as is.
+Which type of proxy you are using. If you do not know what a proxy is just leave it as is.
 
 Proxy address:
-Full url of your proxy. If you do not know what is a proxy just leave it as is.
-If you choose to use proxy your porxy will be verified before saving , after verification, there will be a prompt to tell you result.
-The following settings means the same in all engines, describle them here to save space.
+Full URL of your proxy. If you do not know what a proxy is just leave it as is.
+If you choose to use proxy your proxy will be verified before saving , after verification, there will be a prompt to tell you result.
+The following settings means the same in all engines, describe them here to save space.
 
 API Access Type:
 This controls how you get access to the corresponding API endpoints.
@@ -178,7 +179,7 @@ Step 1: Create an account.
 
 https://azure.microsoft.com/en-ua/try/cognitive-services/
 
-Please note that the key has to be created for the Computer Vision API. The first "GET API key" button you encounter with single key navigation. Currently Microsoft provides the option to create a trial key for 7 days. You can also sign up for a free azure account for more trail. Signing up requires a credit card. If you already have a subscription account you can skip this step.
+Please note that the key must be created for the Computer Vision API. The first "GET API key" button you encounter with single key navigation. Currently Microsoft provides the option to create a trial key for 7 days. You can also sign up for a free azure account for more trail. Signing up requires a credit card. If you already have a subscription account, you can skip this step.
 
 Step 2: Deploy Cognitive Services
 Now you have an azure account. 
@@ -186,25 +187,25 @@ First login on  [Azure Portal](https://portal.azure.com)
 Wait until you get the message Portal is Ready you are logged into azure portal.
 Find the link called All resources after All services
 button and activate it.
-Wait until you get the message Blade All resources is ready , your focus will be an editbox,then press shift+tab find a menu item called add and activate it.
+Wait until you get the message Blade All resources are ready , your focus will be an edit box, then press shift tab find a menu item called add and activate it.
 
 Wait until you get the message Search the Marketplace,
 Type Cognitive Services and press down arrow.
 Wait until you get the message List of options Cognitive Services one of five, then press enter.
 Wait until you get the message Blade Cognitive Services is ready press tab or b to find a button named Create activate it.
-Wait until you get the message Blade Create is ready, your focus will be an editbox, type a name for this resource. Note that Your resource name can only include alphanumeric characters, ‘_,-’, and can’t end with ’_’ or ’-‘.
+Wait until you get the message Blade Create is ready, your focus will be an edit box, type a name for this resource. Note that Your resource name can only include alphanumeric characters, ‘_,-’, and can’t end with ’_’ or ’-‘.
 I choose NVDAOCR.
-Press tab to go to Subscription combobox. Usually you can leave it as is.
-Press tab to go to Location combobox. Choose one close to your current location. Be sure to remember this since location is required in engine configuration.
-Press tab to go to Pricing tie combobox. Usually a free tie like F0 is adequate.If that is not enough you can choose other tier after reading full pricing details in View full pricing details link.
-Press tab to go to Create new Resource group  editbox. You should create one if you do not have any Resource group.Press tab  find Create new button. 
-Then press tab go to Create Button to create this rescource.
+Press tab to go to Subscription combo box. Usually you can leave it as is.
+Press tab to go to Location combo box. Choose one close to your current location. Be sure to remember this since location is required in engine configuration.
+Press tab to go to Pricing tie combo box. Usually a free tie like F0 is adequate. If that is not enough you can choose other tier after reading full pricing details in View full pricing details link.
+Press tab to go to Create new Resource group  edit box. You should create one if you do not have any Resource group. Press tab  find Create new button. 
+Then press tab go to Create Button to create this resource.
 Wait until you get the message Deployment succeeded.
 Then find Go to resource button sometimes you need go up to activate Notifications button before you can find Go to resource button.
 Wait until you get the message Blade Quick Start is busy.
 Find the link named keys, then activate it.
 Wait until you get the message Blade Manage keys is ready.
-Find edit box named key 1 or key 2. The content of that edit box is the API key required in engine configuration.Press Ctrl-C to copy it for engine configuration
+Find edit box named key 1 or key 2. The content of that edit box is the API key required in engine configuration. Press Ctrl-C to copy it for engine configuration
 Then you can fill in these two settings required if you use your own API key.
 Azure resource Region: 
 The region you choose when deploying Cognitive Services in Azure Portal.
@@ -276,21 +277,21 @@ Fixed another place do not work well with non ascii config path
 
 ### 0.6
 Added proxy settings for people with access of Internet behind a specific proxy.
-Added serveral general options.
-Fix unicode decode error due to sending unicode url to urllib3.
+Added several general options.
+Fix Unicode decode error due to sending Unicode URL to urllib3.
 
 ### 0.5
-Fix unicode error if OCR engine upload image file directly instead of base64 encode.
+Fix Unicode error if OCR engine upload image file directly instead of base64 encode.
 Change gesture of recognizing clipboard to Control+Shift+NVDA+R 
-since NVDA+shift+r is used in Word and Excel to define row headers in tables, or to delete the definitions when pressed twice.
+since NVDA+Shift+R is used in Word and Excel to define row headers in tables, or to delete the definitions when pressed twice.
 
 ### 0.4
 
 Fix installation error when config path contains non-ascii characters
-Change gesture to avoid collison with golden cursor.
-Change default engine to Microsoft azure because it is able to detect text language automatically.
+Change gesture to avoid Collison with golden cursor.
+Change default engine to Microsoft azure because it can detect text language automatically.
 
 ### 0.3 
 Add detail documentation on how to get API key of Microsoft Azure OCR
 Fix issue about new installation.
-Removed auto OCR since this feature is problematic and may confuse with online engines. Auto OCR will be a seperate addon, when it is stable enough.
+Removed auto OCR since this feature is problematic and may confuse with online engines. Auto OCR will be a separate addon, when it is stable enough.
