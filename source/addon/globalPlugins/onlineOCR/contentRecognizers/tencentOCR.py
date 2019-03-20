@@ -81,6 +81,13 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         md5.update(encoded_option)
         return md5.hexdigest()
 
+    def getFullURL(self):
+        fullURL = super(CustomContentRecognizer, self).getFullURL()
+        from six import binary_type
+        if isinstance(fullURL, binary_type):
+            fullURL = fullURL.encode("utf-8")
+        return fullURL
+
     def create_payload(self, png_string, app_id="", app_secret="", use_nvda_cn=True):
         if use_nvda_cn:
             options = {

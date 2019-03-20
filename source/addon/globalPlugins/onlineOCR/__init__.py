@@ -47,8 +47,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             return
         if config.isAppX:
             return
-        self.lastNavigatorObject = None
-        self.autoOCREnabled = False
         from . import onlineOCRHandler
         onlineOCRHandler.CustomOCRHandler.initialize()
         self.handler = onlineOCRHandler.CustomOCRHandler

@@ -4,15 +4,15 @@
 # See the file COPYING for more details.
 # urllib3 used in this file is Copyright (c) 2008-2019 Andrey Petrov and contributors under MIT license.
 import addonHandler
-import certifi
-import urllib3.contrib.pyopenssl
 import ui
 from logHandler import log
-from six import string_types
 from urllib3.contrib.socks import SOCKSProxyManager
 import config
-
-urllib3.contrib.pyopenssl.inject_into_urllib3()
+import urllib3
+urllib3.disable_warnings()
+# import certifi
+# import urllib3.contrib.pyopenssl
+# urllib3.contrib.pyopenssl.inject_into_urllib3()
 
 oldProxyType = config.conf["onlineOCR"]["proxyType"]
 oldProxyAddress = config.conf["onlineOCR"]["proxyAddress"]
@@ -36,8 +36,8 @@ def getConnectionPool():
     if proxyType == u"http":
         pool = urllib3.ProxyManager(
             proxyAddress,
-            cert_reqs='CERT_REQUIRED',
-            ca_certs=certifi.where(),
+            # cert_reqs='CERT_REQUIRED',
+            # ca_certs=certifi.where(),
             timeout=urllib3.Timeout(connect=10, read=10)
         )
         msg += u"\nHTTP proxy\n{0}".format(
@@ -48,8 +48,8 @@ def getConnectionPool():
     elif proxyType == u"socks":
         pool = SOCKSProxyManager(
             proxyAddress,
-            cert_reqs='CERT_REQUIRED',
-            ca_certs=certifi.where(),
+            # cert_reqs='CERT_REQUIRED',
+            # ca_certs=certifi.where(),
             timeout=urllib3.Timeout(connect=10, read=10)
         )
         msg += u"\nSocks proxy\n{0}".format(
@@ -59,8 +59,8 @@ def getConnectionPool():
         return pool
     else:
         pool = urllib3.PoolManager(
-            cert_reqs='CERT_REQUIRED',
-            ca_certs=certifi.where(),
+            # cert_reqs='CERT_REQUIRED',
+            # ca_certs=certifi.where(),
             timeout=urllib3.Timeout(connect=10, read=10)
         )
         msg += u"\nNo proxy\n{0}".format(
@@ -94,10 +94,6 @@ def doHTTPRequest(callback, method, url, **kwargs):
     """
     refreshConnectionPool()
     try:
-        # Unicode URL cause urllib3 to decode raw image data as if they were unicode.
-        if isinstance(url, string_types):
-            if not isinstance(url, str):
-                url = url.decode('utf8')
         r = httpConnectionPool.request(method, url, **kwargs)
     except urllib3.exceptions.TimeoutError:
         ui.message(timeout_message)

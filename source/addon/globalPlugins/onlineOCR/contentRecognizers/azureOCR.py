@@ -211,12 +211,18 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         return self.generate_string_settings(languages)
 
     def getFullURL(self):
+        from six import string_types
         url = super(CustomContentRecognizer, self).getFullURL()
         queryString = b"?language={0}&detectOrientation={1}".format(
             self._language,
             self.pyBool2json(self._detectDirection)
         )
-        return url + queryString
+        fullURL = url + queryString
+        # Unicode URL cause urllib3 to decode raw image data as if they were unicode.
+        if isinstance(fullURL, string_types):
+            if not isinstance(fullURL, str):
+                fullURL = fullURL.decode('utf8')
+        return fullURL
 
     def serializeImage(self, PILImage):
         from io import BytesIO

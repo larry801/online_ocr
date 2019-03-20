@@ -105,6 +105,13 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         except Exception as e:
             log.error(e)
 
+    def getFullURL(self):
+        fullURL = super(CustomContentRecognizer, self).getFullURL()
+        from six import binary_type
+        if isinstance(fullURL, binary_type):
+            fullURL = fullURL.encode("utf-8")
+        return fullURL
+
     # noinspection PyBroadException
     def process_api_result(self, result):
         import json

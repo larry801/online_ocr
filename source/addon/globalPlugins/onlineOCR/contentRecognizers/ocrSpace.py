@@ -194,6 +194,13 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         except KeyError:
             return False
 
+    def getFullURL(self):
+        fullURL = super(CustomContentRecognizer, self).getFullURL()
+        from six import binary_type
+        if isinstance(fullURL, binary_type):
+            fullURL = fullURL.encode("utf-8")
+        return fullURL
+
     codeToErrorMessage = {
         # Translators: Report when API error occurred
         3: _(u"Image parsing failed."),

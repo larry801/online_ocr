@@ -158,6 +158,16 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
         log.io(headerSig)
         return headerSig
 
+    def getFullURL(self):
+        from six import string_types
+        url = super(CustomContentRecognizer, self).getFullURL()
+        fullURL = url
+        # Unicode URL cause urllib3 to decode raw image data as if they were unicode.
+        if isinstance(fullURL, string_types):
+            if not isinstance(fullURL, str):
+                fullURL = fullURL.decode('utf8')
+        return fullURL
+
     @staticmethod
     def getImageFileName():
         import time

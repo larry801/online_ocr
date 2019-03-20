@@ -246,8 +246,8 @@ Currently 500 times a day.
 Accurate with information about text location.
 Currently 50 times a day.
 
-If you press NVDA+Shift+R or NVDA+Windows+R, you are using endpoints without any information about text location. 
-If you press NVDA+Shift+Alt+R or NVDA+Windows+Alt+R, you are using endpoints with information about text location. 
+If you press the gesture which only read result, you are using endpoints without any information about text location. 
+If you press the gesture which shows an result viewer, you are using endpoints with information about text location. 
 
 Though it provides a quite generous free quota, its website is Chinese only and not quite accessible.
 
