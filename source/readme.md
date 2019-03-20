@@ -29,10 +29,17 @@ The author of addon have registered account with free API quota and put them on 
 
 ### Keyboard commands
 
-NVDA+Shift+R Recognize current navigator object with online OCR engine Then read result.If pressed twice, open a virtual result document.
+Control+Shift+NVDA+R Recognize current navigator object with online OCR engine Then read result.If pressed twice, open a virtual result document.
 
-Control+Shift+NVDA+R Recognizes image in clipboard with online OCR engine. Then read result.If pressed twice, open a virtual result document.
+NVDA+Alt+R Recognizes image in clipboard with online OCR engine. Then read result.If pressed twice, open a virtual result document.
+It accepts two kinds of content.
+First is an actual image(CF_DIB), you can put that into clipboard by taking a screenshot with PrintScreen key or copy image in a browser.
 
+Second is a file copied in  explorer.(CF_HDROP)
+If it is not an image or there is only text in clipboard.This addon will tell you, No image in clipboard.
+
+Third is a path or url of an image. This addon will try to open or download that image file 
+If none of above 
 ### Engine Configuration
 
 You can choose recognition engines and configure them in detail in *Online OCR* category in NVDA settings dialog.
@@ -40,7 +47,7 @@ You can choose recognition engines and configure them in detail in *Online OCR* 
 The following settings are applicable to all engines.
 
 Copy result to clipboard after recognition:
-If enabled, recognition result will be copyed to clipboard after recognition.
+If enabled, recognition result will be copied to clipboard after recognition.
 
 Swap the effect of repeated gesture with none repeated ones:
 By default a virtual result document is shown only if you press the corresponding gesture twice, if you use that frequently you can enable this option so that you only need to press once to get a result viewer.
