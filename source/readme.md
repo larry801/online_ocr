@@ -2,7 +2,7 @@
 
 Author: Larry Wang
 NVDA compatibility: from 2018.3 to 2019.1
-Download [development version](https://github.com/larry801/online_ocr/download/0.8-dev/onlineOCR-0.8-dev.nvda-addon)
+Download [development version](https://github.com/larry801/online_ocr/download/0.9-dev/onlineOCR-0.9-dev.nvda-addon)
 
 This addon aims at adding more accurate online engines to NVDA.
 
