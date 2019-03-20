@@ -141,13 +141,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 import os
                 text = getClipData()
                 if os.path.exists(text):
-                    clipboardImage = Image.open(text)
+                    if os.path.isfile(text):
+                        clipboardImage = Image.open(text)
+                    else:
+                        # Translators: Reported when text in clipboard is not a valid path
+                        ui.message(_(u"Text in clipboard is the name of a directory."))
                 else:
                     # Translators: Reported when text in clipboard is not a valid path
-                    ui.message(_(u"Text in clipboard is not a valid path"))
-            except IOError:
+                    ui.message(_(u"Text in clipboard is not a valid path."))
+            except IOError as e:
                 # Translators: Reported when cannot get content of the path specified
-                ui.message(_("Cannot read the file specified in clipboard"))
+                errMsg = _("The file specified in clipboard is not an image")
+                ui.message(errMsg)
             finally:
                 return clipboardImage
         else:
