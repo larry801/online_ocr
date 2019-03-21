@@ -19,12 +19,12 @@ addon_info = {
     # Translators: Long description to be shown for this add-on on add-on information from add-ons manager
     "addon_description": _("Add online OCR engines to NVDA"),
     # version
-    "addon_version": "0.9-dev",
+    "addon_version": "0.10-dev",
     # Author(s)
     "addon_author": "Larry Wang <larry.wang.801@gmail.com>",
     # URL for the add-on documentation support
 
-    "addon_url": None,
+    "addon_url": r"https://github.com/larry801/online_ocr/tree/master/source",
 
     # Documentation file name
     "addon_docFileName": "readme.html",
