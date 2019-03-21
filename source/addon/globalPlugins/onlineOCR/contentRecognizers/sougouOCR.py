@@ -21,7 +21,11 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 	description = _("Sougou AI OCR")
 
 	def _get_supportedSettings(self):
-		return []
+		return [
+			CustomContentRecognizer.AccessTypeSetting(),
+			CustomContentRecognizer.APIKeySetting(),
+			CustomContentRecognizer.APISecretSetting(),
+		]
 
 	@classmethod
 	def check(cls):
@@ -86,7 +90,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 	def getHTTPHeaders(self):
 		if self._use_own_api_key:
 			return {
-				"Authorization": self.getSignature(self._api_key, self._api_secret_key, "")
+				b"Authorization": self.getSignature(self._api_key, self._api_secret_key, "")
 			}
 		else:
 			return {}
@@ -107,8 +111,10 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
 	def getPayload(self, jpegBytes):
 		if self._use_own_api_key:
-			fileName = self.getImageFileName()
-			paramName = fileName
+			# use str here to avoid urllib3 decode raw image data as bytes
+			fileName = str(self.getImageFileName())
+			# The name "pic" is mandated by the API endpoint
+			paramName = b"pic"
 		else:
 			paramName = b'foo'
 			fileName = b'foo'
@@ -156,7 +162,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		signature = hmac.new(bytes(sk), message, digestmod=hashlib.sha256).digest()
 		headerSig = pre + '/' + base64.b64encode(signature)
 		log.io(headerSig)
-		return headerSig
+		return str(headerSig)
 
 	def getFullURL(self):
 		from six import string_types
@@ -172,13 +178,13 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 	def getImageFileName():
 		import time
 		fNList = []
-		ts = str(time.time())
+		ts = "{0:.3f}".format(time.time())
 		fNList.append(ts)
 		fNList.append('_')
 
 		def luhn_residue(digits):
 			return sum(sum(divmod(int(d) * (1 + i % 2), 10))
-			           for i, d in enumerate(digits[::-1])) % 10
+				for i, d in enumerate(digits[::-1])) % 10
 
 		def getImei(N):
 			import random
