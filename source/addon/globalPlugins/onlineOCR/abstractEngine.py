@@ -152,6 +152,8 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 		engine_module = cls.import_class(cls.enginePackageName, name)
 		for items in dir(engine_module):
 			obj = getattr(engine_module, items)
+			if obj == cls.engineClass:
+				continue
 			if inspect.isclass(obj) and issubclass(obj, cls.engineClass):
 				return obj
 

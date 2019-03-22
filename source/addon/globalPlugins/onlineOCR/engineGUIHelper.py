@@ -44,6 +44,7 @@ class VoiceSettingsSlider(wx.Slider):
 		self.Bind(wx.EVT_CHAR, self.onSliderChar)
 
 	def SetValue(self, i):
+		i = int(i)
 		super(VoiceSettingsSlider, self).SetValue(i)
 		evt = wx.CommandEvent(wx.wxEVT_COMMAND_SLIDER_UPDATED, self.GetId())
 		evt.SetInt(i)

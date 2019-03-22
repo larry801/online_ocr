@@ -20,6 +20,7 @@ from logHandler import log
 import ui
 from PIL import ImageGrab, Image
 import scriptHandler
+from .OnlineImageDescriberHandler import OnlineImageDescriberHandler, OnlineImageDescriberPanel
 
 _ = lambda x: x
 # We need to initialize translation and localization support:
@@ -28,7 +29,7 @@ category_name = _(u"Online OCR")
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
-
+	
 	def PILImageToPixels(self, image):
 		"""
 		Convert PIL Image into pixels and imageInfo
@@ -40,7 +41,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		imageInfo = RecogImageInfo(0, 0, image.width, image.height, 1)
 		pixels = image.tobytes("raw", "BGRX")
 		return pixels, imageInfo
-
+	
 	def __init__(self):
 		super(GlobalPlugin, self).__init__()
 		if globalVars.appArgs.secure:
@@ -51,11 +52,62 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		onlineOCRHandler.CustomOCRHandler.initialize()
 		self.handler = onlineOCRHandler.CustomOCRHandler
 		gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(CustomOCRPanel)
+	
+		OnlineImageDescriberHandler.initialize()
+		self.handler = OnlineImageDescriberHandler
+		gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(OnlineImageDescriberPanel)
+		
+	# Translators: Online Image Describer command name in input gestures dialog
+	image_describe = _(
+		"Describe the content of the current navigator object with online image describer.Then open a virtual result document.")
 
+	# Translators: Online Image Describer command name in input gestures dialog
+	@script(description=image_describe,
+	        category=category_name,
+	        gestures=[])
+	def script_describeNavigatorObject(self, gesture):
+		from contentRecog import recogUi
+		engine = OnlineImageDescriberHandler.getCurrentEngine()
+		repeatCount = scriptHandler.getLastScriptRepeatCount()
+		textResultWhenRepeatGesture = not config.conf["onlineImageDescriber"]["swapRepeatedCountEffect"]
+		if repeatCount == 0:
+			engine.text_result = textResultWhenRepeatGesture
+			recogUi.recognizeNavigatorObject(engine)
+		elif repeatCount == 1:
+			engine.text_result = not textResultWhenRepeatGesture
+	
+	# Translators: OCR command name in input gestures dialog
+	describe_clipboard_msg = _(
+		"Describe clipboard images with online image describer.Then read result.If pressed twice, open a virtual result document.")
+	
+	# Translators: Reported when PIL cannot grab image from clipboard
+	noImageMessage = _(u"No image in clipboard")
+	
+	@script(description=describe_clipboard_msg,
+	        category=category_name,
+	        gestures=[])
+	def script_describeClipboardImage(self, gesture):
+		engine = OnlineImageDescriberHandler.getCurrentEngine()
+		repeatCount = scriptHandler.getLastScriptRepeatCount()
+		textResultWhenRepeatGesture = not config.conf["onlineImageDescriber"]["swapRepeatedCountEffect"]
+		if repeatCount == 0:
+			engine.text_result = textResultWhenRepeatGesture
+			clipboardImage = self.getImageFromClipboard()
+			if clipboardImage:
+				imageInfo = RecogImageInfo(0, 0, clipboardImage.width, clipboardImage.height, 1)
+				pixels = clipboardImage.tobytes("raw", "BGRX")
+				# Translators: Reporting when content recognition begins.
+				ui.message(_("Recognizing"))
+				engine.recognize(pixels, imageInfo, _recogOnResult)
+			else:
+				ui.message(self.noImageMessage)
+		elif repeatCount >= 1:
+			engine.text_result = not textResultWhenRepeatGesture
+	
 	# Translators: OCR command name in input gestures dialog
 	full_ocr_msg = _(
 		"Recognizes the content of the current navigator object with online OCR engine.Then open a virtual result document.")
-
+		
 	# Translators: OCR command name in input gestures dialog
 	@script(
 		description=full_ocr_msg,
@@ -72,14 +124,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			recogUi.recognizeNavigatorObject(engine)
 		elif repeatCount == 1:
 			engine.text_result = not textResultWhenRepeatGesture
-
+	
 	# Translators: OCR command name in input gestures dialog
 	clipboard_ocr_msg = _(
 		"Recognizes the text in clipboard images with online OCR engine.Then read result.If pressed twice, open a virtual result document.")
-
-	# Translators: Reported when PIL cannot grab image from clipboard
-	noImageMessage = _(u"No image in clipboard")
-
+	
 	@script(
 		description=clipboard_ocr_msg,
 		category=category_name,
@@ -102,7 +151,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				ui.message(self.noImageMessage)
 		elif repeatCount >= 1:
 			engine.text_result = not textResultWhenRepeatGesture
-
+	
 	@staticmethod
 	def enumerateClipboardFormat():
 		import win32clipboard
@@ -115,7 +164,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				break
 			formats.append(fmt)
 		return formats
-
+	
 	@classmethod
 	def getImageFromClipboard(cls):
 		import win32clipboard
