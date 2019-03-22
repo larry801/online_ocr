@@ -5,6 +5,7 @@ NVDA compatibility: from 2018.3 to 2019.1
 Download [development version](https://github.com/larry801/online_ocr/releases/download/0.10-dev/onlineOCR-0.10-dev.nvda-addon)
 
 This addon aims at adding more accurate online engines to NVDA.
+This addon also added image description capability to NDVA.
 
 ## Online OCR
 
@@ -259,6 +260,9 @@ According to my test Chinese and English and their mixture is supported.
 There is no additional configuration for these API.
 
 ## Change Log
+
+### 0.11
+Added image description capability Oliver Edholm 
 
 ### 0.10
 
