@@ -14,12 +14,18 @@ addon_info = {
     "addon_name": "onlineOCR",
     # Add-on summary, usually the user visible name of the addon.
     # Translators: Summary for this add-on to be shown on installation and add-on information.
-    "addon_summary": _("Online OCR"),
+    "addon_summary": _("Online Image describer"),
     # Add-on description: can span multiple lines with """ syntax """
     # Translators: Long description to be shown for this add-on on add-on information from add-ons manager
-    "addon_description": _("Add online OCR engines to NVDA"),
+    "addon_description": _("""
+This addon aims at adding online image recognition engines to NVDA.
+There are two types of engines. OCR and image describer.
+OCR extract text from image.
+Image describer describe visual features in image in text form.
+Such as general description, color type landmarks and so on.
+    """),
     # version
-    "addon_version": "0.10-dev",
+    "addon_version": "0.11-dev",
     # Author(s)
     "addon_author": "Larry Wang <larry.wang.801@gmail.com>",
     # URL for the add-on documentation support
