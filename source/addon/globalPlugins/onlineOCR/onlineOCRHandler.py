@@ -15,12 +15,17 @@ import base64
 import wx
 import config
 from six import iterkeys
-from .abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine, BooleanEngineSetting
+
+from addon.globalPlugins.onlineOCR import OnlineImageDescriberPanel
+from .abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine, BooleanEngineSetting, \
+	SpecificEnginePanel
+from OnlineImageDescriberHandler import OnlineImageDescriberPanel
 import addonHandler
 from . import contentRecognizers
 from logHandler import log
 import ui
 from collections import OrderedDict
+from gui.settingsDialogs import SettingsPanel
 
 try:
 	from urllib import urlencode
@@ -63,41 +68,42 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	"""
 	Abstract base BaseRecognizer
 	"""
-
+	
 	# Translators: Description of Online OCR Engine
 	description = ""
-
-	nvda_cn_domain = b"www.nvdacn.com"
+	isURLSupported = False
+	NVDAcnDomain = b"www.nvdacn.com"
 	configSectionName = "onlineOCR"
 	networkThread = None  # type: Thread
 	useHttps = True
-
+	_onResult = None
+	
 	_api_key = ""
-
+	
 	_api_secret_key = ""
-
+	
 	_appID = ""
-
+	
 	def _get_appID(self):
 		return self._appID
-
+	
 	def _set_appID(self, appID):
 		self._appID = appID
-
+	
 	text_result = False
-
+	
 	minHeight = 50
-
+	
 	maxHeight = 4096
-
+	
 	minWidth = 50
-
+	
 	maxWidth = 4096
-
+	
 	maxPixels = 10000000
-
+	
 	maxSize = 4 * 1024 * 1024  # 4 mega bytes
-
+	
 	@classmethod
 	def CopyToClipboardSetting(cls):
 		return BaseRecognizer.BooleanSetting(
@@ -105,15 +111,15 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			# Translators: Label in settings dialog
 			_(u"Copy result text to clipboard after recognition")
 		)
-
+	
 	_clipboard = False
-
+	
 	def _get_clipboard(self):
 		return self._clipboard
-
+	
 	def _set_clipboard(self, clipboard):
 		self._clipboard = clipboard
-
+	
 	@staticmethod
 	def pyBool2json(boolean):
 		"""
@@ -127,28 +133,28 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			return b"true"
 		else:
 			return b"false"
-
+	
 	def _get_supportedSettings(self):
 		raise NotImplementedError
-
+	
 	def _get_apiKey(self):
 		return self._api_key
-
+	
 	def _set_apiKey(self, key):
 		self._api_key = key
-
+	
 	def _get_apiSecret(self):
 		return self._api_secret_key
-
+	
 	def _set_apiSecret(self, key):
 		self._api_secret_key = key
-
+	
 	def json_endpoint(self, url, payloads):
 		json_data = self.convert_to_json(
 			self.post_to_url(url, payloads)
 		)
 		return json_data
-
+	
 	@staticmethod
 	def capture_again(imageInfo):
 		"""
@@ -170,7 +176,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			imageInfo.recogHeight * imageInfo.resizeFactor
 		))
 		return img
-
+	
 	def convert_to_line_result_format(self, apiResult):
 		"""
 		Convert API result to NVDA compatible ones
@@ -180,14 +186,14 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		@rtype: L{LinesWordsResult}
 		"""
 		raise NotImplementedError
-
+	
 	@property
 	def _use_own_api_key(self):
 		if self._type_of_api_access == "own_key":
 			return True
 		else:
 			return False
-
+	
 	def rgb_quad_to_png(self, pixels, imageInfo, resizeFactor=None):
 		"""
 		@param pixels: The pixels of the image as a two dimensional array of RGBQUADs.
@@ -208,12 +214,14 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		img = Image.frombytes("RGBX", (width, height), pixels, "raw", "BGRX")
 		img = img.convert("RGB")
 		if resizeFactor:
-			img = img.resize((width * resizeFactor,
-			                  height * resizeFactor))
+			img = img.resize((
+				width * resizeFactor,
+				height * resizeFactor
+			))
 		png_buffer = BytesIO()
 		img.save(png_buffer, "PNG")
 		return png_buffer.getvalue()
-
+	
 	@staticmethod
 	def post_to_url(url, payloads):
 		import urllib3
@@ -221,7 +229,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		response = http.request("POST", url=url, fields=payloads)
 		text = response.data
 		return text
-
+	
 	@staticmethod
 	def form_encode(options):
 		"""
@@ -241,17 +249,17 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		if config.conf["onlineOCR"]["verboseDebugLogging"]:
 			log.io(payload)
 		return payload
-
+	
 	@staticmethod
 	def convert_to_json(data):
 		return json.loads(data)
-
+	
 	def get_url(self):
 		raise NotImplementedError
-
+	
 	def get_domain(self):
 		raise NotImplementedError
-
+	
 	def getFullURL(self):
 		"""
 
@@ -270,7 +278,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			url
 		])
 		return fullURL
-
+	
 	def getPayload(self, image):
 		"""
 		Get payload from image and engine settings
@@ -279,7 +287,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		@return: A dictionary for urllib3
 		"""
 		raise NotImplementedError
-
+	
 	# noinspection PyBroadException
 	def processCURLError(self, result):
 		"""
@@ -300,10 +308,10 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				return errorMessage
 		except (KeyError, ValueError):
 			return False
-
+	
 	resizeUpperLimit = 5
 	resizeLowerLimit = 0.2
-
+	
 	def checkAndResizeImage(self, image):
 		"""
 		Check Image Size to meet requirement of API
@@ -348,17 +356,17 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			)
 			# Translators: Reported when error occurred during image conversion
 			errorMsg = _(u"Error occurred when converting images")
-
+			
 			if widthResizeFactor >= self.resizeUpperLimit:
 				# Translators: Reported when image size is not valid
 				errorMsg = _(u"Image width is too big for this engine")
 				isImageValid = False
-
+			
 			if heightResizeFactor <= self.resizeLowerLimit:
 				isImageValid = False
 				# Translators: Reported when error occurred during image conversion
 				errorMsg = _(u"Image height is too small for this engine")
-
+			
 			if widthResizeFactor >= self.resizeUpperLimit:
 				# Translators: Reported when image size is not valid
 				errorMsg = _(u"Image width is too big for this engine")
@@ -392,7 +400,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			log.io(msg)
 			ui.message(errorMsg)
 			return False
-
+	
 	def getHTTPHeaders(self):
 		"""
 		Generate HTTP Header for request
@@ -400,7 +408,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		@rtype:
 		"""
 		return {}
-
+	
 	def get_converted_image(self, pixels, imageInfo):
 		"""
 		Convert RGBQUAD image to PIL format
@@ -415,16 +423,18 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		img = Image.frombytes("RGBX", (width, height), pixels, "raw", "BGRX")
 		img = img.convert("RGB")
 		return img
-
-	def recognize(self, pixels, imageInfo, onResult):
+	
+	def getPayloadForHyperLink(self, url):
+		raise NotImplementedError
+	
+	def recognizeHyperLink(self, link, onResult):
 		"""
 		Setup data for recognition then send request
-		@param pixels:
-		@param imageInfo:
+		@param link:
 		@param onResult: Result callback for result viewer
 		@return: None
 		"""
-
+		
 		def callback(result):
 			self.networkThread = None
 			# Translators: Reported when api result is invalid
@@ -447,7 +457,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			except ValueError as e:
 				ui.message(failed_message)
 				return
-
+			
 			try:
 				ocrResult = self.extract_text(result)
 				if ocrResult.isspace():
@@ -465,7 +475,119 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				log.error(e)
 				log.error(result)
 				ui.message(failed_message)
-
+		
+		if self.networkThread:
+			# Translators: Error message
+			ui.message(_(u"There is another recognition ongoing. Please wait."))
+			return
+		
+		payloads = self.getPayloadForHyperLink(link)
+		fullURL = self.getFullURL()
+		headers = self.getHTTPHeaders()
+		
+		if config.conf["onlineOCR"]["verboseDebugLogging"]:
+			msg = u"{0}\n{1}\n{2}\n{3}".format(
+				callback,
+				fullURL,
+				headers,
+				payloads,
+			)
+			log.io(msg)
+		self.sendRequest(callback, fullURL, payloads, headers)
+	
+	def callback(self, result):
+		# Translators: Reported when api result is invalid
+		failed_message = _(u"Recognition failed. Result is invalid.")
+		# Translators: Message added before recognition result
+		# when user do not use result viewer
+		result_prefix = _(u"Recognition result:")
+		self.networkThread = None
+		log.io(result)
+		if not self._use_own_api_key:
+			curl_error_message = self.processCURLError(result)  # type: str
+			if curl_error_message:
+				ui.message(curl_error_message)
+				return
+		api_error_message = self.process_api_result(result)  # type: str
+		if api_error_message:
+			ui.message(api_error_message)
+			return
+		try:
+			result = self.convert_to_json(result)
+		except ValueError as e:
+			ui.message(failed_message)
+			return
+		
+		try:
+			ocrResult = self.extract_text(result)
+			if ocrResult.isspace():
+				# Translators: Reported when recognition result is empty
+				ocrResult = _(u"blank. There may be no text on this image.")
+			resultText = result_prefix + ocrResult
+			if config.conf[self.configSectionName]["copyToClipboard"]:
+				import api
+				api.copyToClip(resultText)
+			if self.text_result:
+				ui.message(resultText)
+			else:
+				self._onResult(LinesWordsResult(self.convert_to_line_result_format(result), imageInfo))
+		except Exception as e:
+			log.error(e)
+			log.error(result)
+			ui.message(failed_message)
+		finally:
+			self._onResult = None
+	
+	def recognize(self, pixels, imageInfo, onResult):
+		"""
+		Setup data for recognition then send request
+		@param pixels:
+		@param imageInfo:
+		@param onResult: Result callback for result viewer
+		@return: None
+		"""
+		
+		def callback(result):
+			self.networkThread = None
+			# Translators: Reported when api result is invalid
+			failed_message = _(u"Recognition failed. Result is invalid.")
+			# Translators: Message added before recognition result
+			# when user do not use result viewer
+			result_prefix = _(u"Recognition result:")
+			log.io(result)
+			if not self._use_own_api_key:
+				curl_error_message = self.processCURLError(result)  # type: str
+				if curl_error_message:
+					ui.message(curl_error_message)
+					return
+			api_error_message = self.process_api_result(result)  # type: str
+			if api_error_message:
+				ui.message(api_error_message)
+				return
+			try:
+				result = self.convert_to_json(result)
+			except ValueError as e:
+				ui.message(failed_message)
+				return
+			
+			try:
+				ocrResult = self.extract_text(result)
+				if ocrResult.isspace():
+					# Translators: Reported when recognition result is empty
+					ocrResult = _(u"blank. There may be no text on this image.")
+				resultText = result_prefix + ocrResult
+				if config.conf[self.configSectionName]["copyToClipboard"]:
+					import api
+					api.copyToClip(resultText)
+				if self.text_result:
+					ui.message(resultText)
+				else:
+					onResult(LinesWordsResult(self.convert_to_line_result_format(result), imageInfo))
+			except Exception as e:
+				log.error(e)
+				log.error(result)
+				ui.message(failed_message)
+		
 		if self.networkThread:
 			# Translators: Error message
 			ui.message(_(u"There is another recognition ongoing. Please wait."))
@@ -489,8 +611,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		)
 		if config.conf["onlineOCR"]["verboseDebugLogging"]:
 			log.io(msg)
-		self.sendRequest(callback, fullURL, payloads, headers)
-
+		self.sendRequest(self.callback, fullURL, payloads, headers)
+	
 	def sendRequest(self, callback, fullURL, payloads, headers=None):
 		"""
 		Send async network request
@@ -514,28 +636,28 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			)
 		)
 		self.networkThread.start()
-
+	
 	def cancel(self):
 		self.networkThread = None
-
+	
 	def terminate(self):
 		self.networkThread = None
-
+	
 	def process_api_result(self, result):
 		raise NotImplementedError
-
+	
 	@staticmethod
 	def extract_text(apiResult):
 		raise NotImplementedError
-
+	
 	_type_of_api_access = "free"
-
+	
 	def _get_accessType(self):
 		return self._type_of_api_access
-
+	
 	def _set_accessType(self, type_of_api_access):
 		self._type_of_api_access = type_of_api_access
-
+	
 	def _get_availableAccesstypes(self):
 		accessTypes = OrderedDict({
 			# Translators: Label for OCR engine settings.
@@ -544,7 +666,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			"own_key": _("Use api key registered by yourself"),
 		})
 		return self.generate_string_settings(accessTypes)
-
+	
 	@classmethod
 	def AccessTypeSetting(cls):
 		return AbstractEngine.StringSettings(
@@ -552,7 +674,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			# Translators: Label for OCR engine settings.
 			_(u"API Access Type")
 		)
-
+	
 	@classmethod
 	def BalanceSetting(cls):
 		return AbstractEngine.ReadOnlySetting(
@@ -560,15 +682,15 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			# Translators: Label of OCR API quota balance control
 			_(u"API quota Balance")
 		)
-
+	
 	_balance = -1
-
+	
 	def _get_balance(self):
 		return self._balance
-
+	
 	def _set_balance(self, balance):
 		self._balance = balance
-
+	
 	def serializeImage(self, PILImage):
 		"""
 
@@ -605,18 +727,25 @@ class CustomOCRHandler(AbstractEngineHandler):
 		"proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
 		"proxyAddress": 'string(default="")',
 	}
+	
+	
+class OnlineOCRPanel(AbstractEngineSettingsPanel):
+	title = _(u"Online OCR")
+	handler = CustomOCRHandler
+	
 
-
-class CustomOCRPanel(AbstractEngineSettingsPanel):
+class CustomOCRPanel(SettingsPanel):
+	descEngineSettingPanel = None  # type: OnlineImageDescriberPanel
+	ocrEngineSettingPanel = None  # type: OnlineOCRPanel
 	testEngineButton = None  # type: wx.Button
 	proxyAddressTextCtrl = None  # type: wx.TextCtrl
 	swapRepeatedCountEffectCheckBox = None  # type: wx.CheckBox
 	verboseDebugLoggingCheckBox = None  # type: wx.CheckBox
 	proxyTypeList = None  # type: wx.Choice
 	copyToClipboardCheckBox = None  # type: wx.CheckBox
-	title = _(u"Online OCR")
+	title = _(u"Online Image Describer")
 	handler = CustomOCRHandler
-
+	
 	PROXY_TYPES = [
 		# Translators: One of the proxy types in online OCR settings panel.
 		("noProxy", _(u"Do not use proxy")),
@@ -625,8 +754,15 @@ class CustomOCRPanel(AbstractEngineSettingsPanel):
 		# Translators: One of the proxy types  in online OCR settings panel.
 		("socks", _(u"Use socks proxy")),
 	]
-
-	def makeGeneralSettings(self, settingsSizerHelper):
+	
+	def makeSettings(self, sizer):
+		from gui.guiHelper import BoxSizerHelper
+		settingsSizerHelper = BoxSizerHelper(self, sizer=sizer)
+		self.ocrEngineSettingPanel = OnlineOCRPanel(self)
+		self.descEngineSettingPanel = OnlineImageDescriberPanel(self)
+		settingsSizerHelper.addItem(self.ocrEngineSettingPanel)
+		settingsSizerHelper.addItem(self.descEngineSettingPanel)
+		
 		# Translators: This is the label for a checkbox in the
 		# online OCR settings panel.
 		copyToClipboardText = _("&Copy result to clipboard after recognition")
@@ -661,19 +797,22 @@ class CustomOCRPanel(AbstractEngineSettingsPanel):
 		# Translators: The label for a TextCtrl in the
 		# online OCR settings panel.
 		proxyAddressLabelText = _(u"Proxy &Address")
-		self.proxyAddressTextCtrl = settingsSizerHelper.addLabeledControl(proxyAddressLabelText,
-		                                                                  wx.TextCtrl)
+		self.proxyAddressTextCtrl = settingsSizerHelper.addLabeledControl(
+			proxyAddressLabelText,
+			wx.TextCtrl)
 		self.proxyAddressTextCtrl.SetValue(config.conf[self.handler.configSectionName]["proxyAddress"])
-
+	
 	def onSave(self):
-		super(CustomOCRPanel, self).onSave()
+		self.descEngineSettingPanel.onSave()
+		self.ocrEngineSettingPanel.onSave()
 		config.conf[self.handler.configSectionName]["copyToClipboard"] = self.copyToClipboardCheckBox.GetValue()
 		config.conf[self.handler.configSectionName]["verboseDebugLogging"] = self.verboseDebugLoggingCheckBox.GetValue()
-		config.conf[self.handler.configSectionName]["swapRepeatedCountEffect"] = self.swapRepeatedCountEffectCheckBox.GetValue()
+		config.conf[self.handler.configSectionName][
+			"swapRepeatedCountEffect"] = self.swapRepeatedCountEffectCheckBox.GetValue()
 		config.conf[self.handler.configSectionName]["proxyType"] = self.PROXY_TYPES[self.proxyTypeList.GetSelection()][
 			0]
 		config.conf[self.handler.configSectionName]["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
-
+	
 	def isValid(self):
 		oldProxy = config.conf[self.handler.configSectionName]["proxyAddress"]
 		oldProxyType = config.conf[self.handler.configSectionName]["proxyType"]
@@ -709,7 +848,7 @@ class CustomOCRPanel(AbstractEngineSettingsPanel):
 				config.conf[self.handler.configSectionName]["proxyType"] = oldProxyType
 				config.conf[self.handler.configSectionName]["proxyAddress"] = oldProxy
 				refreshConnectionPool()
-
+				
 				gui.messageBox(
 					# Translators: Reported when proxy verification fails in online ocr settings panel
 					caption=_(u"Proxy is not valid, please check your proxy type and address."),

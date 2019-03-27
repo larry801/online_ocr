@@ -21,7 +21,7 @@ import ui
 from PIL import ImageGrab, Image
 import scriptHandler
 from .OnlineImageDescriberHandler import OnlineImageDescriberHandler, OnlineImageDescriberPanel
-
+import inputCore
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
@@ -52,19 +52,68 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		onlineOCRHandler.CustomOCRHandler.initialize()
 		self.handler = onlineOCRHandler.CustomOCRHandler
 		gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(CustomOCRPanel)
-	
-		OnlineImageDescriberHandler.initialize()
-		self.handler = OnlineImageDescriberHandler
-		gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(OnlineImageDescriberPanel)
 		
+		OnlineImageDescriberHandler.initialize()
+		self.descHandler = OnlineImageDescriberHandler
+		self.captureFunction = None
+		self.prevCaptureFunc = None
+		self.capture_function_installed = False
+		
+	# Translators:
+	prefix_name = _(u"Prefix of sequential gesture")
+	
+	@script(
+		description=prefix_name,
+		category=category_name,
+		gestures=[]
+	)
+	def script_startGestureSequence(self, gesture):
+		from inputCore import manager
+		self.prevCaptureFunc = manager._captureFunc
+		manager._captureFunc = self.captureFunction
+		# Translators:
+		ui.message(_("OCR layer entered"))
+		
+	def captureFunction(self, gesture):
+		"""
+		
+		@param gesture:
+		@type gesture: inputCore.InputGesture
+		@return:
+		@rtype:
+		"""
+		if not gesture.isModifier:
+			gid = gesture.identifiers[0]
+			if gid == 'c':
+				self.script_describeClipboardImage(gesture)
+				self.removeCaptureFunction()
+			elif gid == 'b':
+				self.script_describeNavigatorObject(gesture)
+				self.removeCaptureFunction()
+			else:
+				pass
+	
+	def addCaptureFunction(self):
+		log.debug("Added capture function")
+		self.prevCaptureFunc = inputCore.manager._captureFunc
+		inputCore.manager._captureFunc = self.captureFunction
+		self.capture_function_installed = True
+
+	def removeCaptureFunction(self):
+		inputCore.manager._captureFunc = self.prevCaptureFunc
+		msg = u"Capture function removed"
+		self.capture_function_installed = False
+		log.debug(msg)
+	
 	# Translators: Online Image Describer command name in input gestures dialog
 	image_describe = _(
-		"Describe the content of the current navigator object with online image describer.Then open a virtual result document.")
-
+		"Describe the content of the current navigator object with online image describer.")
+	
 	# Translators: Online Image Describer command name in input gestures dialog
-	@script(description=image_describe,
-	        category=category_name,
-	        gestures=[])
+	@script(
+		description=image_describe,
+		category=category_name,
+		gestures=[])
 	def script_describeNavigatorObject(self, gesture):
 		from contentRecog import recogUi
 		engine = OnlineImageDescriberHandler.getCurrentEngine()
@@ -78,14 +127,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	
 	# Translators: OCR command name in input gestures dialog
 	describe_clipboard_msg = _(
-		"Describe clipboard images with online image describer.Then read result.If pressed twice, open a virtual result document.")
+		"Describe clipboard images with online image describer.")
 	
 	# Translators: Reported when PIL cannot grab image from clipboard
 	noImageMessage = _(u"No image in clipboard")
 	
-	@script(description=describe_clipboard_msg,
-	        category=category_name,
-	        gestures=[])
+	@script(
+		description=describe_clipboard_msg,
+		category=category_name,
+		gestures=[])
 	def script_describeClipboardImage(self, gesture):
 		engine = OnlineImageDescriberHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
@@ -106,8 +156,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	
 	# Translators: OCR command name in input gestures dialog
 	full_ocr_msg = _(
-		"Recognizes the content of the current navigator object with online OCR engine.Then open a virtual result document.")
-		
+		"Recognizes the content of the current navigator object with online OCR engine.")
+	
 	# Translators: OCR command name in input gestures dialog
 	@script(
 		description=full_ocr_msg,
@@ -127,7 +177,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	
 	# Translators: OCR command name in input gestures dialog
 	clipboard_ocr_msg = _(
-		"Recognizes the text in clipboard images with online OCR engine.Then read result.If pressed twice, open a virtual result document.")
+		"Recognizes the text in clipboard images with online OCR engine..")
 	
 	@script(
 		description=clipboard_ocr_msg,

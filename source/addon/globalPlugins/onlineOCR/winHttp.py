@@ -9,6 +9,7 @@ from logHandler import log
 from urllib3.contrib.socks import SOCKSProxyManager
 import config
 import urllib3
+
 urllib3.disable_warnings()
 # import certifi
 # import urllib3.contrib.pyopenssl
@@ -32,7 +33,7 @@ def getConnectionPool():
 		proxyType,
 		proxyAddress
 	)
-
+	
 	if proxyType == u"http":
 		pool = urllib3.ProxyManager(
 			proxyAddress,
@@ -75,11 +76,13 @@ httpConnectionPool = getConnectionPool()
 
 def refreshConnectionPool():
 	if oldProxyType == config.conf["onlineOCR"]["proxyType"] \
-			and oldProxyAddress == config.conf["onlineOCR"]["proxyAddress"]:
+		and oldProxyAddress == config.conf["onlineOCR"]["proxyAddress"]:
 		pass
 	else:
-		global httpConnectionPool
+		global httpConnectionPool, oldProxyType, oldProxyAddress
 		httpConnectionPool = getConnectionPool()
+		oldProxyType = config.conf["onlineOCR"]["proxyType"]
+		oldProxyAddress = config.conf["onlineOCR"]["proxyAddress"]
 
 
 def doHTTPRequest(callback, method, url, **kwargs):
@@ -107,5 +110,6 @@ def doHTTPRequest(callback, method, url, **kwargs):
 
 
 def postContent(callback, url, data, headers=None):
-	doHTTPRequest(callback, 'POST', url, fields=data,
-	              headers=headers)
+	doHTTPRequest(
+		callback, 'POST', url, fields=data,
+		headers=headers)

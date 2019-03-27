@@ -214,7 +214,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		if self._use_own_api_key:
 			return "aip.baidubce.com"
 		else:
-			return self.nvda_cn_domain
+			return self.NVDAcnDomain
 
 	def get_url(self):
 		if self._use_own_api_key:

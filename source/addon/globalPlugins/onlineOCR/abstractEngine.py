@@ -339,29 +339,21 @@ class AbstractEngine(baseObject.AutoPropertyObject):
 		return False
 
 
-class AbstractEngineSettingsPanel(SettingsPanel):
+class ChangeEnginePanel(SettingsPanel):
 	"""
 	Settings panel of external services.
 	handler must be specified before use.
 	"""
 	# Developers: Please also specify a comment for translators
-	name = _("Engine")
-	engineNameCtrl = None  # type: ExpandoTextCtrl
+	title = _("Change Engine")
+	descEngineNameCtrl = None  # type: ExpandoTextCtrl
 	engineSettingPanel = None  # type: SpecificEnginePanel
 	handler = AbstractEngineHandler  # type: AbstractEngineHandler
-
-	def makeGeneralSettings(self, settingsSizerHelper):
-		"""
-		Generate general settings for engine handler
-		@param settingsSizerHelper:
-		@type settingsSizerHelper:
-		"""
-		pass
 
 	def makeSettings(self, settingsSizer):
 		settingsSizerHelper = guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
 		# Translators: A label for the engines on the engine panel.
-		engineLabel = _("&Engines")
+		engineLabel = self.title + _("&Engines")
 		engineBox = wx.StaticBox(self, label=engineLabel)
 		engineGroup = guiHelper.BoxSizerHelper(self, sizer=wx.StaticBoxSizer(engineBox, wx.HORIZONTAL))
 		settingsSizerHelper.addItem(engineGroup)
@@ -372,17 +364,17 @@ class AbstractEngineSettingsPanel(SettingsPanel):
 		# and a vertical scroll bar. This is not necessary for the single line of text we wish to
 		# display here.
 		engineDesc = self.handler.getCurrentEngine().description
-		self.engineNameCtrl = ExpandoTextCtrl(
+		self.descEngineNameCtrl = ExpandoTextCtrl(
 			self, size=(self.scaleSize(250), -1), value=engineDesc,
 			style=wx.TE_READONLY)
-		self.engineNameCtrl.Bind(wx.EVT_CHAR_HOOK, self._enterTriggersOnChangeEngine)
+		self.descEngineNameCtrl.Bind(wx.EVT_CHAR_HOOK, self._enterTriggersOnChangeEngine)
 
 		# Translators: This is the label for the button used to change engines,
 		# it appears in the context of a engine group on the Online OCR settings panel.
 		changeEngineBtn = wx.Button(self, label=_("C&hange..."))
 		engineGroup.addItem(
 			guiHelper.associateElements(
-				self.engineNameCtrl,
+				self.descEngineNameCtrl,
 				changeEngineBtn
 			)
 		)
@@ -409,7 +401,96 @@ class AbstractEngineSettingsPanel(SettingsPanel):
 
 	def updateCurrentEngine(self):
 		engine_description = self.handler.getCurrentEngine().description
-		self.engineNameCtrl.SetValue(engine_description)
+		self.descEngineNameCtrl.SetValue(engine_description)
+
+	def onPanelActivated(self):
+		# call super after all panel updates have been completed, we do not want the panel to show until this is complete.
+		self.engineSettingPanel.onPanelActivated()
+		super(AbstractEngineSettingsPanel, self).onPanelActivated()
+
+	def onPanelDeactivated(self):
+		self.engineSettingPanel.onPanelDeactivated()
+		super(AbstractEngineSettingsPanel, self).onPanelDeactivated()
+
+	def onDiscard(self):
+		self.engineSettingPanel.onDiscard()
+
+	def onSave(self):
+		self.engineSettingPanel.onSave()
+
+
+class AbstractEngineSettingsPanel(SettingsPanel):
+	"""
+	Settings panel of external services.
+	handler must be specified before use.
+	"""
+	# Developers: Please also specify a comment for translators
+	name = _("Engine")
+	title = _("Engine")
+	descEngineNameCtrl = None  # type: ExpandoTextCtrl
+	engineSettingPanel = None  # type: SpecificEnginePanel
+	handler = AbstractEngineHandler  # type: AbstractEngineHandler
+
+	def makeGeneralSettings(self, settingsSizerHelper):
+		"""
+		Generate general settings for engine handler
+		@param settingsSizerHelper:
+		@type settingsSizerHelper:
+		"""
+		pass
+
+	def makeSettings(self, settingsSizer):
+		settingsSizerHelper = guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
+		# Translators: A label for the engines on the engine panel.
+		engineLabel = self.title + _(" Engines")
+		engineBox = wx.StaticBox(self, label=engineLabel)
+		engineGroup = guiHelper.BoxSizerHelper(self, sizer=wx.StaticBoxSizer(engineBox, wx.HORIZONTAL))
+		settingsSizerHelper.addItem(engineGroup)
+
+		# Use a ExpandoTextCtrl because even when readonly it accepts focus from keyboard, which
+		# standard readonly TextCtrl does not. ExpandoTextCtrl is a TE_MULTILINE control, however
+		# by default it renders as a single line. Standard TextCtrl with TE_MULTILINE has two lines,
+		# and a vertical scroll bar. This is not necessary for the single line of text we wish to
+		# display here.
+		engineDesc = self.handler.getCurrentEngine().description
+		self.descEngineNameCtrl = ExpandoTextCtrl(
+			self, size=(self.scaleSize(250), -1), value=engineDesc,
+			style=wx.TE_READONLY)
+		self.descEngineNameCtrl.Bind(wx.EVT_CHAR_HOOK, self._enterTriggersOnChangeEngine)
+
+		# Translators: This is the label for the button used to change engines,
+		# it appears in the context of a engine group on the Online OCR settings panel.
+		changeEngineBtn = wx.Button(self, label=_("C&hange..."))
+		engineGroup.addItem(
+			guiHelper.associateElements(
+				self.descEngineNameCtrl,
+				changeEngineBtn
+			)
+		)
+		changeEngineBtn.Bind(wx.EVT_BUTTON, self.onChangeEngine)
+		self.engineSettingPanel = SpecificEnginePanel(self, self.handler)
+		settingsSizerHelper.addItem(self.engineSettingPanel)
+		self.makeGeneralSettings(settingsSizerHelper)
+
+	def _enterTriggersOnChangeEngine(self, evt):
+		if evt.KeyCode == wx.WXK_RETURN:
+			self.onChangeEngine(evt)
+		else:
+			evt.Skip()
+
+	def onChangeEngine(self, evt):
+		change_engine = EnginesSelectionDialog(self, self.handler, multiInstanceAllowed=True)
+		ret = change_engine.ShowModal()
+		if ret == wx.ID_OK:
+			self.Freeze()
+			# trigger a refresh of the settings
+			self.onPanelActivated()
+			self._sendLayoutUpdatedEvent()
+			self.Thaw()
+
+	def updateCurrentEngine(self):
+		engine_description = self.handler.getCurrentEngine().description
+		self.descEngineNameCtrl.SetValue(engine_description)
 
 	def onPanelActivated(self):
 		# call super after all panel updates have been completed, we do not want the panel to show until this is complete.

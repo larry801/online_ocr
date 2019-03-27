@@ -124,7 +124,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		if self._use_own_api_key:
 			return self.api_domain
 		else:
-			return self.nvda_cn_domain
+			return self.NVDAcnDomain
 
 	def get_url(self):
 		if self._use_own_api_key:

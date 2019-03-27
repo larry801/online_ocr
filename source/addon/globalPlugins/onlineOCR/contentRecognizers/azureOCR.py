@@ -43,6 +43,12 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 	maxSize = 4 * 1024 * 1024  # 4 mega bytes
 
 	_region = ""
+	
+	def getPayloadForHyperLink(self, url):
+		import json
+		return json.dumps({
+			"url": url,
+		})
 
 	@classmethod
 	def check(cls):
@@ -99,7 +105,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		if self._use_own_api_key:
 			return self._region
 		else:
-			return self.nvda_cn_domain
+			return self.NVDAcnDomain
 
 	def get_url(self):
 		if self._use_own_api_key:

@@ -64,7 +64,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			return "api.captchadecoder.com"
 		else:
 			self.useHttps = True
-			return self.nvda_cn_domain
+			return self.NVDAcnDomain
 
 	def _get_supportedSettings(self):
 		return [

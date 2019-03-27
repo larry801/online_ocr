@@ -54,7 +54,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			return b"api.ai.sogou.com"
 		else:
 			self.useHttps = True
-			return self.nvda_cn_domain
+			return self.NVDAcnDomain
 
 	useHttps = True
 
