@@ -18,14 +18,14 @@ from contentRecog.recogUi import _recogOnResult
 from scriptHandler import script
 from logHandler import log
 import ui
-from PIL import ImageGrab, Image
 import scriptHandler
-from .OnlineImageDescriberHandler import OnlineImageDescriberHandler, OnlineImageDescriberPanel
+from .OnlineImageDescriberHandler import OnlineImageDescriberHandler
+from PIL import ImageGrab, Image
 import inputCore
+from LayeredGesture import category_name, addonGestureMap
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
-category_name = _(u"Online OCR")
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
@@ -55,46 +55,41 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		
 		OnlineImageDescriberHandler.initialize()
 		self.descHandler = OnlineImageDescriberHandler
-		self.captureFunction = None
 		self.prevCaptureFunc = None
 		self.capture_function_installed = False
 		
-	# Translators:
-	prefix_name = _(u"Prefix of sequential gesture")
-	
-	@script(
-		description=prefix_name,
-		category=category_name,
-		gestures=[]
-	)
-	def script_startGestureSequence(self, gesture):
-		from inputCore import manager
-		self.prevCaptureFunc = manager._captureFunc
-		manager._captureFunc = self.captureFunction
-		# Translators:
-		ui.message(_("OCR layer entered"))
-		
 	def captureFunction(self, gesture):
 		"""
-		
+		Implement sequential gestures
 		@param gesture:
 		@type gesture: inputCore.InputGesture
 		@return:
 		@rtype:
 		"""
+		gestureIdentifiers = gesture.identifiers
+		msg = u"Name\n{0}\nidentifiers\n{2}\nisModifier\n{1}".format(
+			gesture.displayName,
+			gesture.isModifier,
+			gestureIdentifiers
+		)
+		log.io(msg)
 		if not gesture.isModifier:
-			gid = gesture.identifiers[0]
-			if gid == 'c':
+			addonGestureMap.getScriptsForGesture(gesture)
+			if 'kb:c' in gestureIdentifiers:
 				self.script_describeClipboardImage(gesture)
 				self.removeCaptureFunction()
-			elif gid == 'b':
+			elif 'kb:d' in gestureIdentifiers:
 				self.script_describeNavigatorObject(gesture)
 				self.removeCaptureFunction()
-			else:
-				pass
+			elif 'kb:d' in gestureIdentifiers:
+				self.script_recognizeClipboardImageWithOnlineOCREngine(gesture)
+				self.removeCaptureFunction()
+			elif 'kb:d' in gestureIdentifiers:
+				self.script_recognizeWithOnlineOCREngine(gesture)
+				self.removeCaptureFunction()
 	
 	def addCaptureFunction(self):
-		log.debug("Added capture function")
+		log.io("Capture function added.")
 		self.prevCaptureFunc = inputCore.manager._captureFunc
 		inputCore.manager._captureFunc = self.captureFunction
 		self.capture_function_installed = True
@@ -103,7 +98,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		inputCore.manager._captureFunc = self.prevCaptureFunc
 		msg = u"Capture function removed"
 		self.capture_function_installed = False
-		log.debug(msg)
+		log.io(msg)
 	
 	# Translators: Online Image Describer command name in input gestures dialog
 	image_describe = _(
@@ -113,7 +108,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		description=image_describe,
 		category=category_name,
-		gestures=[])
+		gestures=["kb:NVDA+Alt+P"])
 	def script_describeNavigatorObject(self, gesture):
 		from contentRecog import recogUi
 		engine = OnlineImageDescriberHandler.getCurrentEngine()
@@ -135,7 +130,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		description=describe_clipboard_msg,
 		category=category_name,
-		gestures=[])
+		gestures=["kb:Control+Shift+NVDA+P"])
 	def script_describeClipboardImage(self, gesture):
 		engine = OnlineImageDescriberHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
@@ -164,7 +159,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=["kb:control+shift+NVDA+r"]
 	)
-	def script_recognizeWithCustomOcr(self, gesture):
+	def script_recognizeWithOnlineOCREngine(self, gesture):
 		from contentRecog import recogUi
 		engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
@@ -184,7 +179,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=["kb:NVDA+alt+r"]
 	)
-	def script_recognizeClipboardTextWithCustomOcr(self, gesture):
+	def script_recognizeClipboardImageWithOnlineOCREngine(self, gesture):
 		engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
 		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]

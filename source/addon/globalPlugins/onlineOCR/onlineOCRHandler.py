@@ -15,10 +15,7 @@ import base64
 import wx
 import config
 from six import iterkeys
-
-from addon.globalPlugins.onlineOCR import OnlineImageDescriberPanel
-from .abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine, BooleanEngineSetting, \
-	SpecificEnginePanel
+from .abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine
 from OnlineImageDescriberHandler import OnlineImageDescriberPanel
 import addonHandler
 from . import contentRecognizers
@@ -57,7 +54,6 @@ contribPath = safeJoin(
 	u"_contrib",
 )
 sys.path.insert(0, contribPath)
-log.io(sys.path)
 from PIL import Image
 
 _ = lambda x: x
@@ -727,12 +723,12 @@ class CustomOCRHandler(AbstractEngineHandler):
 		"proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
 		"proxyAddress": 'string(default="")',
 	}
-	
-	
+
+
 class OnlineOCRPanel(AbstractEngineSettingsPanel):
 	title = _(u"Online OCR")
 	handler = CustomOCRHandler
-	
+
 
 class CustomOCRPanel(SettingsPanel):
 	descEngineSettingPanel = None  # type: OnlineImageDescriberPanel
@@ -801,7 +797,7 @@ class CustomOCRPanel(SettingsPanel):
 			proxyAddressLabelText,
 			wx.TextCtrl)
 		self.proxyAddressTextCtrl.SetValue(config.conf[self.handler.configSectionName]["proxyAddress"])
-	
+		
 	def onSave(self):
 		self.descEngineSettingPanel.onSave()
 		self.ocrEngineSettingPanel.onSave()

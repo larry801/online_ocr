@@ -49,7 +49,6 @@ If you want to use quota from your own account corresponding access tokens is re
 Some engines require two tokens.
 These are only valid if you choose "use your own API key" in API Access type.
 
-
 ## Online image description
 
 ### Keyboard commands
@@ -66,7 +65,7 @@ If there is only text in clipboard, this addon will try to use it as a path of l
 
 Here are three engines available.
 
-### Machine Learing Engine by Oliver Edholm
+### Machine Learning Engine by Oliver Edholm
 It's a free engine gives description of an image.
 If there is text inside it will do OCR on the image.
 There are two settings for this engine.
@@ -81,12 +80,7 @@ If you want to use this proxy please chose Use proxy on www.nvdacn.com in access
 
 ### Azure Image Analyze
 This engine extracts a rich set of visual features based on the image content. 
-This engine supports 5 languages in its result.
-English, Default.
-Spanish.
-Japanese.
-Portuguese.
-Simplified Chinese.
+This engine is english only by now.
 
 Visual Features include:
 Adult - detects if the image is pornographic in nature (depicts nudity or a sex act). Sexually suggestive content is also detected.
@@ -104,7 +98,7 @@ Some features also provide additional details:
 Celebrities - identifies celebrities if detected in the image.
 Landmarks - identifies landmarks if detected in the image.
 
-### Azure image description
+### Microsoft Azure Image describer
 
 This engine generates a description of an image in human readable language with complete sentences. The description is based on a collection of content tags, which are also returned by the operation. More than one description can be generated for each image. Descriptions are ordered by their confidence score.
 There are two settings for this engine.
@@ -172,8 +166,8 @@ Polish
 Portuguese 
 Russian 
 Slovenian 
-Spanish  
-Swedish  
+Spanish
+Swedish
 Turkish  
 
 Here are settings for this engine:
@@ -331,7 +325,7 @@ There is no additional configuration for these API.
 
 ### 0.11
 Added image description capability
-Oliver Edholm 
+Change addon summary to online image describer
 
 ### 0.10
 

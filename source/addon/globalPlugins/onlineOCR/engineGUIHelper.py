@@ -8,11 +8,11 @@ import winUser
 
 class EngineSettingChanger(object):
 	"""Functor which acts as callback for GUI events."""
-
+	
 	def __init__(self, setting, engine):
 		self.engine = engine
 		self.setting = setting
-
+	
 	def __call__(self, evt):
 		val = evt.GetSelection()
 		setattr(self.engine, self.setting.name, val)
@@ -20,29 +20,29 @@ class EngineSettingChanger(object):
 
 class TextInputEngineSettingChanger(EngineSettingChanger):
 	"""Same as L{EngineSettingChanger} but handles TextCtrl events."""
-
+	
 	def __call__(self, evt):
 		setattr(self.engine, self.setting.name, evt.GetString())
 
 
 class StringEngineSettingChanger(EngineSettingChanger):
 	"""Same as L{EngineSettingChanger} but handles combobox events."""
-
+	
 	def __init__(self, setting, engine, panel):
 		self.panel = panel
 		super(StringEngineSettingChanger, self).__init__(setting, engine)
-
+	
 	def __call__(self, evt):
 		setattr(self.engine, self.setting.name,
 		        getattr(self.panel, "_%ss" % self.setting.name)[evt.GetSelection()].ID)
 
 
 class VoiceSettingsSlider(wx.Slider):
-
+	
 	def __init__(self, *args, **kwargs):
 		super(VoiceSettingsSlider, self).__init__(*args, **kwargs)
 		self.Bind(wx.EVT_CHAR, self.onSliderChar)
-
+	
 	def SetValue(self, i):
 		i = int(i)
 		super(VoiceSettingsSlider, self).SetValue(i)
@@ -52,9 +52,10 @@ class VoiceSettingsSlider(wx.Slider):
 		# HACK: Win events don't seem to be sent for certain explicitly set values,
 		# so send our own win event.
 		# This will cause duplicates in some cases, but NVDA will filter them out.
-		winUser.user32.NotifyWinEvent(winUser.EVENT_OBJECT_VALUECHANGE, self.Handle, winUser.OBJID_CLIENT,
-		                              winUser.CHILDID_SELF)
-
+		winUser.user32.NotifyWinEvent(
+			winUser.EVENT_OBJECT_VALUECHANGE, self.Handle, winUser.OBJID_CLIENT,
+			winUser.CHILDID_SELF)
+	
 	def onSliderChar(self, evt):
 		key = evt.KeyCode
 		if key == wx.WXK_UP:
@@ -80,7 +81,7 @@ class EngineSetting(object):
 	Represents an engine setting such as language or region
 	"""
 	configSpec = "string(default=None)"
-
+	
 	def __init__(self, name, displayNameWithAccelerator, availableInEngineSettingsRing=True, displayName=None):
 		self.name = name
 		self.displayNameWithAccelerator = displayNameWithAccelerator
@@ -108,7 +109,7 @@ class ReadOnlyEngineSetting(EngineSetting):
 class NumericEngineSetting(EngineSetting):
 	"""Represents a numeric engine setting such as image quality."""
 	configSpec = "integer(default=50,min=0,max=100)"
-
+	
 	def __init__(self, name, displayNameWithAccelerator, availableInEngineSettingsRing=True, minStep=1, normalStep=5,
 	             largeStep=10, displayName=None):
 		"""
@@ -132,7 +133,7 @@ class BooleanEngineSetting(EngineSetting):
 	"""Represents a boolean engine setting such as whether to detect language automatically.
 	"""
 	configSpec = "boolean(default=False)"
-
+	
 	def __init__(self, name, displayNameWithAccelerator, availableInEngineSettingsRing=False, displayName=None):
 		super(BooleanEngineSetting, self).__init__(
 			name,

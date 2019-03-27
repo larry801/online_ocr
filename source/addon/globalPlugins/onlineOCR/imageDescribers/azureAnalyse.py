@@ -2,6 +2,7 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
+from __future__ import unicode_literals
 from . import azure
 import addonHandler
 from collections import OrderedDict
@@ -124,7 +125,14 @@ class MLDescriber(azure.MLDescriber):
 				"imageObjects",
 				_(
 					u"Detects various objects within an image, including the approximate location. The Objects argument is only available in English.")
-			), MLDescriber.APIKeySetting(),
+			),
+			
+			MLDescriber.APIKeySetting(),
+			MLDescriber.StringSettings(
+				"region",
+				# Translators: Label for engine settings
+				_(u"Azure resource Region")
+			),
 		]
 	
 	@classmethod
@@ -147,7 +155,7 @@ class MLDescriber(azure.MLDescriber):
 			"Celebrities,Landmarks": _(u"identifies landmarks and celebrities if detected in the image."),
 		})
 		return self.generate_string_settings(details)
-
+	
 	def _get_visualFeature(self):
 		features = []
 		if self._adult:
@@ -172,7 +180,7 @@ class MLDescriber(azure.MLDescriber):
 			features.append("Description")
 			features.append("Tags")
 		return ','.join(features)
-		
+	
 	def get_url(self):
 		if self._use_own_api_key:
 			return b"vision/v2.0/analyze"
@@ -194,7 +202,7 @@ class MLDescriber(azure.MLDescriber):
 		])
 		queryString = b"?visualFeatures={2}&language={0}&details={1}".format(
 			self._language,
-			self._maxCandidates,
+			self._detail,
 			self.visualFeature,
 		)
 		fullURL = fullURL + queryString
@@ -203,3 +211,160 @@ class MLDescriber(azure.MLDescriber):
 			if not isinstance(fullURL, str):
 				fullURL = fullURL.decode('utf8')
 		return fullURL
+	
+	def extract_text(self, apiResult):
+		entries = []
+		if "categories" in apiResult:
+			entries.append("\n")
+			# Translators: Result from azure image analyzer
+			entries.append(_(u"Categories:"))
+			for cats in apiResult["categories"]:
+				entries.append(cats["name"])
+		if "adult" in apiResult:
+			entries.append("\n")
+			if apiResult["adult"]["isAdultContent"]:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"This image contains adult content"))
+			else:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"This image does not contain adult content"))
+			if apiResult["adult"]["isRacyContent"]:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"This image contains racy content"))
+			else:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"This image does not contain racy content"))
+		if "color" in apiResult:
+			entries.append("\n")
+			# Translators: Result from azure image analyzer
+			colorMsg = _(
+				u"Dominant foreground color is {foreGroundColor}. Dominant background color is {backGroundColor}.")
+			entries.append(colorMsg.format(
+				foreGroundColor=apiResult["color"]["dominantColorForeground"],
+				backGroundColor=apiResult["color"]["dominantColorBackground"],
+			))
+			# Translators: Result from azure image analyzer
+			entries.append(_("Hex code of accent color is {hex}.".format(
+				hex=apiResult["color"]["accentColor"]
+			)))
+			# Translators: Result from azure image analyzer
+			entries.append(_("Dominant colors:"))
+			for color in apiResult["color"]["dominantColors"]:
+				entries.append(color)
+			if apiResult["color"]["isBWImg"]:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"The image is black and white."))
+			else:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"The image is not black and white."))
+		if "tags" in apiResult:
+			entries.append("\n")
+			# Translators: Result from azure image analyzer
+			entries.append(_(u"Tags:"))
+			for tag in apiResult["tags"]:
+				entries.append(tag["name"])
+		if "imageType" in apiResult:
+			entries.append("\n")
+			if apiResult["imageType"]["clipArtType"] == 0:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"The image is not a clip-art."))
+			elif apiResult["imageType"]["clipArtType"] == 1:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"Cannot tell whether is image is clip-art"))
+			elif apiResult["imageType"]["clipArtType"] == 2:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"The image is Normal-clip-art"))
+			elif apiResult["imageType"]["clipArtType"] == 3:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"The image is Good-clip-art"))
+			if apiResult["imageType"]["lineDrawingType"] == 1:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"The image is a lineDrawing"))
+			else:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"The image is not a lineDrawing"))
+		if "description" in apiResult:
+			entries.append("\n")
+			# Translators: Result from azure image analyzer
+			entries.append(_(u"Descriptions:"))
+			for desc in apiResult["description"]["captions"]:
+				entries.append(desc["text"])
+		if self.text_result:
+			if "objects" in apiResult and len(apiResult["objects"]) > 0:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"Objects:"))
+				resultSets = apiResult["objects"]
+				for result in resultSets:
+					entries.append(result["object"])
+			if "brands" in apiResult and len(apiResult["brands"]) > 0:
+				# Translators: Result from azure image analyzer
+				entries.append(_(u"Brands:"))
+				resultSets = apiResult["brands"]
+				for result in resultSets:
+					entries.append(result["name"])
+			if "faces" in apiResult and len(apiResult["faces"]) > 0:
+				resultSets = apiResult["faces"]
+				for result in resultSets:
+					entries.append(
+						self.getFaceDescription(result)
+					)
+		return u" ".join(entries)
+	
+	def convert_to_line_result_format(self, apiResult):
+		lineResult = [[{
+			"x": 0,
+			"y": 0,
+			"width": 1,
+			"height": 1,
+			"text": self.extract_text(apiResult),
+		}]]
+		if "objects" in apiResult and len(apiResult["objects"]) > 0:
+			objectResult = []
+			resultSets = apiResult["objects"]
+			for result in resultSets:
+				objectResult.append({
+					"x": result["rectangle"]["x"],
+					"y": result["rectangle"]["y"],
+					"width": result["rectangle"]["w"],
+					"height": result["rectangle"]["h"],
+					"text": result["object"]
+				})
+			lineResult.append(objectResult)
+		if "brands" in apiResult and len(apiResult["brands"]) > 0:
+			brandResult = []
+			resultSets = apiResult["brands"]
+			for result in resultSets:
+				brandResult.append({
+					"x": result["rectangle"]["x"],
+					"y": result["rectangle"]["y"],
+					"width": result["rectangle"]["w"],
+					"height": result["rectangle"]["h"],
+					"text": result["name"]
+				})
+			lineResult.append(brandResult)
+		if "faces" in apiResult and len(apiResult["faces"]) > 0:
+			faceResult = []
+			resultSets = apiResult["faces"]
+			for result in resultSets:
+				faceResult.append({
+					"x": result["faceRectangle"]["x"],
+					"y": result["faceRectangle"]["y"],
+					"width": result["faceRectangle"]["w"],
+					"height": result["faceRectangle"]["h"],
+					"text": self.getFaceDescription(result)
+				})
+			lineResult.append(faceResult)
+		log.io(lineResult)
+		return lineResult
+	
+	@staticmethod
+	def getFaceDescription(faceObj):
+		# Translators: Result from azure image analyzer
+		entries = [
+			_(u"Face:"),
+			_("Age:"),
+			faceObj["age"],
+			_("Gender:"),
+			faceObj["genger"]
+		]
+		return " ".join(entries)
