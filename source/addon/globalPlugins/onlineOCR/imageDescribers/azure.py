@@ -147,15 +147,15 @@ class MLDescriber(BaseDescriber):
 	
 	def _get_availableLanguages(self):
 		languages = OrderedDict({
-			# Translators: Text language for OCR
+			# Translators: Text language for image description
 			b"zh": _(u"Simplified Chinese"),
-			# Translators: Text language for OCR
+			# Translators: Text language for image description
 			b"en": _(u"English"),
-			# Translators: Text language for OCR
+			# Translators: Text language for image description
 			b"ja": _(u"Japanese"),
-			# Translators: Text language for OCR
+			# Translators: Text language for image description
 			b"pt": _(u"Portuguese"),
-			# Translators: Text language for OCR
+			# Translators: Text language for image description
 			b"es": _(u"Spanish"),
 		})
 		return self.generate_string_settings(languages)
