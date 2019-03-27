@@ -2,7 +2,7 @@
 
 Author: Larry Wang
 NVDA compatibility: from 2018.3 to 2019.1
-Download [development version](https://github.com/larry801/online_ocr/releases/download/0.10-dev/onlineOCR-0.10-dev.nvda-addon)
+Download [development version](https://github.com/larry801/online_ocr/releases/download/0.11-dev/onlineOCR-0.11-dev.nvda-addon)
 
 This addon aims at adding online image recognition engines to NVDA.
 There are two types of engines. OCR and image describer.
@@ -78,7 +78,8 @@ Security:
 The author of this addon has setup a proxy on www.nvdacn.com for users who cannot access google service access.
 If you want to use this proxy please chose Use proxy on www.nvdacn.com in access type settings.
 
-### Azure Image Analyze
+If you want to use your own key in the following two Microsoft engines. Please follow the guide in Microsoft Azure OCR section.
+### Microsoft Azure Image Analyser
 This engine extracts a rich set of visual features based on the image content. 
 This engine is english only by now.
 

@@ -15,7 +15,7 @@ class MLDescriber(BaseDescriber):
 
 	name = b"machineLearning"
 
-	description = _(u"AI image description by Oliver Edholm")
+	description = _(u"Machine Learning Engine by Oliver Edholm")
 
 	@classmethod
 	def check(cls):
