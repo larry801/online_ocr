@@ -460,7 +460,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 					# Translators: Reported when recognition result is empty
 					ocrResult = _(u"blank. There may be no text on this image.")
 				resultText = result_prefix + ocrResult
-				if config.conf[self.configSectionName]["copyToClipboard"]:
+				if config.conf["onlineOCR"]["copyToClipboard"]:
 					import api
 					api.copyToClip(resultText)
 				if self.text_result:
@@ -498,7 +498,6 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		# when user do not use result viewer
 		result_prefix = _(u"Recognition result:")
 		self.networkThread = None
-		log.io(result)
 		if not self._use_own_api_key:
 			curl_error_message = self.processCURLError(result)  # type: str
 			if curl_error_message:
@@ -520,7 +519,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				# Translators: Reported when recognition result is empty
 				ocrResult = _(u"blank. There may be no text on this image.")
 			resultText = result_prefix + ocrResult
-			if config.conf[self.configSectionName]["copyToClipboard"]:
+			if config.conf["onlineOCR"]["copyToClipboard"]:
 				import api
 				api.copyToClip(resultText)
 			if self.text_result:
@@ -542,52 +541,11 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		@param onResult: Result callback for result viewer
 		@return: None
 		"""
-		
-		def callback(result):
-			self.networkThread = None
-			# Translators: Reported when api result is invalid
-			failed_message = _(u"Recognition failed. Result is invalid.")
-			# Translators: Message added before recognition result
-			# when user do not use result viewer
-			result_prefix = _(u"Recognition result:")
-			log.io(result)
-			if not self._use_own_api_key:
-				curl_error_message = self.processCURLError(result)  # type: str
-				if curl_error_message:
-					ui.message(curl_error_message)
-					return
-			api_error_message = self.process_api_result(result)  # type: str
-			if api_error_message:
-				ui.message(api_error_message)
-				return
-			try:
-				result = self.convert_to_json(result)
-			except ValueError as e:
-				ui.message(failed_message)
-				return
-			
-			try:
-				ocrResult = self.extract_text(result)
-				if ocrResult.isspace():
-					# Translators: Reported when recognition result is empty
-					ocrResult = _(u"blank. There may be no text on this image.")
-				resultText = result_prefix + ocrResult
-				if config.conf[self.configSectionName]["copyToClipboard"]:
-					import api
-					api.copyToClip(resultText)
-				if self.text_result:
-					ui.message(resultText)
-				else:
-					onResult(LinesWordsResult(self.convert_to_line_result_format(result), imageInfo))
-			except Exception as e:
-				log.error(e)
-				log.error(result)
-				ui.message(failed_message)
-		
 		if self.networkThread:
 			# Translators: Error message
 			ui.message(_(u"There is another recognition ongoing. Please wait."))
 			return
+		self._onResult = onResult
 		PILImage = self.get_converted_image(pixels, imageInfo)
 		PILImage = self.checkAndResizeImage(PILImage)
 		if PILImage is False:
@@ -599,13 +557,13 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		payloads = self.getPayload(imageContent)
 		fullURL = self.getFullURL()
 		headers = self.getHTTPHeaders()
-		msg = u"{0}\n{1}\n{2}\n{3}".format(
-			callback,
-			fullURL,
-			headers,
-			payloads,
-		)
+
 		if config.conf["onlineOCR"]["verboseDebugLogging"]:
+			msg = u"{0}\n{1}\n{2}".format(
+				fullURL,
+				headers,
+				payloads,
+			)
 			log.io(msg)
 		self.sendRequest(self.callback, fullURL, payloads, headers)
 	

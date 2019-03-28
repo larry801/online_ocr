@@ -220,14 +220,17 @@ class MLDescriber(BaseDescriber):
 	def extract_text(apiResult):
 		words = []
 		tags = apiResult["description"]["tags"]
-		# Translators: Result from azure image describer
-		tagCode = _("Tags:")
-		words.append(tagCode)
-		for result in tags:
-			words.append(result)
-		# Translators: Result from azure image describer
-		captionsCode = _("Captions:")
-		words.append(captionsCode)
-		for captions in apiResult["description"]["captions"]:
-			words.append(captions["text"])
+		if len(tags) > 0:
+			# Translators: Result from azure image describer
+			tagCode = _("Tags:")
+			words.append(tagCode)
+			for result in tags:
+				words.append(result)
+		captions = apiResult["description"]["captions"]
+		if len(captions) > 0:
+			# Translators: Result from azure image describer
+			captionsCode = _("Captions:")
+			words.append(captionsCode)
+			for caption in captions:
+				words.append(caption["text"])
 		return u" ".join(words)

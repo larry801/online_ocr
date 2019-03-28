@@ -1,8 +1,8 @@
 # Online image describer addon #
 
-Author: Larry Wang
-NVDA compatibility: from 2018.3 to 2019.1
-Download [development version](https://github.com/larry801/online_ocr/releases/download/0.11-dev/onlineOCR-0.11-dev.nvda-addon)
+* Author: Larry Wang
+* NVDA compatibility: from 2018.3 to 2019.1
+* Download [development version](https://github.com/larry801/online_ocr/releases/download/0.11-dev/onlineOCR-0.11-dev.nvda-addon)
 
 This addon aims at adding online image recognition engines to NVDA.
 There are two types of engines. OCR and image describer.
@@ -323,6 +323,10 @@ According to my test Chinese and English and their mixture is supported.
 There is no additional configuration for these API.
 
 ## Change Log
+
+### 0.12
+Fixed browse mode message of Microsoft Azure Image Describer
+The accent color is now represented as NVDA colour descriptions.
 
 ### 0.11
 Added image description capability
