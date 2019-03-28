@@ -20,11 +20,6 @@ oldProxyAddress = config.conf["onlineOCR"]["proxyAddress"]
 _ = lambda x: x
 addonHandler.initTranslation()
 
-# Translators: Message announced when network error occurred
-internet_error_message = _(u"Recognition failed. Internet connection error.")
-# Translators: Message announced when network error occurred
-timeout_message = _(u"Internet connection timeout.Recognition failed. ")
-
 
 def getConnectionPool():
 	proxyType = config.conf["onlineOCR"]["proxyType"]
@@ -98,12 +93,17 @@ def doHTTPRequest(callback, method, url, **kwargs):
 	refreshConnectionPool()
 	try:
 		r = httpConnectionPool.request(method, url, **kwargs)
-	except urllib3.exceptions.TimeoutError:
-		ui.message(timeout_message)
+	except urllib3.exceptions.TimeoutError as e:
+		# Translators: Message announced when network error occurred
+		ui.message(_(u"Internet connection timeout.Recognition failed."))
+		log.io(r.data)
+		callback(None)
 		return
 	except urllib3.exceptions.HTTPError as e:
 		log.error(e)
-		ui.message(internet_error_message)
+		# Translators: Message announced when network error occurred
+		ui.message(_(u"Recognition failed. Internet connection error."))
+		callback(None)
 		return
 	log.io(r.data)
 	callback(r.data)
