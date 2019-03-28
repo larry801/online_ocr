@@ -516,7 +516,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				self._onResult(LinesWordsResult(
 					self.convert_to_line_result_format(result),
 					imageInfo=self._imageInfo))
-		except (KeyError, ValueError) as e:
+		except (KeyError, ValueError):
 			# Translators: Reported when api result is invalid
 			ui.message(_(u"Recognition failed. Result is invalid."))
 		finally:

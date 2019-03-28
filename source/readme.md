@@ -338,7 +338,8 @@ Improved result format of Microsoft Azure Image Analyser
 Improve document according to review comments
 Fixed gesture inconsistency.
 Control+Shift+NVDA for clipboard while NVDA+ALT for navigator object
-Fix missing imageInfo  
+Fix missing imageInfo 
+ 
 ### 0.11
 Added image description capability
 Change addon summary to online image describer
