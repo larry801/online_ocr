@@ -163,27 +163,27 @@ class MLDescriber(azure.MLDescriber):
 	def _get_visualFeature(self):
 		features = []
 		if self._adult:
-			features.append("Adult")
+			features.append(b"Adult")
 		if self._brands:
-			features.append("Brands")
+			features.append(b"Brands")
 		if self._categories:
-			features.append("Categories")
+			features.append(b"Categories")
 		if self._color:
-			features.append("Color")
+			features.append(b"Color")
 		if self._imageDescription:
-			features.append("Description")
+			features.append(b"Description")
 		if self._faces:
-			features.append("Faces")
+			features.append(b"Faces")
 		if self._imageType:
-			features.append("ImageType")
+			features.append(b"ImageType")
 		if self._imageObjects:
-			features.append("Objects")
+			features.append(b"Objects")
 		if self._tags:
-			features.append("Tags")
+			features.append(b"Tags")
 		if len(features) <= 0:
-			features.append("Description")
-			features.append("Tags")
-		return ','.join(features)
+			features.append(b"Description")
+			features.append(b"Tags")
+		return b','.join(features)
 	
 	def get_url(self):
 		if self._use_own_api_key:
