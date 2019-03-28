@@ -46,7 +46,7 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 	configSectionName = None  # type: str
 	engineClass = None
 	engineClassName = None
-
+	isInitialized = False
 	currentEngine = None
 	engine_class_list = None
 	defaultEnginePriorityList = ['empty']
@@ -63,6 +63,11 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 		cls.getEngineList()
 		engine_name = config.conf[cls.configSectionName]["engine"]
 		cls.setCurrentEngine(engine_name)
+		cls.isInitialized = True
+		
+	@classmethod
+	def terminate(cls):
+		config.post_configProfileSwitch.unregister(cls.handlePostConfigProfileSwitch)
 
 	@classmethod
 	def init_config(cls):
@@ -168,6 +173,7 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 
 	@classmethod
 	def handlePostConfigProfileSwitch(cls):
+		cls.initialize()
 		conf = config.conf[cls.configSectionName]
 		if conf["engine"] != cls.currentEngine.name:
 			cls.setCurrentEngine(conf["engine"])

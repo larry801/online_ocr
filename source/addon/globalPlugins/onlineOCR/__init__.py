@@ -12,7 +12,9 @@ import globalPluginHandler
 import gui
 import globalVars
 import config
-from onlineOCRHandler import CustomOCRPanel, OnlineImageDescriberHandler
+from onlineOCRHandler import (
+	CustomOCRPanel, OnlineImageDescriberHandler, CustomOCRHandler
+)
 from contentRecog import RecogImageInfo
 from contentRecog.recogUi import _recogOnResult
 from scriptHandler import script
@@ -252,3 +254,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				return clipboardImage
 		else:
 			return None
+	
+	def terminate(self):
+		OnlineImageDescriberHandler.terminate()
+		CustomOCRHandler.terminate()
