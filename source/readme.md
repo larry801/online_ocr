@@ -2,7 +2,7 @@
 
 * Author: Larry Wang
 * NVDA compatibility: from 2018.3 to 2019.1
-* Download [development version](https://github.com/larry801/online_ocr/releases/download/0.11-dev/onlineOCR-0.11-dev.nvda-addon)
+* Download [development version](https://github.com/larry801/online_ocr/releases/download/0.12-dev/onlineOCR-0.12-sdev.nvda-addon)
 
 This addon aims at adding online image recognition engines to NVDA.
 There are two types of engines. OCR and image describer.
@@ -10,12 +10,20 @@ OCR extract text from image.
 Image describer describe visual features in image in text form.
 Such as general description, color type landmarks and so on.
 
+## Online image describe engines
+Internet connection is required to use this addon, since image describe services are provided by API endpoints on the Internet.
+They are called engines in this addon.
+Quality and accuracy of results are affected by many factors.
+
+* Models and techniques used by engine provider
+* 
+* Screen resolution
+* Quality of image
+ 
+You can choose recognition engines and configure them in detail in *Online Image Describer* category in NVDA settings dialog.
+
 The author of addon have registered account with free API quota and set up a proxy server on www.nvdacn.com to make this addon easier to test at first. Test quota is limited and may be cancelled by API provider anytime.
 It is highly recommended to register your own key according to guide in each engine.
-
-### Engine Configuration
-
-You can choose recognition engines and configure them in detail in *Online Image Describer* category in NVDA settings dialog.
 
 The following settings are applicable to all engines.
 
@@ -26,7 +34,6 @@ If enabled, recognition result will be copied to clipboard after recognition.
 By default, a virtual result document is shown only if you press the corresponding gesture twice, if you use that frequently you can enable this option so that you only need to press once to get a result viewer.
 
 * Enable more verbose logging for debug purpose:
-
 Some logs are essential for debugging but affects performance and takes up a lot of space. Only turn this on if specifically instructed to by the addon author or an NVDA developer.
 
 * Proxy type:
@@ -327,6 +334,7 @@ There is no additional configuration for these API.
 ### 0.12
 Fixed browse mode message of Microsoft Azure Image Describer
 The accent color is now represented as NVDA colour descriptions.
+Improved result format of Microsoft Azure Image Analyser
 
 ### 0.11
 Added image description capability
