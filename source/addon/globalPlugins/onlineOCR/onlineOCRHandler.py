@@ -16,8 +16,8 @@ import wx
 import config
 from six import iterkeys
 from .abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine
-from OnlineImageDescriberHandler import OnlineImageDescriberPanel
 import addonHandler
+from . import imageDescribers
 from . import contentRecognizers
 from logHandler import log
 import ui
@@ -721,6 +721,37 @@ class CustomOCRHandler(AbstractEngineHandler):
 class OnlineOCRPanel(AbstractEngineSettingsPanel):
 	title = _(u"Online OCR")
 	handler = CustomOCRHandler
+
+
+class BaseDescriber(BaseRecognizer):
+	"""
+	Abstract base BaseDescriber for image description
+	"""
+	
+	configSectionName = "onlineImageDescriber"
+
+
+class OnlineImageDescriberHandler(AbstractEngineHandler):
+	engineClass = BaseDescriber
+	engineClassName = "BaseDescriber"
+	engineAddonName = "onlineImageDescriber"
+	enginePackageName = "imageDescribers"
+	enginePackage = imageDescribers
+	configSectionName = "onlineImageDescriber"
+	defaultEnginePriorityList = ["machineLearning"]
+	configSpec = {
+		"engine": "string(default=auto)",
+		"copyToClipboard": "boolean(default=false)",
+		"swapRepeatedCountEffect": "boolean(default=false)",
+		"verboseDebugLogging": "boolean(default=false)",
+		"proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
+		"proxyAddress": 'string(default="")',
+	}
+
+
+class OnlineImageDescriberPanel(AbstractEngineSettingsPanel):
+	title = _(u"Online Image Describer")
+	handler = OnlineImageDescriberHandler
 
 
 class CustomOCRPanel(SettingsPanel):

@@ -2,7 +2,7 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
-from ..OnlineImageDescriberHandler import BaseDescriber
+from ..onlineOCRHandler import BaseDescriber
 import addonHandler
 from collections import OrderedDict
 from logHandler import log
@@ -55,7 +55,7 @@ class MLDescriber(BaseDescriber):
 		if self._use_own_api_key:
 			return "us-central1-icon-classifier.cloudfunctions.net"
 		else:
-			return self.nvda_cn_domain
+			return self.NVDAcnDomain
 
 	def getPayload(self, image):
 		if self._use_own_api_key:

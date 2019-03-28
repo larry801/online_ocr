@@ -12,14 +12,13 @@ import globalPluginHandler
 import gui
 import globalVars
 import config
-from onlineOCRHandler import CustomOCRPanel
+from onlineOCRHandler import CustomOCRPanel, OnlineImageDescriberHandler
 from contentRecog import RecogImageInfo
 from contentRecog.recogUi import _recogOnResult
 from scriptHandler import script
 from logHandler import log
 import ui
 import scriptHandler
-from .OnlineImageDescriberHandler import OnlineImageDescriberHandler
 from PIL import ImageGrab, Image
 import inputCore
 from LayeredGesture import category_name, addonGestureMap
