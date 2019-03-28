@@ -35,6 +35,8 @@ class MLDescriber(BaseDescriber):
 			"height": 1,
 			"text": self.extract_text(apiResult),
 		}]]
+	
+	_type_of_api_access = "own_key"
 
 	def _get_availableAccesstypes(self):
 		accessTypes = OrderedDict({
