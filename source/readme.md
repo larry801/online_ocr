@@ -135,9 +135,9 @@ http://ai.sogou.com/
 
 ### Keyboard commands
 
-Control+Shift+NVDA+R Recognize current navigator object with online OCR engine Then read result. If pressed twice, open a virtual result document.
+NVDA+Alt+R Recognize current navigator object with online OCR engine Then read result. If pressed twice, open a virtual result document.
 
-NVDA+Alt+R Recognizes image in clipboard with online OCR engine. Then read result. If pressed twice, open a virtual result document.
+Control+Shift+NVDA+R Recognizes image in clipboard with online OCR engine. Then read result. If pressed twice, open a virtual result document.
 It accepts two kinds of content.
 First is an actual image(CF_DIB), you can put that into clipboard by taking a screenshot with Print Screen key or copy image in a browser.
 
@@ -336,6 +336,8 @@ Fixed browse mode message of Microsoft Azure Image Describer
 The accent color is now represented as NVDA colour descriptions.
 Improved result format of Microsoft Azure Image Analyser
 Improve document according to review comments
+Fixed gesture inconsistency.
+Control+Shift+NVDA for clipboard while NVDA+ALT for navigator object
 
 ### 0.11
 Added image description capability

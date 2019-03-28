@@ -157,7 +157,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		description=full_ocr_msg,
 		category=category_name,
-		gestures=["kb:control+shift+NVDA+r"]
+		gestures=["kb:NVDA+Alt+R"]
 	)
 	def script_recognizeWithOnlineOCREngine(self, gesture):
 		from contentRecog import recogUi
@@ -177,7 +177,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		description=clipboard_ocr_msg,
 		category=category_name,
-		gestures=["kb:NVDA+alt+r"]
+		gestures=["kb:Control+Shift+NVDA+R"]
 	)
 	def script_recognizeClipboardImageWithOnlineOCREngine(self, gesture):
 		engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
