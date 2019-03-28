@@ -2,7 +2,10 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
-from __future__ import unicode_literals
+from __future__ import (
+	unicode_literals,
+	absolute_import
+)
 from .. import onlineOCRHandler
 import addonHandler
 from collections import OrderedDict
@@ -228,9 +231,10 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		# Unicode URL cause urllib3 to decode raw image data as if they were unicode.
 		if isinstance(fullURL, string_types):
 			if not isinstance(fullURL, str):
-				fullURL = fullURL.decode('utf8')
-		return fullURL
-
+				return str(fullURL)
+			else:
+				return fullURL
+			
 	def process_api_result(self, result):
 		import json
 		apiResult = json.loads(result)

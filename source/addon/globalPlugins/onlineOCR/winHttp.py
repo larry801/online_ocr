@@ -3,6 +3,9 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
 # urllib3 used in this file is Copyright (c) 2008-2019 Andrey Petrov and contributors under MIT license.
+from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import division
 import addonHandler
 import ui
 from logHandler import log
@@ -91,6 +94,7 @@ def doHTTPRequest(callback, method, url, **kwargs):
 	@type url:
 	"""
 	refreshConnectionPool()
+	
 	try:
 		r = httpConnectionPool.request(method, url, **kwargs)
 	except urllib3.exceptions.TimeoutError as e:

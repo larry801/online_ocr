@@ -153,7 +153,7 @@ class ImImageFile(ImageFile.ImageFile):
 
             try:
                 m = split.match(s)
-            except re.error as v:
+            except re.error:
                 raise SyntaxError("not an IM file")
 
             if m:
@@ -196,7 +196,7 @@ class ImImageFile(ImageFile.ImageFile):
             raise SyntaxError("Not an IM file")
 
         # Basic attributes
-        self.size = self.info[SIZE]
+        self._size = self.info[SIZE]
         self.mode = self.info[MODE]
 
         # Skip forward to start of image data
@@ -289,6 +289,15 @@ class ImImageFile(ImageFile.ImageFile):
 
     def tell(self):
         return self.frame
+
+    def _close__fp(self):
+        try:
+            if self.__fp != self.fp:
+                self.__fp.close()
+        except AttributeError:
+            pass
+        finally:
+            self.__fp = None
 
 #
 # --------------------------------------------------------------------

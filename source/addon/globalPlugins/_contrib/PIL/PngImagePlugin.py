@@ -142,7 +142,8 @@ class ChunkStream(object):
     def crc(self, cid, data):
         "Read and verify checksum"
 
-        # Skip CRC checks for ancillary chunks if allowed to load truncated images
+        # Skip CRC checks for ancillary chunks if allowed to load truncated
+        # images
         # 5th byte of first char is 1 [specs, section 5.4]
         if ImageFile.LOAD_TRUNCATED_IMAGES and (i8(cid[0]) >> 5 & 1):
             self.crc_skip(cid, data)
@@ -295,14 +296,15 @@ class PngStream(ChunkStream):
         self.im_mode = None
         self.im_tile = None
         self.im_palette = None
+        self.im_custom_mimetype = None
 
         self.text_memory = 0
 
     def check_text_memory(self, chunklen):
         self.text_memory += chunklen
         if self.text_memory > MAX_TEXT_MEMORY:
-            raise ValueError("Too much memory used in text chunks: %s>MAX_TEXT_MEMORY" %
-                             self.text_memory)
+            raise ValueError("Too much memory used in text chunks: "
+                             "%s>MAX_TEXT_MEMORY" % self.text_memory)
 
     def chunk_iCCP(self, pos, length):
 
@@ -339,7 +341,7 @@ class PngStream(ChunkStream):
         self.im_size = i32(s), i32(s[4:])
         try:
             self.im_mode, self.im_rawmode = _MODES[(i8(s[8]), i8(s[9]))]
-        except:
+        except Exception:
             pass
         if i8(s[12]):
             self.im_info["interlace"] = 1
@@ -525,6 +527,20 @@ class PngStream(ChunkStream):
 
         return s
 
+    # APNG chunks
+    def chunk_acTL(self, pos, length):
+        s = ImageFile._safe_read(self.fp, length)
+        self.im_custom_mimetype = 'image/apng'
+        return s
+
+    def chunk_fcTL(self, pos, length):
+        s = ImageFile._safe_read(self.fp, length)
+        return s
+
+    def chunk_fdAT(self, pos, length):
+        s = ImageFile._safe_read(self.fp, length)
+        return s
+
 
 # --------------------------------------------------------------------
 # PNG reader
@@ -576,16 +592,26 @@ class PngImageFile(ImageFile.ImageFile):
         # (believe me, I've tried ;-)
 
         self.mode = self.png.im_mode
-        self.size = self.png.im_size
+        self._size = self.png.im_size
         self.info = self.png.im_info
-        self.text = self.png.im_text  # experimental
+        self._text = None
         self.tile = self.png.im_tile
+        self.custom_mimetype = self.png.im_custom_mimetype
 
         if self.png.im_palette:
             rawmode, data = self.png.im_palette
             self.palette = ImagePalette.raw(rawmode, data)
 
         self.__idat = length  # used by load_read()
+
+    @property
+    def text(self):
+        # experimental
+        if self._text is None:
+            # iTxt, tEXt and zTXt chunks may appear at the end of the file
+            # So load the file to ensure that they are read
+            self.load()
+        return self._text
 
     def verify(self):
         "Verify PNG file"
@@ -599,6 +625,8 @@ class PngImageFile(ImageFile.ImageFile):
         self.png.verify()
         self.png.close()
 
+        if self._exclusive_fp:
+            self.fp.close()
         self.fp = None
 
     def load_prepare(self):
@@ -637,7 +665,24 @@ class PngImageFile(ImageFile.ImageFile):
 
     def load_end(self):
         "internal: finished reading image data"
+        while True:
+            self.fp.read(4)  # CRC
 
+            try:
+                cid, pos, length = self.png.read()
+            except (struct.error, SyntaxError):
+                break
+
+            if cid == b"IEND":
+                break
+
+            try:
+                self.png.call(cid, pos, length)
+            except UnicodeDecodeError:
+                break
+            except EOFError:
+                ImageFile._safe_read(self.fp, length)
+        self._text = self.png.im_text
         self.png.close()
         self.png = None
 
@@ -865,6 +910,6 @@ def getchunks(im, **params):
 Image.register_open(PngImageFile.format, PngImageFile, _accept)
 Image.register_save(PngImageFile.format, _save)
 
-Image.register_extension(PngImageFile.format, ".png")
+Image.register_extensions(PngImageFile.format, [".png", ".apng"])
 
 Image.register_mime(PngImageFile.format, "image/png")

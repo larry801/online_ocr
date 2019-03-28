@@ -2,6 +2,9 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
+from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import division
 import wx
 import winUser
 
@@ -33,8 +36,9 @@ class StringEngineSettingChanger(EngineSettingChanger):
 		super(StringEngineSettingChanger, self).__init__(setting, engine)
 	
 	def __call__(self, evt):
-		setattr(self.engine, self.setting.name,
-		        getattr(self.panel, "_%ss" % self.setting.name)[evt.GetSelection()].ID)
+		setattr(
+			self.engine, self.setting.name,
+			getattr(self.panel, "_%ss" % self.setting.name)[evt.GetSelection()].ID)
 
 
 class VoiceSettingsSlider(wx.Slider):
@@ -110,8 +114,9 @@ class NumericEngineSetting(EngineSetting):
 	"""Represents a numeric engine setting such as image quality."""
 	configSpec = "integer(default=50,min=0,max=100)"
 	
-	def __init__(self, name, displayNameWithAccelerator, availableInEngineSettingsRing=True, minStep=1, normalStep=5,
-	             largeStep=10, displayName=None):
+	def __init__(
+		self, name, displayNameWithAccelerator, availableInEngineSettingsRing=True, minStep=1, normalStep=5,
+		largeStep=10, displayName=None):
 		"""
 		@param minStep: Specifies the minimum step between valid values for each numeric setting. For example, if L{minStep} is set to 10, setting values can only be multiples of 10; 10, 20, 30, etc.
 		@type minStep: int
@@ -121,9 +126,10 @@ class NumericEngineSetting(EngineSetting):
 		@type largeStep: int
 		@note: If necessary, the step values will be normalised so that L{minStep} <= L{normalStep} <= L{largeStep}.
 		"""
-		super(NumericEngineSetting, self).__init__(name, displayNameWithAccelerator,
-		                                           availableInEngineSettingsRing=availableInEngineSettingsRing,
-		                                           displayName=displayName)
+		super(NumericEngineSetting, self).__init__(
+			name, displayNameWithAccelerator,
+			availableInEngineSettingsRing=availableInEngineSettingsRing,
+			displayName=displayName)
 		self.minStep = minStep
 		self.normalStep = max(normalStep, minStep)
 		self.largeStep = max(largeStep, self.normalStep)

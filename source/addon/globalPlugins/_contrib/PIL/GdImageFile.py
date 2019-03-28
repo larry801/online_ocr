@@ -49,7 +49,7 @@ class GdImageFile(ImageFile.ImageFile):
             raise SyntaxError("Not a valid GD 2.x .gd file")
 
         self.mode = "L"  # FIXME: "P"
-        self.size = i16(s[2:4]), i16(s[4:6])
+        self._size = i16(s[2:4]), i16(s[4:6])
 
         trueColor = i8(s[6])
         trueColorOffset = 2 if trueColor else 0
@@ -59,9 +59,11 @@ class GdImageFile(ImageFile.ImageFile):
         if tindex < 256:
             self.info["transparency"] = tindex
 
-        self.palette = ImagePalette.raw("XBGR", s[7+trueColorOffset+4:7+trueColorOffset+4+256*4])
+        self.palette = ImagePalette.raw(
+            "XBGR", s[7+trueColorOffset+4:7+trueColorOffset+4+256*4])
 
-        self.tile = [("raw", (0, 0)+self.size, 7+trueColorOffset+4+256*4, ("L", 0, 1))]
+        self.tile = [("raw", (0, 0)+self.size, 7+trueColorOffset+4+256*4,
+                      ("L", 0, 1))]
 
 
 def open(fp, mode="r"):

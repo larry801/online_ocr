@@ -4,6 +4,8 @@
 # See the file COPYING for more details.
 # urllib3 used in this file is Copyright (c) 2008-2019 Andrey Petrov and contributors under MIT license.
 from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import division
 from threading import Thread
 import gui
 import os
@@ -23,11 +25,7 @@ from logHandler import log
 import ui
 from collections import OrderedDict
 from gui.settingsDialogs import SettingsPanel
-
-try:
-	from urllib import urlencode
-except ImportError:
-	from urllib.urllib_parse import urlencode
+from six.moves.urllib_parse import urlencode
 from six import binary_type
 
 
@@ -250,6 +248,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	
 	@staticmethod
 	def post_to_url(url, payloads):
+		# noinspection PyUnresolvedReferences
 		import urllib3
 		http = urllib3.PoolManager(timeout=urllib3.Timeout(connect=10, read=100))
 		response = http.request("POST", url=url, fields=payloads)
@@ -338,6 +337,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	
 	resizeUpperLimit = 5
 	resizeLowerLimit = 0.2
+	asymptoticResizeFactor = 0.8
 	
 	def checkAndResizeImage(self, image):
 		"""
@@ -416,11 +416,27 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			)
 			log.io(msg)
 			if width * height > self.maxPixels:
-				isImageValid = False
-				# Translators: Reported when error occurred during image resizing
-				errorMsg = _(u"Image has too many pixels.")
-				ui.message(errorMsg)
-				return False
+				pixelCount = image.width * image.height
+				while pixelCount >= self.maxPixels and image.width >= self.minWidth and image.height >= self.minHeight:
+					image = image.resize((
+						int(image.width * self.asymptoticResizeFactor),
+						int(image.height * self.asymptoticResizeFactor),
+					))
+					pixelCount = image.width * image.height
+					if config.conf["onlineOCR"]["verboseDebugLogging"]:
+						msg = "newWidth\n{0}\nnewHeight\n{1}\npixelCount\n{2}".format(
+							image.width,
+							image.height,
+							pixelCount
+						)
+						log.io(msg)
+				if image.width * image.height > self.maxPixels:
+					isImageValid = False
+					# Translators: Reported when error occurred during image resizing
+					ui.message(_(u"Image has too many pixels."))
+					return False
+				else:
+					return image
 			else:
 				return image
 		else:
@@ -471,6 +487,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		headers = self.getHTTPHeaders()
 		
 		if config.conf["onlineOCR"]["verboseDebugLogging"]:
+			log.io(type(fullURL))
 			msg = u"{0}\n{1}\n{2}".format(
 				fullURL,
 				headers,
@@ -539,7 +556,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		self._imageInfo = imageInfo
 		PILImage = self.get_converted_image(pixels, imageInfo)
 		PILImage = self.checkAndResizeImage(PILImage)
-		if PILImage is False:
+		if not PILImage:
 			ui.message(PILImage)
 			return
 		imageContent = self.prepareImageContent(PILImage)
@@ -548,8 +565,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		payloads = self.getPayload(imageContent)
 		fullURL = self.getFullURL()
 		headers = self.getHTTPHeaders()
-		
 		if config.conf["onlineOCR"]["verboseDebugLogging"]:
+			log.io(type(fullURL))
 			msg = u"{0}\n{1}\n{2}".format(
 				fullURL,
 				headers,
@@ -654,14 +671,14 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		
 		while imageSize >= self.maxSize and image.width >= self.minWidth and image.height >= self.minHeight:
 			image = image.resize((
-				int(image.width * 0.8),
-				int(image.height * 0.8),
+				int(image.width * self.asymptoticResizeFactor),
+				int(image.height * self.asymptoticResizeFactor),
 			))
 			
 			imageContent = self.serializeImage(image)
 			imageSize = len(imageContent)
 			if config.conf["onlineOCR"]["verboseDebugLogging"]:
-				msg = "newWidth\n{0}newHeight\n{1}\nsize\n{2}".format(
+				msg = "newWidth\n{0}\nnewHeight\n{1}\nsize\n{2}".format(
 					image.width,
 					image.height,
 					imageSize
@@ -673,7 +690,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			errorMsg = _(u"Image content is too big to upload.")
 			ui.message(errorMsg)
 			if config.conf["onlineOCR"]["verboseDebugLogging"]:
-				msg = "newWidth\n{0}newHeight\n{1}\nsize\n{2}".format(
+				msg = "newWidth\n{0}\nnewHeight\n{1}\nsize\n{2}".format(
 					image.width,
 					image.height,
 					imageSize

@@ -159,13 +159,13 @@ class Jpeg2KImageFile(ImageFile.ImageFile):
         sig = self.fp.read(4)
         if sig == b'\xff\x4f\xff\x51':
             self.codec = "j2k"
-            self.size, self.mode = _parse_codestream(self.fp)
+            self._size, self.mode = _parse_codestream(self.fp)
         else:
             sig = sig + self.fp.read(8)
 
             if sig == b'\x00\x00\x00\x0cjP  \x0d\x0a\x87\x0a':
                 self.codec = "jp2"
-                self.size, self.mode = _parse_jp2_header(self.fp)
+                self._size, self.mode = _parse_jp2_header(self.fp)
             else:
                 raise SyntaxError('not a JPEG 2000 file')
 
@@ -181,14 +181,14 @@ class Jpeg2KImageFile(ImageFile.ImageFile):
         try:
             fd = self.fp.fileno()
             length = os.fstat(fd).st_size
-        except:
+        except Exception:
             fd = -1
             try:
                 pos = self.fp.tell()
                 self.fp.seek(0, 2)
                 length = self.fp.tell()
                 self.fp.seek(pos, 0)
-            except:
+            except Exception:
                 length = -1
 
         self.tile = [('jpeg2k', (0, 0) + self.size, 0,
@@ -198,8 +198,8 @@ class Jpeg2KImageFile(ImageFile.ImageFile):
         if self.reduce:
             power = 1 << self.reduce
             adjust = power >> 1
-            self.size = (int((self.size[0] + adjust) / power),
-                         int((self.size[1] + adjust) / power))
+            self._size = (int((self.size[0] + adjust) / power),
+                          int((self.size[1] + adjust) / power))
 
         if self.tile:
             # Update the reduce and layers settings
@@ -232,6 +232,13 @@ def _save(im, fp, filename):
     tile_size = info.get('tile_size', None)
     quality_mode = info.get('quality_mode', 'rates')
     quality_layers = info.get('quality_layers', None)
+    if quality_layers is not None and not (
+        isinstance(quality_layers, (list, tuple)) and
+        all([isinstance(quality_layer, (int, float))
+             for quality_layer in quality_layers])
+    ):
+        raise ValueError('quality_layers must be a sequence of numbers')
+
     num_resolutions = info.get('num_resolutions', 0)
     cblk_size = info.get('codeblock_size', None)
     precinct_size = info.get('precinct_size', None)
@@ -243,7 +250,7 @@ def _save(im, fp, filename):
     if hasattr(fp, "fileno"):
         try:
             fd = fp.fileno()
-        except:
+        except Exception:
             fd = -1
 
     im.encoderconfig = (
@@ -270,7 +277,8 @@ def _save(im, fp, filename):
 Image.register_open(Jpeg2KImageFile.format, Jpeg2KImageFile, _accept)
 Image.register_save(Jpeg2KImageFile.format, _save)
 
-Image.register_extensions(Jpeg2KImageFile.format, [".jp2", ".j2k", ".jpc", ".jpf", ".jpx", ".j2c"])
+Image.register_extensions(Jpeg2KImageFile.format,
+                          [".jp2", ".j2k", ".jpc", ".jpf", ".jpx", ".j2c"])
 
 Image.register_mime(Jpeg2KImageFile.format, 'image/jp2')
 Image.register_mime(Jpeg2KImageFile.format, 'image/jpx')

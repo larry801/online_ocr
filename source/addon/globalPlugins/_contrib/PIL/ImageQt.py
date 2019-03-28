@@ -23,16 +23,21 @@ import sys
 
 qt_versions = [
     ['5', 'PyQt5'],
+    ['side2', 'PySide2'],
     ['4', 'PyQt4'],
     ['side', 'PySide']
 ]
 # If a version has already been imported, attempt it first
-qt_versions.sort(key=lambda qt_version: qt_version[1] in sys.modules, reverse=True)
+qt_versions.sort(key=lambda qt_version: qt_version[1] in sys.modules,
+                 reverse=True)
 for qt_version, qt_module in qt_versions:
     try:
         if qt_module == 'PyQt5':
             from PyQt5.QtGui import QImage, qRgba, QPixmap
             from PyQt5.QtCore import QBuffer, QIODevice
+        elif qt_module == 'PySide2':
+            from PySide2.QtGui import QImage, qRgba, QPixmap
+            from PySide2.QtCore import QBuffer, QIODevice
         elif qt_module == 'PyQt4':
             from PyQt4.QtGui import QImage, qRgba, QPixmap
             from PyQt4.QtCore import QBuffer, QIODevice
@@ -119,7 +124,8 @@ def align8to32(bytes, width, mode):
 
     new_data = []
     for i in range(len(bytes) // bytes_per_line):
-        new_data.append(bytes[i*bytes_per_line:(i+1)*bytes_per_line] + b'\x00' * extra_padding)
+        new_data.append(bytes[i*bytes_per_line:(i+1)*bytes_per_line]
+                        + b'\x00' * extra_padding)
 
     return b''.join(new_data)
 
@@ -134,7 +140,7 @@ def _toqclass_helper(im):
         if py3:
             im = str(im.toUtf8(), "utf-8")
         else:
-            im = unicode(im.toUtf8(), "utf-8")
+            im = unicode(im.toUtf8(), "utf-8")  # noqa: F821
     if isPath(im):
         im = Image.open(im)
 
@@ -179,8 +185,8 @@ if qt_is_installed:
             An PIL image wrapper for Qt.  This is a subclass of PyQt's QImage
             class.
 
-            :param im: A PIL Image object, or a file name (given either as Python
-                string or a PyQt string object).
+            :param im: A PIL Image object, or a file name (given either as
+                Python string or a PyQt string object).
             """
             im_data = _toqclass_helper(im)
             # must keep a reference, or Qt will crash!

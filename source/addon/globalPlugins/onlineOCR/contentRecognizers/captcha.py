@@ -3,6 +3,8 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
 from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import division
 from .. import onlineOCRHandler
 import addonHandler
 

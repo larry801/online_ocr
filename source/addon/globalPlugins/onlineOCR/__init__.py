@@ -7,12 +7,14 @@
 A global plugin that add online ocr to NVDA
 """
 from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import division
 import addonHandler
 import globalPluginHandler
 import gui
 import globalVars
 import config
-from onlineOCRHandler import (
+from .onlineOCRHandler import (
 	CustomOCRPanel, OnlineImageDescriberHandler, CustomOCRHandler
 )
 from contentRecog import RecogImageInfo
@@ -23,7 +25,7 @@ import ui
 import scriptHandler
 from PIL import ImageGrab, Image
 import inputCore
-from LayeredGesture import category_name, addonGestureMap
+from .LayeredGesture import category_name, addonGestureMap
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()

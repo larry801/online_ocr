@@ -75,7 +75,7 @@ def APP(self, marker):
         try:
             jfif_unit = i8(s[7])
             jfif_density = i16(s, 8), i16(s, 10)
-        except:
+        except Exception:
             pass
         else:
             if jfif_unit == 1:
@@ -107,7 +107,7 @@ def APP(self, marker):
         # extract Adobe custom properties
         try:
             adobe_transform = i8(s[1])
-        except:
+        except Exception:
             pass
         else:
             self.info["adobe_transform"] = adobe_transform
@@ -159,7 +159,7 @@ def SOF(self, marker):
 
     n = i16(self.fp.read(2))-2
     s = ImageFile._safe_read(self.fp, n)
-    self.size = i16(s[3:]), i16(s[1:])
+    self._size = i16(s[3:]), i16(s[1:])
 
     self.bits = i8(s[0])
     if self.bits != 8:
@@ -334,7 +334,6 @@ class JpegImageFile(ImageFile.ImageFile):
 
             if i in MARKER:
                 name, description, handler = MARKER[i]
-                # print(hex(i), name, description)
                 if handler is not None:
                     handler(self, i)
                 if i == 0xFFDA:  # start of scan
@@ -391,7 +390,7 @@ class JpegImageFile(ImageFile.ImageFile):
                 if scale >= s:
                     break
             e = e[0], e[1], (e[2]-e[0]+s-1)//s+e[0], (e[3]-e[1]+s-1)//s+e[1]
-            self.size = ((self.size[0]+s-1)//s, (self.size[1]+s-1)//s)
+            self._size = ((self.size[0]+s-1)//s, (self.size[1]+s-1)//s)
             scale = s
 
         self.tile = [(d, e, o, a)]
@@ -424,7 +423,7 @@ class JpegImageFile(ImageFile.ImageFile):
                 pass
 
         self.mode = self.im.mode
-        self.size = self.im.size
+        self._size = self.im.size
 
         self.tile = []
 
@@ -442,7 +441,7 @@ def _fixup_dict(src_dict):
         try:
             if len(value) == 1 and not isinstance(value, dict):
                 return value[0]
-        except:
+        except Exception:
             pass
         return value
 
@@ -513,7 +512,7 @@ def _getmp(self):
         info = TiffImagePlugin.ImageFileDirectory_v2(head)
         info.load(file_contents)
         mp = dict(info)
-    except:
+    except Exception:
         raise SyntaxError("malformed MP Index (unreadable directory)")
     # it's an error not to have a number of images
     try:
@@ -579,7 +578,7 @@ RAWMODE = {
     "YCbCr": "YCbCr",
 }
 
-zigzag_index = (0,  1,  5,  6, 14, 15, 27, 28,
+zigzag_index = (0,  1,  5,  6, 14, 15, 27, 28,  # noqa: E128
                 2,  4,  7, 13, 16, 26, 29, 42,
                 3,  8, 12, 17, 25, 30, 41, 43,
                 9, 11, 18, 24, 31, 40, 44, 53,
@@ -793,12 +792,13 @@ def jpeg_factory(fp=None, filename=None):
     return im
 
 
-# -------------------------------------------------------------------q-
+# ---------------------------------------------------------------------
 # Registry stuff
 
 Image.register_open(JpegImageFile.format, jpeg_factory, _accept)
 Image.register_save(JpegImageFile.format, _save)
 
-Image.register_extensions(JpegImageFile.format, [".jfif", ".jpe", ".jpg", ".jpeg"])
+Image.register_extensions(JpegImageFile.format,
+                          [".jfif", ".jpe", ".jpg", ".jpeg"])
 
 Image.register_mime(JpegImageFile.format, "image/jpeg")

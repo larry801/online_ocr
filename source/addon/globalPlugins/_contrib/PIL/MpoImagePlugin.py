@@ -84,8 +84,17 @@ class MpoImageFile(JpegImagePlugin.JpegImageFile):
     def tell(self):
         return self.__frame
 
+    def _close__fp(self):
+        try:
+            if self.__fp != self.fp:
+                self.__fp.close()
+        except AttributeError:
+            pass
+        finally:
+            self.__fp = None
 
-# -------------------------------------------------------------------q-
+
+# ---------------------------------------------------------------------
 # Registry stuff
 
 # Note that since MPO shares a factory with JPEG, we do not need to do a

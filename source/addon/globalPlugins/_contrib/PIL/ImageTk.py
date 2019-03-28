@@ -26,21 +26,14 @@
 #
 
 import sys
+from io import BytesIO
+
+from . import Image
 
 if sys.version_info.major > 2:
     import tkinter
 else:
     import Tkinter as tkinter
-
-# required for pypy, which always has cffi installed
-try:
-    from cffi import FFI
-    ffi = FFI()
-except ImportError:
-    pass
-
-from . import Image
-from io import BytesIO
 
 
 # --------------------------------------------------------------------
@@ -131,7 +124,7 @@ class PhotoImage(object):
         self.__photo.name = None
         try:
             self.__photo.tk.call("image", "delete", name)
-        except:
+        except Exception:
             pass  # ignore internal errors
 
     def __str__(self):
@@ -192,10 +185,15 @@ class PhotoImage(object):
                 from . import _imagingtk
                 try:
                     if hasattr(tk, 'interp'):
-                        # Pypy is using a ffi cdata element
+                        # Required for PyPy, which always has CFFI installed
+                        from cffi import FFI
+                        ffi = FFI()
+
+                        # PyPy is using an FFI CDATA element
                         # (Pdb) self.tk.interp
                         #  <cdata 'Tcl_Interp *' 0x3061b50>
-                        _imagingtk.tkinit(int(ffi.cast("uintptr_t", tk.interp)), 1)
+                        _imagingtk.tkinit(
+                            int(ffi.cast("uintptr_t", tk.interp)), 1)
                     else:
                         _imagingtk.tkinit(tk.interpaddr(), 1)
                 except AttributeError:
@@ -246,7 +244,7 @@ class BitmapImage(object):
         self.__photo.name = None
         try:
             self.__photo.tk.call("image", "delete", name)
-        except:
+        except Exception:
             pass  # ignore internal errors
 
     def width(self):

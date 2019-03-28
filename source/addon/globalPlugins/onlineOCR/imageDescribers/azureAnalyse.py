@@ -3,6 +3,8 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
 from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import division
 from . import azure
 import addonHandler
 from collections import OrderedDict
@@ -213,8 +215,10 @@ class MLDescriber(azure.MLDescriber):
 		# Unicode URL cause urllib3 to decode raw image data as if they were unicode.
 		if isinstance(fullURL, string_types):
 			if not isinstance(fullURL, str):
-				fullURL = fullURL.decode('utf8')
-		return fullURL
+				log.io("Decode URL to str")
+				return str(fullURL)
+			else:
+				return fullURL
 	
 	def extract_text(self, apiResult):
 		entries = []
@@ -406,7 +410,7 @@ class MLDescriber(azure.MLDescriber):
 			_("Face:"),
 			# Translators: Result from azure image analyzer
 			_("Age:"),
-			faceObj["age"],
+			str(faceObj["age"]),
 			# Translators: Result from azure image analyzer
 			_("Gender:"),
 			faceObj["gender"]

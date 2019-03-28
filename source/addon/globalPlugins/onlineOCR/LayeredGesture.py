@@ -2,17 +2,20 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
+from __future__ import unicode_literals
+from __future__ import absolute_import
 import gui
 import wx
 from gui.settingsDialogs import InputGesturesDialog
 from inputCore import (
-	GlobalGestureMap, _AllGestureMappingsRetriever
+	GlobalGestureMap,
+	_AllGestureMappingsRetriever,
 )
 import addonHandler
 from logHandler import log
 import os
 import globalVars
-from onlineOCRHandler import safeJoin
+from .onlineOCRHandler import safeJoin
 import inputCore
 _ = lambda x: x
 # We need to initialize translation and localization support:

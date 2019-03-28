@@ -2,6 +2,9 @@
 # Copyright (C) 2019 Larry Wang <larry.wang.801@gmail.com>
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
+from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import division
 from ..onlineOCRHandler import BaseDescriber
 import addonHandler
 from collections import OrderedDict
@@ -49,13 +52,13 @@ class MLDescriber(BaseDescriber):
 
 	def get_url(self):
 		if self._use_own_api_key:
-			return "function-2/interpret_image"
+			return b"function-2/interpret_image"
 		else:
-			return "ocr/imageDesc.php"
+			return b"ocr/imageDesc.php"
 
 	def get_domain(self):
 		if self._use_own_api_key:
-			return "us-central1-icon-classifier.cloudfunctions.net"
+			return b"us-central1-icon-classifier.cloudfunctions.net"
 		else:
 			return self.NVDAcnDomain
 
