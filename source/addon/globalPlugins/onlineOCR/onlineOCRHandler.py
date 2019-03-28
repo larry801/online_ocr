@@ -74,6 +74,14 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	useHttps = True
 	_onResult = None
 	
+	_compression = 9
+	
+	def _get_compression(self):
+		return self._compression
+	
+	def _set_compression(self, compression):
+		self._compression = compression
+	
 	_quality = 75
 	
 	def _get_quality(self):
@@ -81,7 +89,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	
 	def _set_quality(self, quality):
 		self._quality = quality
-		
+	
 	def ImageQualitySetting(self):
 		return BaseRecognizer.NumericSettings(
 			"quality",
@@ -232,6 +240,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		png_buffer = BytesIO()
 		img.save(
 			png_buffer, "PNG",
+			compression_level=self._compression,
 			quality=self._quality,
 			optimize=True
 		)
