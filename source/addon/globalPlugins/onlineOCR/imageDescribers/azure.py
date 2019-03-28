@@ -208,8 +208,13 @@ class MLDescriber(BaseDescriber):
 			return False
 	
 	def convert_to_line_result_format(self, apiResult):
-		from contentRecog import SimpleTextResult
-		return SimpleTextResult(self.extract_text(apiResult))
+		return [[{
+			"x": 0,
+			"y": 0,
+			"width": 1,
+			"height": 1,
+			"text": self.extract_text(apiResult),
+		}]]
 	
 	@staticmethod
 	def extract_text(apiResult):
