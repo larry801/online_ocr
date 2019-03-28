@@ -70,22 +70,8 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		return [
 			CustomContentRecognizer.AccessTypeSetting(),
 			CustomContentRecognizer.APIKeySetting(),
-			# CustomContentRecognizer.BalanceSetting(),
 		]
 
-	def serializeImage(self, PILImage):
-		from io import BytesIO
-		import ui
-		imgBuf = BytesIO()
-		PILImage.save(imgBuf, "PNG")
-		imageContent = imgBuf.getvalue()
-		if len(imageContent) > self.maxSize:
-			# Translators: Reported when error occurred during image serialization
-			errorMsg = _(u"Image content size is too big")
-			ui.message(errorMsg)
-			return False
-		else:
-			return imageContent
 	name = b"captcha"
 
 	@classmethod

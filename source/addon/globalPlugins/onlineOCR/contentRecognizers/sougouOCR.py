@@ -16,21 +16,23 @@ addonHandler.initTranslation()
 
 class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 	name = b"sougouOCR"
-
+	
 	# Translators: Description of Online OCR Engine
 	description = _("Sougou AI OCR")
-
+	
+	uploadBase64EncodeImage = False
+	
 	def _get_supportedSettings(self):
 		return [
 			CustomContentRecognizer.AccessTypeSetting(),
 			CustomContentRecognizer.APIKeySetting(),
 			CustomContentRecognizer.APISecretSetting(),
 		]
-
+	
 	@classmethod
 	def check(cls):
 		return True
-
+	
 	def process_api_result(self, result):
 		import json
 		try:
@@ -47,7 +49,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			return statusText
 		except:
 			return False
-
+	
 	def get_domain(self):
 		if self._use_own_api_key:
 			self.useHttps = False
@@ -55,15 +57,15 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		else:
 			self.useHttps = True
 			return self.NVDAcnDomain
-
+	
 	useHttps = True
-
+	
 	def get_url(self):
 		if self._use_own_api_key:
 			return b"pub/ocr"
 		else:
 			return b"ocr/sougou.php"
-
+	
 	@staticmethod
 	def calculate_signature(options, app_key):
 		"""
@@ -86,7 +88,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		md5 = hashlib.md5()
 		md5.update(encoded_option)
 		return md5.hexdigest()
-
+	
 	def getHTTPHeaders(self):
 		if self._use_own_api_key:
 			return {
@@ -94,12 +96,16 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			}
 		else:
 			return {}
-
+	
 	def serializeImage(self, PILImage):
 		from io import BytesIO
 		import ui
 		imgBuf = BytesIO()
-		PILImage.save(imgBuf, "JPEG")
+		PILImage.save(
+			imgBuf, "JPEG",
+			subsampling=0,
+			quality=self._quality
+		)
 		imageContent = imgBuf.getvalue()
 		if len(imageContent) > self.maxSize:
 			# Translators: Reported when error occurred during image serialization
@@ -108,7 +114,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			return False
 		else:
 			return imageContent
-
+	
 	def getPayload(self, jpegBytes):
 		if self._use_own_api_key:
 			# use str here to avoid urllib3 decode raw image data as bytes
@@ -122,12 +128,12 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			paramName: (fileName, jpegBytes)
 		}
 		return payloads
-
+	
 	def convert_to_line_result_format(self, apiResult):
 		def extractCoordinate(coord):
 			groups = coord.split(',')
 			return int(groups[0]), int(groups[1])
-
+		
 		lineResult = []
 		for items in apiResult[u"result"]:
 			rightXCoord, yCoord = extractCoordinate(items[u"frame"][1])
@@ -141,7 +147,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			}])
 		log.io(lineResult)
 		return lineResult
-
+	
 	@staticmethod
 	def extract_text(apiResult):
 		words = []
@@ -149,7 +155,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			words.append(items[u"content"])
 			log.io(items[u"content"])
 		return u" ".join(words)
-
+	
 	@staticmethod
 	def getSignature(ak, sk, url, method='POST'):
 		import hashlib
@@ -163,7 +169,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		headerSig = pre + '/' + base64.b64encode(signature)
 		log.io(headerSig)
 		return str(headerSig)
-
+	
 	def getFullURL(self):
 		from six import string_types
 		url = super(CustomContentRecognizer, self).getFullURL()
@@ -173,7 +179,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			if not isinstance(fullURL, str):
 				fullURL = fullURL.decode('utf8')
 		return fullURL
-
+	
 	@staticmethod
 	def getImageFileName():
 		import time
@@ -181,20 +187,26 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		ts = "{0:.3f}".format(time.time())
 		fNList.append(ts)
 		fNList.append('_')
-
+		
 		def luhn_residue(digits):
-			return sum(sum(divmod(int(d) * (1 + i % 2), 10))
-				for i, d in enumerate(digits[::-1])) % 10
-
-		def getImei(N):
+			return sum(
+				sum(
+					divmod(
+						int(d) * (1 + i % 2), 10
+					)
+				)
+				for i, d in enumerate(digits[::-1])
+			) % 10
+		
+		def getIMEI(N):
 			import random
 			part = ''.join(str(random.randrange(0, 9)) for _ in range(N - 1))
 			res = luhn_residue('{}{}'.format(part, 0))
 			return '{}{}'.format(part, -res % 10)
-
+		
 		import hashlib
 		m = hashlib.md5()
-		m.update(str(getImei(15)))
+		m.update(str(getIMEI(15)))
 		fNList.append(m.hexdigest())
 		fNList.append('_fyj.jpg')
 		return "".join(fNList)

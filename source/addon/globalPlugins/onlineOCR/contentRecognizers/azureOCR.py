@@ -18,6 +18,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 
 	# Translators: Description of Online OCR Engine
 	description = _("Microsoft Azure OCR")
+	uploadBase64EncodeImage = False
 
 	def _get_supportedSettings(self):
 		return [
@@ -229,20 +230,6 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 			if not isinstance(fullURL, str):
 				fullURL = fullURL.decode('utf8')
 		return fullURL
-
-	def serializeImage(self, PILImage):
-		from io import BytesIO
-		import ui
-		imgBuf = BytesIO()
-		PILImage.save(imgBuf, "PNG")
-		imageContent = imgBuf.getvalue()
-		if len(imageContent) > self.maxSize:
-			# Translators: Reported when error occurred during image serialization
-			errorMsg = _(u"Image content size is too big")
-			ui.message(errorMsg)
-			return False
-		else:
-			return imageContent
 
 	def process_api_result(self, result):
 		import json

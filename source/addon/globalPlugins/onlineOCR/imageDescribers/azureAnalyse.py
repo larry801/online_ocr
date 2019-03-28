@@ -20,6 +20,8 @@ class MLDescriber(azure.MLDescriber):
 	# Translators: Description of Online OCR Engine
 	description = _("Microsoft Azure Image Analyser")
 	
+	uploadBase64EncodeImage = False
+	
 	_adult = False
 	
 	def _get_adult(self):
