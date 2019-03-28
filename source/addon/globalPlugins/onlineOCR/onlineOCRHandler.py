@@ -681,12 +681,19 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		@return:
 		@rtype: bool or str
 		"""
-		imgBuf = BytesIO()
-		PILImage.save(imgBuf, "PNG")
-		imageContent = imgBuf.getvalue()
-		if len(imageContent) > self.maxSize:
+		imageBuffer = BytesIO()
+		PILImage.save(
+			imageBuffer, "PNG",
+			compression_level=self._compression,
+			quality=self._quality,
+			optimize=True
+		)
+		imageContent = imageBuffer.getvalue()
+		imageSize = len(imageContent)
+		if imageSize > self.maxSize:
 			# Translators: Reported when error occurred during image serialization
-			errorMsg = _(u"Image content size is too big")
+			errorMsg = _(u"Image content is too big to upload.")
+			log.io(imageSize)
 			ui.message(errorMsg)
 			return False
 		else:
