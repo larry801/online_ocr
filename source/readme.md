@@ -9,17 +9,11 @@ There are two types of engines. OCR and image describer.
 OCR extract text from image.
 Image describer describe visual features in image in text form.
 Such as general description, color type landmarks and so on.
-
-## Online image describe engines
 Internet connection is required to use this addon, since image describe services are provided by API endpoints on the Internet.
 They are called engines in this addon.
-Quality and accuracy of results are affected by many factors.
 
-* Models and techniques used by engine provider
-* 
-* Screen resolution
-* Quality of image
- 
+## Engine Configuration
+
 You can choose recognition engines and configure them in detail in *Online Image Describer* category in NVDA settings dialog.
 
 The author of addon have registered account with free API quota and set up a proxy server on www.nvdacn.com to make this addon easier to test at first. Test quota is limited and may be cancelled by API provider anytime.
@@ -46,15 +40,21 @@ The following settings means the same in all engines, describe them here to save
 
 * API Access Type:
 This controls how you get access to the corresponding API endpoints.
-
 If you choose "Use public quota", you are using free quota in an account registered by addon author.
 If you choose "Use your own API key", this addon will use quota from your own account.
-
 
 * APP ID, API key or API Secret Key:
 If you want to use quota from your own account corresponding access tokens is required. Some engines only need API key.
 Some engines require two tokens.
 These are only valid if you choose "use your own API key" in API Access type.
+
+Note that the quality and accuracy of results are affected by many factors.
+
+* Models and techniques used by engine provider
+* Quality of uploaded image
+* Is navigator object hidden behind something else
+* Screen resolution
+ 
 
 ## Online image description
 
@@ -335,15 +335,14 @@ There is no additional configuration for these API.
 Fixed browse mode message of Microsoft Azure Image Describer
 The accent color is now represented as NVDA colour descriptions.
 Improved result format of Microsoft Azure Image Analyser
+Improve document according to review comments
 
 ### 0.11
 Added image description capability
 Change addon summary to online image describer
 
 ### 0.10
-
-Fix error using user's own api key in sougou API
-
+Fix error using user's own api key in sougou API.
 Fix unknown panel issue by adding settings to supportedSettings
 
 ### 0.9

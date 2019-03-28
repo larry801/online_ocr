@@ -74,6 +74,21 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	useHttps = True
 	_onResult = None
 	
+	_quality = 75
+	
+	def _get_quality(self):
+		return self._quality
+	
+	def _set_quality(self, quality):
+		self._quality = quality
+		
+	def ImageQualitySetting(self):
+		return BaseRecognizer.NumericSettings(
+			"quality",
+			# Translators: Label for image quality settings in settings panel
+			_("Upload image quality")
+		)
+	
 	_api_key = ""
 	
 	_api_secret_key = ""
@@ -215,7 +230,11 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				height * resizeFactor
 			))
 		png_buffer = BytesIO()
-		img.save(png_buffer, "PNG")
+		img.save(
+			png_buffer, "PNG",
+			quality=self._quality,
+			optimize=True
+		)
 		return png_buffer.getvalue()
 	
 	@staticmethod
@@ -557,7 +576,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		payloads = self.getPayload(imageContent)
 		fullURL = self.getFullURL()
 		headers = self.getHTTPHeaders()
-
+		
 		if config.conf["onlineOCR"]["verboseDebugLogging"]:
 			msg = u"{0}\n{1}\n{2}".format(
 				fullURL,
@@ -755,7 +774,7 @@ class CustomOCRPanel(SettingsPanel):
 			proxyAddressLabelText,
 			wx.TextCtrl)
 		self.proxyAddressTextCtrl.SetValue(config.conf[self.handler.configSectionName]["proxyAddress"])
-		
+	
 	def onSave(self):
 		self.descEngineSettingPanel.onSave()
 		self.ocrEngineSettingPanel.onSave()
