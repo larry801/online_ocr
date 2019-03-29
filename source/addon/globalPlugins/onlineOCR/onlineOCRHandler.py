@@ -504,6 +504,11 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		# when user do not use result viewer
 		result_prefix = _(u"Recognition result:")
 		self.networkThread = None
+		# Network error occurred
+		if not result:
+			self._onResult = None
+			self._imageInfo = None
+			return
 		if not self._use_own_api_key:
 			curl_error_message = self.processCURLError(result)  # type: str
 			if curl_error_message:

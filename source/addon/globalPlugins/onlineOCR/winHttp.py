@@ -103,7 +103,6 @@ def doHTTPRequest(callback, method, url, **kwargs):
 	except urllib3.exceptions.TimeoutError as e:
 		# Translators: Message announced when network error occurred
 		showMessageInNetworkThread(_(u"Internet connection timeout.Recognition failed."))
-		log.io(r.data)
 		callback(None)
 		return
 	except urllib3.exceptions.HTTPError as e:

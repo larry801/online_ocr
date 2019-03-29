@@ -331,6 +331,12 @@ There is no additional configuration for these API.
 
 ## Change Log
 
+### 0.14
+Fix error caused by calling ui.message in networkThread
+Add image size limit of Oliver's engine.
+prepare for python3 compatibility
+fix unicode decode error due to unicode http header
+
 ### 0.13
 Make sure that the add-on works when reloading the plug-ins without
 restart (NVDA+Control+F3)
