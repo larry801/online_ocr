@@ -94,7 +94,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 	def getHTTPHeaders(self):
 		if self._use_own_api_key:
 			return {
-				b"Authorization": self.getSignature(self._api_key, self._api_secret_key, "")
+				b"Authorization": str(self.getSignature(self._api_key, self._api_secret_key, b""))
 			}
 		else:
 			return {}
