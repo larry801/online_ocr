@@ -12,7 +12,7 @@ from logHandler import log
 from urllib3.contrib.socks import SOCKSProxyManager
 import config
 import urllib3
-
+import wx
 urllib3.disable_warnings()
 # import certifi
 # import urllib3.contrib.pyopenssl
@@ -22,6 +22,10 @@ oldProxyType = config.conf["onlineOCR"]["proxyType"]
 oldProxyAddress = config.conf["onlineOCR"]["proxyAddress"]
 _ = lambda x: x
 addonHandler.initTranslation()
+
+
+def showMessageInNetworkThread(message):
+	wx.CallAfter(ui.message, message)
 
 
 def getConnectionPool():
@@ -94,19 +98,18 @@ def doHTTPRequest(callback, method, url, **kwargs):
 	@type url:
 	"""
 	refreshConnectionPool()
-	
 	try:
 		r = httpConnectionPool.request(method, url, **kwargs)
 	except urllib3.exceptions.TimeoutError as e:
 		# Translators: Message announced when network error occurred
-		ui.message(_(u"Internet connection timeout.Recognition failed."))
+		showMessageInNetworkThread(_(u"Internet connection timeout.Recognition failed."))
 		log.io(r.data)
 		callback(None)
 		return
 	except urllib3.exceptions.HTTPError as e:
 		log.error(e)
 		# Translators: Message announced when network error occurred
-		ui.message(_(u"Recognition failed. Internet connection error."))
+		showMessageInNetworkThread(_(u"Recognition failed. Internet connection error."))
 		callback(None)
 		return
 	log.io(r.data)
@@ -115,5 +118,5 @@ def doHTTPRequest(callback, method, url, **kwargs):
 
 def postContent(callback, url, data, headers=None):
 	doHTTPRequest(
-		callback, 'POST', url, fields=data,
+		callback, b'POST', url, fields=data,
 		headers=headers)

@@ -496,6 +496,9 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			log.io(msg)
 		self.sendRequest(self.callback, fullURL, payloads, headers)
 	
+	def showMessageInNetworkThread(self, message):
+		wx.CallAfter(ui.message, message)
+	
 	def callback(self, result):
 		# Translators: Message added before recognition result
 		# when user do not use result viewer
@@ -504,38 +507,38 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		if not self._use_own_api_key:
 			curl_error_message = self.processCURLError(result)  # type: str
 			if curl_error_message:
-				ui.message(curl_error_message)
+				self.showMessageInNetworkThread(curl_error_message)
 				return
-		api_error_message = self.process_api_result(result)  # type: str
-		if api_error_message:
-			ui.message(api_error_message)
+		apiErrorMessage = self.process_api_result(result)  # type: str
+		if apiErrorMessage:
+			self.showMessageInNetworkThread(apiErrorMessage)
 			return
 		try:
 			result = self.convert_to_json(result)
 		except ValueError as e:
 			# Translators: Reported when api result is invalid
-			ui.message(_(u"Recognition failed. Result is invalid."))
+			self.showMessageInNetworkThread(_(u"Recognition failed. Result is invalid."))
 			return
 		
 		try:
 			ocrResult = self.extract_text(result)
 			if ocrResult.isspace():
 				# Translators: Reported when recognition result is empty
-				ui.message(_(u"Recognition result is blank. There may be no text on this image."))
+				self.showMessageInNetworkThread(_(u"Recognition result is blank. There may be no text on this image."))
 				return
 			resultText = result_prefix + ocrResult
 			if config.conf["onlineOCR"]["copyToClipboard"]:
 				import api
 				api.copyToClip(resultText)
 			if self.text_result:
-				ui.message(resultText)
+				self.showMessageInNetworkThread(resultText)
 			else:
 				self._onResult(LinesWordsResult(
 					self.convert_to_line_result_format(result),
 					imageInfo=self._imageInfo))
 		except (KeyError, ValueError):
 			# Translators: Reported when api result is invalid
-			ui.message(_(u"Recognition failed. Result is invalid."))
+			self.showMessageInNetworkThread(_(u"Recognition failed. Result is invalid."))
 		finally:
 			self._onResult = None
 			self._imageInfo = None
@@ -554,12 +557,10 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			return
 		self._onResult = onResult
 		self._imageInfo = imageInfo
-		PILImage = self.get_converted_image(pixels, imageInfo)
-		PILImage = self.checkAndResizeImage(PILImage)
-		if not PILImage:
-			ui.message(PILImage)
+		imageObject = self.prepareImageObject(pixels, imageInfo)
+		if not imageObject:
 			return
-		imageContent = self.prepareImageContent(PILImage)
+		imageContent = self.prepareImageContent(imageObject)
 		if not imageContent:
 			return
 		payloads = self.getPayload(imageContent)
@@ -598,6 +599,15 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			)
 		)
 		self.networkThread.start()
+	
+	def prepareImageObject(self, pixels, imageInfo):
+		imageObject = self.get_converted_image(pixels, imageInfo)
+		imageObject = self.checkAndResizeImage(imageObject)
+		if not imageObject:
+			ui.message(imageObject)
+			return
+		else:
+			return imageObject
 	
 	def cancel(self):
 		if self.networkThread:
@@ -687,8 +697,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		
 		if imageSize > self.maxSize:
 			# Translators: Reported when error occurred during image serialization
-			errorMsg = _(u"Image content is too big to upload.")
-			ui.message(errorMsg)
+			ui.message(_(u"Image content is too big to upload."))
 			if config.conf["onlineOCR"]["verboseDebugLogging"]:
 				msg = "newWidth\n{0}\nnewHeight\n{1}\nsize\n{2}".format(
 					image.width,
