@@ -23,6 +23,8 @@ class MLDescriber(BaseDescriber):
 	@classmethod
 	def check(cls):
 		return True
+	
+	maxSize = 11 * 1024
 
 	def _get_supportedSettings(self):
 		return [
