@@ -132,7 +132,7 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 	def getHTTPHeaders(self):
 		if self._use_own_api_key:
 			return {
-				'Ocp-Apim-Subscription-Key': self._api_key
+				b'Ocp-Apim-Subscription-Key': str(self._api_key)
 			}
 		else:
 			return {}
