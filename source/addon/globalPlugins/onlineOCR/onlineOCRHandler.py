@@ -17,6 +17,7 @@ import base64
 import wx
 import config
 from six import iterkeys
+
 from .abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine
 import addonHandler
 from . import imageDescribers
@@ -496,8 +497,13 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			log.io(msg)
 		self.sendRequest(self.callback, fullURL, payloads, headers)
 	
-	def showMessageInNetworkThread(self, message):
+	@staticmethod
+	def showMessageInNetworkThread(message):
 		wx.CallAfter(ui.message, message)
+		
+	@staticmethod
+	def showBrowseableMessageInNetworkThread(message):
+		wx.CallAfter(ui.browseableMessage, message)
 	
 	def callback(self, result):
 		# Translators: Message added before recognition result
@@ -536,7 +542,10 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				import api
 				api.copyToClip(resultText)
 			if self.text_result:
-				self.showMessageInNetworkThread(resultText)
+				if config.conf["onlineOCR"]["useBrowseableMessage"]:
+					self.showBrowseableMessageInNetworkThread(resultText)
+				else:
+					self.showMessageInNetworkThread(resultText)
 			else:
 				self._onResult(LinesWordsResult(
 					self.convert_to_line_result_format(result),
@@ -750,6 +759,7 @@ class CustomOCRHandler(AbstractEngineHandler):
 		"engine": "string(default=auto)",
 		"copyToClipboard": "boolean(default=false)",
 		"swapRepeatedCountEffect": "boolean(default=false)",
+		"useBrowseableMessage": "boolean(default=false)",
 		"verboseDebugLogging": "boolean(default=false)",
 		"proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
 		"proxyAddress": 'string(default="")',
@@ -793,6 +803,7 @@ class OnlineImageDescriberPanel(AbstractEngineSettingsPanel):
 
 
 class CustomOCRPanel(SettingsPanel):
+	useBrowseableMessageCheckBox = None  # type: wx.CheckBox
 	descEngineSettingPanel = None  # type: OnlineImageDescriberPanel
 	ocrEngineSettingPanel = None  # type: OnlineOCRPanel
 	testEngineButton = None  # type: wx.Button
@@ -827,6 +838,14 @@ class CustomOCRPanel(SettingsPanel):
 		self.copyToClipboardCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=copyToClipboardText))
 		self.copyToClipboardCheckBox.SetValue(
 			config.conf[self.handler.configSectionName]["copyToClipboard"])
+		
+		# Translators: This is the label for a checkbox in the
+		# online OCR settings panel.
+		useBrowseableMessageText = _("&Use browseable message for text result")
+		self.useBrowseableMessageCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=useBrowseableMessageText))
+		self.useBrowseableMessageCheckBox.SetValue(
+			config.conf[self.handler.configSectionName]["useBrowseableMessage"])
+		
 		# Translators: This is the label for a checkbox in the
 		# online OCR settings panel.
 		swapRepeatedCountEffectText = _("&Swap the effect of repeated gesture with none repeated ones.")
@@ -865,6 +884,7 @@ class CustomOCRPanel(SettingsPanel):
 		self.ocrEngineSettingPanel.onSave()
 		config.conf[self.handler.configSectionName]["copyToClipboard"] = self.copyToClipboardCheckBox.GetValue()
 		config.conf[self.handler.configSectionName]["verboseDebugLogging"] = self.verboseDebugLoggingCheckBox.GetValue()
+		config.conf[self.handler.configSectionName]["useBrowseableMessage"] = self.useBrowseableMessageCheckBox.GetValue()
 		config.conf[self.handler.configSectionName][
 			"swapRepeatedCountEffect"] = self.swapRepeatedCountEffectCheckBox.GetValue()
 		config.conf[self.handler.configSectionName]["proxyType"] = self.PROXY_TYPES[self.proxyTypeList.GetSelection()][

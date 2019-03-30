@@ -22,7 +22,10 @@ It is highly recommended to register your own key according to guide in each eng
 The following settings are applicable to all engines.
 
 * Copy result to clipboard after recognition:
-If enabled, recognition result will be copied to clipboard after recognition.
+If enabled, recognition result text will be copied to clipboard after recognition.
+
+* Use browseable message for text result
+If enabled, recognition result text will be shown in a popup window instead of speech or braille message. 
 
 * Swap the effect of repeated gesture with none repeated ones:
 By default, a virtual result document is shown only if you press the corresponding gesture twice, if you use that frequently you can enable this option so that you only need to press once to get a result viewer.
@@ -336,6 +339,11 @@ According to my test Chinese and English and their mixture is supported.
 There is no additional configuration for these API.
 
 ## Change Log
+
+### 0.15
+
+Add an option to use browseable message instead of normal speech or braille message
+Result from Microsoft Azure Image Describer is in separate lines. 
 
 ### 0.14
 
