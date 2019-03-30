@@ -452,7 +452,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		"""
 		return {}
 	
-	def get_converted_image(self, pixels, imageInfo):
+	def getConvertedImage(self, pixels, imageInfo):
 		"""
 		Convert RGBQUAD image to PIL format
 		@param pixels:
@@ -606,7 +606,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		self.networkThread.start()
 	
 	def prepareImageObject(self, pixels, imageInfo):
-		imageObject = self.get_converted_image(pixels, imageInfo)
+		imageObject = self.getConvertedImage(pixels, imageInfo)
 		imageObject = self.checkAndResizeImage(imageObject)
 		if not imageObject:
 			ui.message(imageObject)

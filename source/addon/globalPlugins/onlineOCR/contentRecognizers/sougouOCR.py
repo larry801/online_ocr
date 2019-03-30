@@ -99,24 +99,6 @@ class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
 		else:
 			return {}
 	
-	def serializeImage(self, PILImage):
-		from io import BytesIO
-		import ui
-		imgBuf = BytesIO()
-		PILImage.save(
-			imgBuf, "JPEG",
-			subsampling=0,
-			quality=self._quality
-		)
-		imageContent = imgBuf.getvalue()
-		if len(imageContent) > self.maxSize:
-			# Translators: Reported when error occurred during image serialization
-			errorMsg = _(u"Image content size is too big")
-			ui.message(errorMsg)
-			return False
-		else:
-			return imageContent
-	
 	def getPayload(self, jpegBytes):
 		if self._use_own_api_key:
 			# use str here to avoid urllib3 decode raw image data as bytes
