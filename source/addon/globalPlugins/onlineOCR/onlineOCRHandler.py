@@ -54,7 +54,7 @@ contribPath = safeJoin(
 )
 sys.path.insert(0, contribPath)
 from PIL import Image
-
+from PIL.Image import LANCZOS
 _ = lambda x: x
 addonHandler.initTranslation()
 
@@ -72,8 +72,10 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	networkThread = None  # type: Thread
 	useHttps = True
 	
-	_onResult = None
-	_imageInfo = None
+	pixels = None
+	originalImage = None
+	onResult = None
+	imageInfo = None
 	_compression = 9
 	
 	def _get_compression(self):
@@ -213,39 +215,6 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			return True
 		else:
 			return False
-	
-	def rgb_quad_to_png(self, pixels, imageInfo, resizeFactor=None):
-		"""
-		@param pixels: The pixels of the image as a two dimensional array of RGBQUADs.
-			For example, to get the red value for the coordinate (1, 2):
-			pixels[2][1].rgbRed
-			This can be treated as raw bytes in BGRA8 format;
-			i.e. four bytes per pixel in the order blue, green, red, alpha.
-			However, the alpha channel should be ignored.
-		@type pixels: Two dimensional array (y then x) of L{winGDI.RGBQUAD}
-		@param imageInfo: Information about the image for recognition.
-		@type imageInfo: L{RecogImageInfo}
-		@rtype: L{Image}
-		@param resizeFactor:
-		@type resizeFactor:
-		"""
-		width = imageInfo.recogWidth
-		height = imageInfo.recogHeight
-		img = Image.frombytes("RGBX", (width, height), pixels, "raw", "BGRX")
-		img = img.convert("RGB")
-		if resizeFactor:
-			img = img.resize((
-				width * resizeFactor,
-				height * resizeFactor
-			))
-		png_buffer = BytesIO()
-		img.save(
-			png_buffer, "PNG",
-			compression_level=self._compression,
-			quality=self._quality,
-			optimize=True
-		)
-		return png_buffer.getvalue()
 	
 	@staticmethod
 	def post_to_url(url, payloads):
@@ -403,12 +372,9 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				isImageValid = False
 				# Translators: Reported when error occurred during image conversion
 				errorMsg = _(u"Image height is too small for this engine")
-		resizeFactor = int(max(widthResizeFactor, heightResizeFactor))
+		self.imageInfo.resizeFactor = int(max(widthResizeFactor, heightResizeFactor))
 		if isImageValid:
-			image = image.resize((
-				int(width * resizeFactor),
-				int(height * resizeFactor)
-			))
+			image = self.getResizedImage()
 			width = image.width
 			height = image.height
 			msg += u"\nSize after resizing\nwidth:\n{w}\nheight:\n{h}".format(
@@ -419,11 +385,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			if width * height > self.maxPixels:
 				pixelCount = image.width * image.height
 				while pixelCount >= self.maxPixels and image.width >= self.minWidth and image.height >= self.minHeight:
-					image = image.resize((
-						int(image.width * self.asymptoticResizeFactor),
-						int(image.height * self.asymptoticResizeFactor),
-					))
-					pixelCount = image.width * image.height
+					self.imageInfo.resizeFactor = self.imageInfo.resizeFactor * self.asymptoticResizeFactor
+					image = self.getResizedImage()
 					if config.conf["onlineOCR"]["verboseDebugLogging"]:
 						msg = "newWidth\n{0}\nnewHeight\n{1}\npixelCount\n{2}".format(
 							image.width,
@@ -437,9 +400,9 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 					ui.message(_(u"Image has too many pixels."))
 					return False
 				else:
-					return image
+					return self.getResizedImage()
 			else:
-				return image
+				return self.getResizedImage()
 		else:
 			log.io(msg)
 			ui.message(errorMsg)
@@ -466,7 +429,22 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		height = imageInfo.recogHeight
 		img = Image.frombytes("RGBX", (width, height), pixels, "raw", "BGRX")
 		img = img.convert("RGB")
+		self.originalImage = img
 		return img
+	
+	def getResizedImage(self):
+		"""
+		Get resized image object for upload
+		@return: resized image
+		@rtype: PIL.Image.Image
+		"""
+		return self.originalImage.resize(
+			(
+				int(self.imageInfo.recogWidth * self.imageInfo.resizeFactor),
+				int(self.imageInfo.recogHeight * self.imageInfo.resizeFactor)
+			),
+			resample=LANCZOS
+		)
 	
 	def getPayloadForHyperLink(self, url):
 		raise NotImplementedError
@@ -504,6 +482,12 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	@staticmethod
 	def showBrowseableMessageInNetworkThread(message):
 		wx.CallAfter(ui.browseableMessage, message)
+
+	def cleanUp(self):
+		self.onResult = None
+		self.imageInfo = None
+		self.originalImage = None
+		self.networkThread = None
 	
 	def callback(self, result):
 		# Translators: Message added before recognition result
@@ -512,8 +496,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		self.networkThread = None
 		# Network error occurred
 		if not result:
-			self._onResult = None
-			self._imageInfo = None
+			self.cleanUp()
 			return
 		if not self._use_own_api_key:
 			curl_error_message = self.processCURLError(result)  # type: str
@@ -529,6 +512,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		except ValueError as e:
 			# Translators: Reported when api result is invalid
 			self.showMessageInNetworkThread(_(u"Recognition failed. Result is invalid."))
+			self.cleanUp()
 			return
 		
 		try:
@@ -547,16 +531,15 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				else:
 					self.showMessageInNetworkThread(resultText)
 			else:
-				self._onResult(LinesWordsResult(
+				self.onResult(LinesWordsResult(
 					self.convert_to_line_result_format(result),
-					imageInfo=self._imageInfo))
+					self.imageInfo))
 		except (KeyError, ValueError):
 			# Translators: Reported when api result is invalid
 			self.showMessageInNetworkThread(_(u"Recognition failed. Result is invalid."))
 		finally:
-			self._onResult = None
-			self._imageInfo = None
-	
+			self.cleanUp()
+
 	def recognize(self, pixels, imageInfo, onResult):
 		"""
 		Setup data for recognition then send request
@@ -569,8 +552,9 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			# Translators: Error message
 			ui.message(_(u"There is another recognition ongoing. Please wait."))
 			return
-		self._onResult = onResult
-		self._imageInfo = imageInfo
+		self.pixels = pixels
+		self.onResult = onResult
+		self.imageInfo = imageInfo
 		imageObject = self.prepareImageObject(pixels, imageInfo)
 		if not imageObject:
 			return
@@ -679,32 +663,19 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	def _set_balance(self, balance):
 		self._balance = balance
 	
-	def resizeBigImage(self, image):
-		"""
-		Resize big image till it meets upload size limit
-		@param image:
-		@type image: Image
-		@return:
-		@rtype:
-		"""
-		pass
-	
 	def prepareImageContent(self, image):
 		imageContent = self.serializeImage(image)
 		imageSize = len(imageContent)
-		
+		newImage = None
 		while imageSize >= self.maxSize and image.width >= self.minWidth and image.height >= self.minHeight:
-			image = image.resize((
-				int(image.width * self.asymptoticResizeFactor),
-				int(image.height * self.asymptoticResizeFactor),
-			))
-			
-			imageContent = self.serializeImage(image)
+			self.imageInfo.resizeFactor = self.imageInfo.resizeFactor * self.asymptoticResizeFactor
+			newImage = self.getResizedImage()
+			imageContent = self.serializeImage(newImage)
 			imageSize = len(imageContent)
 			if config.conf["onlineOCR"]["verboseDebugLogging"]:
 				msg = "newWidth\n{0}\nnewHeight\n{1}\nsize\n{2}".format(
-					image.width,
-					image.height,
+					newImage.width,
+					newImage.height,
 					imageSize
 				)
 				log.io(msg)
@@ -713,9 +684,10 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			# Translators: Reported when error occurred during image serialization
 			ui.message(_(u"Image content is too big to upload."))
 			if config.conf["onlineOCR"]["verboseDebugLogging"]:
+				newImage = self.getResizedImage()
 				msg = "newWidth\n{0}\nnewHeight\n{1}\nsize\n{2}".format(
-					image.width,
-					image.height,
+					newImage.width,
+					newImage.height,
 					imageSize
 				)
 				log.io(msg)
@@ -731,9 +703,9 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	def serializeImage(self, PILImage):
 		"""
 		Serialize image to bytes array
-		@param PILImage:
-		@type PILImage: PIL.Image
-		@return:
+		@param PILImage: image object
+		@type PILImage: PIL.Image.Image
+		@return: image in bytes form
 		@rtype: bool or bytes
 		"""
 		imageBuffer = BytesIO()
@@ -935,3 +907,7 @@ class CustomOCRPanel(SettingsPanel):
 				return False
 		else:
 			return True
+	
+	def onPanelActivated(self):
+		super(CustomOCRPanel, self).onPanelActivated()
+		self.descEngineSettingPanel.SetFocus()
