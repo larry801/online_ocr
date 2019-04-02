@@ -24,115 +24,28 @@ class MLDescriber(azure.MLDescriber):
 	
 	uploadBase64EncodeImage = False
 	
-	_adult = False
+	_feature = ["Tags", "Description"]
 	
-	def _get_adult(self):
-		return self._adult
+	def _get_feature(self):
+		return self._feature
 	
-	def _set_adult(self, adult):
-		self._adult = adult
+	def _set_feature(self, feature):
+		self._feature = feature
 	
-	_faces = False
-	
-	def _get_faces(self):
-		return self._faces
-	
-	def _set_faces(self, faces):
-		self._faces = faces
-	
-	_brands = False
-	
-	def _get_brands(self):
-		return self._brands
-	
-	def _set_brands(self, brands):
-		self._brands = brands
-	
-	_categories = False
-	
-	def _get_categories(self):
-		return self._categories
-	
-	def _set_categories(self, categories):
-		self._categories = categories
-	
-	_imageDescription = True
-	
-	def _get_imageDescription(self):
-		return self._imageDescription
-	
-	def _set_imageDescription(self, imageDescription):
-		self._imageDescription = imageDescription
-	
-	_color = False
-	
-	def _get_color(self):
-		return self._color
-	
-	def _set_color(self, color):
-		self._color = color
-	
-	_tags = False
-	
-	def _get_tags(self):
-		return self._tags
-	
-	def _set_tags(self, tags):
-		self._tags = tags
-	
-	_imageType = False
-	
-	def _get_imageType(self):
-		return self._imageType
-	
-	def _set_imageType(self, imageType):
-		self._imageType = imageType
-	
-	_imageObjects = False
-	
-	def _get_imageObjects(self):
-		return self._imageObjects
-	
-	def _set_imageObjects(self, imageObjects):
-		self._imageObjects = imageObjects
+	def _get_availableFeatures(self):
+		return self.generate_string_settings(self.features)
 	
 	def _get_supportedSettings(self):
 		return [
 			MLDescriber.AccessTypeSetting(),
-			
 			MLDescriber.StringSettings(
 				"detail",
 				_(u"Detect Details")),
-			MLDescriber.BooleanSetting(
-				"adult",
-				_(u"Detect adult content."),
-			), MLDescriber.BooleanSetting(
-				"brands",
-				_(u"Detects various brands within an image, including the approximate location. ")
-			), MLDescriber.BooleanSetting(
-				"categories",
-				_(u"Categorizes image content according to a taxonomy defined in documentation.")
-			), MLDescriber.BooleanSetting(
-				"imageDescription",
-				_(u"Describes the image content with a complete sentence in supported languages.")
-			), MLDescriber.BooleanSetting(
-				"color",
-				_(u"Determines the accent color, dominant color, and whether an image is black&white.")
-			), MLDescriber.BooleanSetting(
-				"tags",
-				_(u"Tags the image with a detailed list of words related to the image content.")
-			), MLDescriber.BooleanSetting(
-				"faces",
-				_(u"Describes the image content with a complete sentence in supported languages.")
-			), MLDescriber.BooleanSetting(
-				"imageType",
-				_(u"Detects if image is clip art or a line drawing.")
-			), MLDescriber.BooleanSetting(
-				"imageObjects",
-				_(
-					u"Detects various objects within an image, including the approximate location. The Objects argument is only available in English.")
+			MLDescriber.CheckListSetting(
+				"feature",
+				# Translators: Label for engine settings
+				_("Configure visual features to extract")
 			),
-			
 			MLDescriber.APIKeySetting(),
 			MLDescriber.StringSettings(
 				"region",
@@ -141,11 +54,45 @@ class MLDescriber(azure.MLDescriber):
 			),
 		]
 	
+	features = OrderedDict({
+		# Translators: Description of visual features
+		"Adult": _(u"Detect adult content."),
+		# Translators: Description of visual features
+		"Brands": _(u"Detects various brands within an image, including the approximate location. "),
+		"Categories":
+			# Translators: Description of visual features
+			_(u"Categorizes image content according to a taxonomy defined in documentation."),
+		"Description":
+			# Translators: Description of visual features
+			_(u"Describes the image content with a complete sentence in supported languages."),
+		"Color":
+			# Translators: Description of visual features
+			_(u"Determines the accent color, dominant color, and whether an image is black&white."),
+		"Tags":
+			# Translators: Description of visual features
+			_(u"Tags the image with a detailed list of words related to the image content."),
+		"Faces":
+			# Translators: Description of visual features
+			_(u"Describes the image content with a complete sentence in supported languages."),
+		"ImageType":
+			# Translators: Description of visual features
+			_(u"Detects if image is clip art or a line drawing."),
+		"Objects": _(
+			# Translators: Description of visual features
+			"Detects various objects within an image, including the approximate location. The Objects argument is only available in English.")
+	})
+	
+	def getFeatures(self):
+		visualFeatures = []
+		for i in self._feature:
+			visualFeatures.append(i)
+		return str(",".join(visualFeatures))
+	
 	@classmethod
 	def check(cls):
 		return True
 	
-	_detail = ""
+	_detail = "Celebrities,Landmarks"
 	
 	def _get_detail(self):
 		return self._detail
@@ -161,31 +108,6 @@ class MLDescriber(azure.MLDescriber):
 			"Celebrities,Landmarks": _(u"identifies landmarks and celebrities if detected in the image."),
 		})
 		return self.generate_string_settings(details)
-	
-	def _get_visualFeature(self):
-		features = []
-		if self._adult:
-			features.append(b"Adult")
-		if self._brands:
-			features.append(b"Brands")
-		if self._categories:
-			features.append(b"Categories")
-		if self._color:
-			features.append(b"Color")
-		if self._imageDescription:
-			features.append(b"Description")
-		if self._faces:
-			features.append(b"Faces")
-		if self._imageType:
-			features.append(b"ImageType")
-		if self._imageObjects:
-			features.append(b"Objects")
-		if self._tags:
-			features.append(b"Tags")
-		if len(features) <= 0:
-			features.append(b"Description")
-			features.append(b"Tags")
-		return b','.join(features)
 	
 	def get_url(self):
 		if self._use_own_api_key:
@@ -209,7 +131,7 @@ class MLDescriber(azure.MLDescriber):
 		queryString = b"?visualFeatures={2}&language={0}&details={1}".format(
 			self._language,
 			self._detail,
-			self.visualFeature,
+			self.getFeatures(),
 		)
 		fullURL = fullURL + queryString
 		# Unicode URL cause urllib3 to decode raw image data as if they were unicode.
