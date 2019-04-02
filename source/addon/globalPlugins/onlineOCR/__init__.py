@@ -219,7 +219,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		clipboardImage = None
 		formats = cls.enumerateClipboardFormat()
 		if win32clipboard.CF_DIB in formats:
-			return ImageGrab.grabclipboard()
+			clipboardImage = ImageGrab.grabclipboard()
 		elif win32clipboard.CF_HDROP in formats:
 			try:
 				win32clipboard.OpenClipboard()
@@ -232,7 +232,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				log.io(e)
 			finally:
 				win32clipboard.CloseClipboard()
-				return clipboardImage
 		elif win32clipboard.CF_TEXT in formats:
 			# TODO extract url or file path from text then grab an image from it.
 			try:
@@ -252,11 +251,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				# Translators: Reported when cannot get content of the path specified
 				errMsg = _("The file specified in clipboard is not an image")
 				ui.message(errMsg)
-			finally:
-				return clipboardImage
-		else:
-			return None
-	
+
+		return clipboardImage
+
 	def terminate(self):
 		OnlineImageDescriberHandler.terminate()
 		CustomOCRHandler.terminate()
