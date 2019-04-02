@@ -342,8 +342,11 @@ There is no additional configuration for these API.
 
 ### 0.15
 
-Add an option to use browseable message instead of normal speech or braille message
-Result from Microsoft Azure Image Describer is in separate lines. 
+Add an option to pop up a window containing message instead of speech or braille message for text results
+
+Fix following issues:
+Position in result document objects are not reliable if image is resized internally.
+Result from Microsoft Azure Image Describer is in the same line which makes it hard to navigate around. 
 
 ### 0.14
 
