@@ -18,9 +18,16 @@ import config
 import addonHandler
 import inspect
 from logHandler import log
-from .engineGUIHelper import EngineSetting, ReadOnlyEngineSetting, NumericEngineSetting, BooleanEngineSetting, \
-	TextInputEngineSetting, VoiceSettingsSlider, EngineSettingChanger, StringEngineSettingChanger, \
-	TextInputEngineSettingChanger
+from gui.nvdaControls import CustomCheckListBox
+from .engineGUIHelper import (
+	EngineSetting, EngineSettingChanger,
+	ReadOnlyEngineSetting, BooleanEngineSetting,
+	NumericEngineSetting, VoiceSettingsSlider,
+	CheckListEngineSetting, CheckListEngineSettingChanger,
+	TextInputEngineSetting, TextInputEngineSettingChanger,
+	StringEngineSettingChanger,
+	ButtonEngineSetting
+)
 
 _ = lambda x: x
 addonHandler.initTranslation()
@@ -66,7 +73,7 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 		engine_name = config.conf[cls.configSectionName]["engine"]
 		cls.setCurrentEngine(engine_name)
 		cls.isInitialized = True
-		
+
 	@classmethod
 	def terminate(cls):
 		config.post_configProfileSwitch.unregister(cls.handlePostConfigProfileSwitch)
@@ -274,6 +281,14 @@ class AbstractEngine(baseObject.AutoPropertyObject):
 	@classmethod
 	def BooleanSetting(cls, name, desc):
 		return BooleanEngineSetting(name, desc)
+
+	@classmethod
+	def ButtonSetting(cls, name, desc):
+		return ButtonEngineSetting(name, desc)
+
+	@classmethod
+	def CheckListSetting(cls, name, desc):
+		return CheckListEngineSetting(name, desc)
 
 	@classmethod
 	def ReadOnlySetting(cls, name, desc):
@@ -644,6 +659,43 @@ class SpecificEnginePanel(SettingsPanel):
 		self.lastControl = lCombo
 		return labeledControl.sizer
 
+	def makeButtonSettingsControl(self, setting):
+		engine = self.handler.getCurrentEngine()
+		button = wx.Button(self, wx.ID_ANY, label=setting.displayNameWithAccelerator)
+		setattr(self, "%sButton" % setting.name, button)
+		button.Bind(
+			wx.EVT_BUTTON,
+			getattr(engine, "%sChanger" % setting.name))
+		if self.lastControl:
+			button.MoveAfterInTabOrder(self.lastControl)
+		self.lastControl = button
+		return button
+
+	def makeCheckListEngineSettingControl(self, setting):
+		engine = self.handler.getCurrentEngine()
+		setattr(self, "_%ss" % setting.name, getattr(engine, "available%ss" % setting.name.capitalize()).values())
+		sizer = wx.WrapSizer(wx.HORIZONTAL)
+		label = wx.StaticText(self, wx.ID_ANY, label="%s:" % setting.displayNameWithAccelerator)
+		sizer.Add(label)
+		availableSettings = getattr(self, "_%ss" % setting.name)
+		items = [x.name for x in availableSettings]
+		checkListBox = CustomCheckListBox(
+			self,
+			choices=items
+		)
+		paramIDs = getattr(engine, setting.name)
+		idToDesc = {x.ID: x.name for x in availableSettings}
+		if len(paramIDs) > 0:
+			checkedStrings = [idToDesc[x] for x in paramIDs]
+			checkListBox.SetCheckedStrings(checkedStrings)
+		sizer.Add(checkListBox)
+		setattr(self, "%sCheckListBox" % setting.name, checkListBox)
+		checkListBox.Bind(wx.EVT_CHECKLISTBOX, CheckListEngineSettingChanger(setting, engine, checkListBox))
+		if self.lastControl:
+			checkListBox.MoveAfterInTabOrder(self.lastControl)
+		self.lastControl = checkListBox
+		return sizer
+
 	def makeBooleanSettingControl(self, setting):
 		"""Same as L{makeSettingControl} but for boolean settings.
 		Returns checkbox."""
@@ -678,7 +730,6 @@ class SpecificEnginePanel(SettingsPanel):
 		textCtrl = labeledControl.control
 		setattr(self, "%sTextCtrl" % setting.name, textCtrl)
 		textCtrl.SetValue(getattr(engine, setting.name))
-		# textCtrl.Bind(wx.EVT_TEXT_PASTE, TextInputEngineSettingChanger(setting, engine))
 		textCtrl.Bind(wx.EVT_TEXT, TextInputEngineSettingChanger(setting, engine))
 		if self.lastControl:
 			textCtrl.MoveAfterInTabOrder(self.lastControl)
@@ -750,6 +801,18 @@ class SpecificEnginePanel(SettingsPanel):
 					getattr(self, "%sTextCtrl" % setting.name).SetValue(getattr(engine, setting.name))
 				elif isinstance(setting, ReadOnlyEngineSetting):
 					getattr(self, "%sExpandoTextCtrl" % setting.name).SetValue(getattr(engine, setting.name))
+				elif isinstance(setting, CheckListEngineSetting):
+					paramIDs = getattr(engine, setting.name)
+					if len(paramIDs) > 0:
+						try:
+							availableSettings = getattr(self, "_%ss" % setting.name)
+							idToDesc = {x.ID: x.name for x in availableSettings}
+							checkedStrings = [idToDesc[x] for x in paramIDs]
+							getattr(self, "%sCheckListBox" % setting.name).SetCheckedStrings(checkedStrings)
+						except ValueError:
+							pass
+				elif isinstance(setting, ButtonEngineSetting):
+					pass
 				else:
 					l = getattr(self, "_%ss" % setting.name)
 					lCombo = getattr(self, "%sList" % setting.name)
@@ -768,13 +831,16 @@ class SpecificEnginePanel(SettingsPanel):
 					settingMaker = self.makeTextInputSettingControl
 				elif isinstance(setting, ReadOnlyEngineSetting):
 					settingMaker = self.makeReadOnlySettingsControl
+				elif isinstance(setting, CheckListEngineSetting):
+					settingMaker = self.makeCheckListEngineSettingControl
+				elif isinstance(setting, ButtonEngineSetting):
+					settingMaker = self.makeButtonSettingsControl
 				else:
 					settingMaker = self.makeStringSettingControl
 				s = settingMaker(setting)
 				if isinstance(s, tuple):
 					self.sizerDict[setting.name] = s[0]
 					self.sizerDict[setting.name + "Label"] = s[1]
-
 					self.settingsSizer.Insert(len(self.sizerDict) - 2, s[0], border=10, flag=wx.BOTTOM)
 					self.settingsSizer.Insert(len(self.sizerDict) - 1, s[1], border=10, flag=wx.BOTTOM)
 				else:

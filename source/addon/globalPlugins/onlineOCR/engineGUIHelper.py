@@ -5,6 +5,8 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
+from logHandler import log
+from gui.nvdaControls import CustomCheckListBox
 import wx
 import winUser
 
@@ -80,6 +82,32 @@ class VoiceSettingsSlider(wx.Slider):
 		self.SetValue(newValue)
 
 
+class CheckListEngineSettingChanger(EngineSettingChanger):
+	
+	def __init__(self, setting, engine, checkListBox):
+		"""
+		EngineSettingChanger for CheckListBoxSettings
+		@param setting:
+		@type setting:
+		@param engine:
+		@type engine:
+		@param checkListBox: ListBox of settings
+		@type checkListBox:  CustomCheckListBox
+		"""
+		super(CheckListEngineSettingChanger, self).__init__(setting, engine)
+		self.checkList = checkListBox
+	
+	def __call__(self, evt):
+		itemIndices = self.checkList.GetCheckedStrings()
+		availableSettings = getattr(self.engine, "available%ss" % self.setting.name.capitalize())
+		descToParamID = {
+			availableSettings[x].name: availableSettings[x].ID
+			for x in availableSettings
+		}
+		result = [descToParamID[x] for x in itemIndices]
+		setattr(self.engine, self.setting.name, result)
+
+
 class EngineSetting(object):
 	"""
 	Represents an engine setting such as language or region
@@ -147,3 +175,19 @@ class BooleanEngineSetting(EngineSetting):
 			availableInEngineSettingsRing=availableInEngineSettingsRing,
 			displayName=displayName
 		)
+
+
+class CheckListEngineSetting(EngineSetting):
+	"""
+	Represents an engine setting for a series of optional features
+	with sequence, such as entries in a weather forecast
+	"""
+	configSpec = "list(default=None)"
+
+
+class ButtonEngineSetting(EngineSetting):
+	"""
+	Represents an engine setting which should be changed
+	in another dialog activated by a button
+	"""
+	configSpec = "list(default=None)"
