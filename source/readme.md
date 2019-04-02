@@ -343,8 +343,11 @@ There is no additional configuration for these API.
 ### 0.15
 
 Add an option to pop up a window containing message instead of speech or braille message for text results
+Change checkboxes for visual features in Microsoft Azure Image Analyzer into a CheckBoxList.
 
 Fix following issues:
+Cannot load jpg image file from clipboard
+Result document object do not show up after recognition.
 Position in result document objects are not reliable if image is resized internally.
 Result from Microsoft Azure Image Describer is in the same line which makes it hard to navigate around. 
 
