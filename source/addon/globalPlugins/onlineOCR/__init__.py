@@ -116,7 +116,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		from contentRecog import recogUi
 		engine = OnlineImageDescriberHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
-		textResultWhenRepeatGesture = not config.conf["onlineImageDescriber"]["swapRepeatedCountEffect"]
+		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
 		if repeatCount == 0:
 			engine.text_result = textResultWhenRepeatGesture
 			recogUi.recognizeNavigatorObject(engine)
@@ -137,7 +137,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def script_describeClipboardImage(self, gesture):
 		engine = OnlineImageDescriberHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
-		textResultWhenRepeatGesture = not config.conf["onlineImageDescriber"]["swapRepeatedCountEffect"]
+		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
 		if repeatCount == 0:
 			engine.text_result = textResultWhenRepeatGesture
 			clipboardImage = self.getImageFromClipboard()
