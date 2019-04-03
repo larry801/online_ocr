@@ -344,6 +344,14 @@ There is no additional configuration for these API.
 
 ## Change Log
 
+### 0.16
+
+Add a cancel recognition gesture
+
+Fixed following issues:
+CheckListBox state change not announced
+Swap the effect of repeated gesture not working in online image describer
+
 ### 0.15
 
 Add an option to pop up a window containing message instead of speech or braille message for text results
