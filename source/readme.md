@@ -154,6 +154,10 @@ Second is a file copied in  explorer.(CF_HDROP)
 If it is not an image. This addon will tell you, No image in clipboard.
 If there is only text in clipboard, this addon will try to use it as a path of local file. If it is not a path, this addon will tell you: Text in clipboard is not a valid path. If the corresponding file is not an image this addon will tell you: The file specified in clipboard is not an image.
 
+There is also a gesture to cancel current recognition. 
+This gesture can be useful if you think you have waited for too long and want to cancel.
+Also sometimes you do not want to be disturbed by recognition message because you need to review some messages arrived after recognition start.
+This gesture is left unassigned. Please assign it before using.
 
 ## Engines
 
