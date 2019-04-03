@@ -106,6 +106,7 @@ class CheckListEngineSettingChanger(EngineSettingChanger):
 		}
 		result = [descToParamID[x] for x in itemIndices]
 		setattr(self.engine, self.setting.name, result)
+		evt.Skip()
 
 
 class EngineSetting(object):
