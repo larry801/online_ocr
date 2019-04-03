@@ -688,6 +688,7 @@ class SpecificEnginePanel(SettingsPanel):
 		if len(paramIDs) > 0:
 			checkedStrings = [idToDesc[x] for x in paramIDs]
 			checkListBox.SetCheckedStrings(checkedStrings)
+		checkListBox.Select(0)
 		sizer.Add(checkListBox)
 		setattr(self, "%sCheckListBox" % setting.name, checkListBox)
 		checkListBox.Bind(wx.EVT_CHECKLISTBOX, CheckListEngineSettingChanger(setting, engine, checkListBox))
