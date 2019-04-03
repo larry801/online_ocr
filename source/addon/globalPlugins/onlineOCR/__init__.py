@@ -199,6 +199,26 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				ui.message(self.noImageMessage)
 		elif repeatCount >= 1:
 			engine.text_result = not textResultWhenRepeatGesture
+
+	@script(
+		# Translators: Online Image Describer command name in input gestures dialog
+		description=_("Cancel current recognition if there is any."),
+		category=category_name,
+		gestures=[])
+	def script_cancelCurrentRecognition(self, gesture):
+		ocrEngine = CustomOCRHandler.getCurrentEngine()
+		describeEngine = OnlineImageDescriberHandler.getCurrentEngine()
+		if ocrEngine.networkThread:
+			# Translators: Reported when cancelling recognition
+			ui.message(_("OCR cancelled"))
+			ocrEngine.cancel()
+		elif describeEngine.networkThread:
+			# Translators: Reported when cancelling recognition
+			ui.message(_("Image describe cancelled"))
+			describeEngine.cancel()
+		else:
+			# Translators: Reported when cancelling recognition
+			ui.message(_("There is no recognition ongoing."))
 	
 	@staticmethod
 	def enumerateClipboardFormat():
