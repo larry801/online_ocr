@@ -490,10 +490,12 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		self.networkThread = None
 	
 	def callback(self, result):
+		if not self.networkThread:
+			# Recognition has been cancelled
+			return
 		# Translators: Message added before recognition result
 		# when user do not use result viewer
 		result_prefix = _(u"Recognition result:")
-		self.networkThread = None
 		# Network error occurred
 		if not result:
 			self.cleanUp()
@@ -502,10 +504,12 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			curl_error_message = self.processCURLError(result)  # type: str
 			if curl_error_message:
 				self.showMessageInNetworkThread(curl_error_message)
+				self.cleanUp()
 				return
 		apiErrorMessage = self.process_api_result(result)  # type: str
 		if apiErrorMessage:
 			self.showMessageInNetworkThread(apiErrorMessage)
+			self.cleanUp()
 			return
 		try:
 			result = self.convert_to_json(result)
@@ -520,6 +524,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			if ocrResult.isspace():
 				# Translators: Reported when recognition result is empty
 				self.showMessageInNetworkThread(_(u"Recognition result is blank. There may be no text on this image."))
+				self.cleanUp()
 				return
 			resultText = result_prefix + ocrResult
 			if config.conf["onlineOCR"]["copyToClipboard"]:
@@ -610,11 +615,11 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	def cancel(self):
 		if self.networkThread:
 			self.networkThread = None
+			self.cleanUp()
 	
 	def terminate(self):
-		if self.networkThread:
-			self.networkThread = None
-	
+		self.cancel()
+
 	def process_api_result(self, result):
 		raise NotImplementedError
 	
