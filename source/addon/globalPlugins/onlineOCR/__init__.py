@@ -175,7 +175,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	
 	# Translators: OCR command name in input gestures dialog
 	clipboard_ocr_msg = _(
-		"Recognizes the text in clipboard images with online OCR engine..")
+		"Recognizes the text in clipboard images with online OCR engine.")
 	
 	@script(
 		description=clipboard_ocr_msg,
