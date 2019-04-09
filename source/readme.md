@@ -351,6 +351,8 @@ Add a cancel recognition gesture
 Fixed following issues:
 CheckListBox state change not announced
 Swap the effect of repeated gesture not working in online image describer
+Jump directly to panel when switch to onlineImageDescriber in settings dialog
+Fix wrong description in azure analyzer
 
 ### 0.15
 

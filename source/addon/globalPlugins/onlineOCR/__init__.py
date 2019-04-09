@@ -25,7 +25,7 @@ import ui
 import scriptHandler
 from PIL import ImageGrab, Image
 import inputCore
-from .LayeredGesture import category_name, addonGestureMap
+from .LayeredGesture import category_name, secondaryGestureMap
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
@@ -77,7 +77,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		)
 		log.io(msg)
 		if not gesture.isModifier:
-			addonGestureMap.getScriptsForGesture(gesture)
+			secondaryGestureMap.getScriptsForGesture(gesture)
 			if 'kb:c' in gestureIdentifiers:
 				self.script_describeClipboardImage(gesture)
 				self.removeCaptureFunction()

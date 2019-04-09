@@ -11,127 +11,144 @@ from inputCore import (
 	GlobalGestureMap,
 	_AllGestureMappingsRetriever,
 )
-import configobj
 import addonHandler
 from logHandler import log
 from baseObject import ScriptableObject
+import baseObject
 import os
 import globalVars
 from .onlineOCRHandler import safeJoin
-import inputCore
 
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
 # Translators: Name of addon script category
 category_name = _(u"Online Image Describer")
+# Translators: Name of script prefix category
+SCRCAT_PREFIX = _("Prefix for sequential gesture")
+# class AddonGestureMap(GlobalGestureMap):
+#
+# 	def load(self, filename):
+# 		self.fileName = filename
+# 		try:
+# 			conf = configobj.ConfigObj(filename, file_error=True, encoding="UTF-8")
+# 		except (configobj.ConfigObjError, UnicodeDecodeError) as e:
+# 			log.warning("Error in gesture map '%s': %s" % (filename, e))
+# 			self.lastUpdateContainedError = True
+# 			return
+# 		self.update(conf)
+#
 
-
-class AddonCommands(ScriptableObject):
-	pass
-
-
-
-class AddonGestureMap(GlobalGestureMap):
-
-	def load(self, filename):
-		self.fileName = filename
-		try:
-			conf = configobj.ConfigObj(filename, file_error=True, encoding="UTF-8")
-		except (configobj.ConfigObjError, UnicodeDecodeError) as e:
-			log.warning("Error in gesture map '%s': %s" % (filename, e))
-			self.lastUpdateContainedError = True
-			return
-		self.update(conf)
-
-	def __init__(self):
-		super(AddonGestureMap, self).__init__()
-		allEntries = inputCore.manager.getAllGestureMappings(
-			obj=gui.mainFrame.prevFocus, ancestors=gui.mainFrame.prevFocusAncestors
-		)
-		log.info(allEntries)
-		# addonEntries = allEntries[category_name]
-		# self.fileName = safeJoin(
-		# 	globalVars.appArgs.configPath,
-		# 	"onlineImageDescriberGestures.ini"
-		# )
-		# log.debug(addonEntries)
-		# if os.path.exists(self.fileName):
-		# 	self.load(self.fileName)
-		# else:
-		# 	self.save()
+secondaryGestureMap = None
 
 
 class AddonGestureMapRetriever(_AllGestureMappingsRetriever):
 
-	def __init__(self):
+	def addObj(self, obj, isAncestor=False):
+		"""
+
+		@param obj:
+		@type obj: ScriptableObject
+		@param isAncestor:
+		@type isAncestor:
+		@return:
+		@rtype:
+		"""
+		scripts = {}
+		for cls in obj.__class__.__mro__:
+			for scriptName, script in cls.__dict__.iteritems():
+				if not scriptName.startswith("script_"):
+					continue
+				if isAncestor and not getattr(script, "canPropagate", False):
+					continue
+				scriptName = scriptName[7:]
+				try:
+					scriptInfo = self.scriptInfo[cls, scriptName]
+				except KeyError:
+					scriptInfo = self.makeNormalScriptInfo(cls, scriptName, script)
+					if not scriptInfo:
+						continue
+					self.addResult(scriptInfo)
+				scripts[script] = scriptInfo
+		for gesture, script in obj._gestureMap.iteritems():
+			try:
+				scriptInfo = scripts[script.__func__]
+			except KeyError:
+				continue
+			key = (scriptInfo.cls, gesture)
+			if key in self.handledGestures:
+				continue
+			self.handledGestures.add(key)
+
+	def __init__(self, obj, ancestors):
 		self.results = {}
 		self.scriptInfo = {}
 		self.handledGestures = set()
-		self.addGlobalMap(addonGestureMap)
 
-	def addGlobalPluginObj(self, obj, isAncestor=False):
-		pass
+		self.addGlobalMap(secondaryGestureMap)
+		import braille
+		gmap = braille.handler.display.gestureMap
+		if gmap:
+			self.addGlobalMap(gmap)
+		if isinstance(braille.handler.display, baseObject.ScriptableObject):
+			self.addObj(braille.handler.display)
 
-
-addonGestureMap = AddonGestureMap()
-defaultAddonGestureMap = AddonGestureMap()
+		# Global plugins.
+		import globalPluginHandler
+		for plugin in globalPluginHandler.runningPlugins:
+			self.addObj(plugin)
 
 
 def loadAddonGestureMap():
-	global addonGestureMap, defaultAddonGestureMap
-	if not addonGestureMap:
+	global secondaryGestureMap
+	if not secondaryGestureMap:
+		secondaryGestureMap = GlobalGestureMap()
 		mapPath = safeJoin(globalVars.appArgs.configPath, u"onlineImageDescriberGestures.ini")
+		defaultMapPath = safeJoin(os.path.dirname(__file__), u"defaultGestures.ini")
 		if os.path.exists(mapPath):
-			addonGestureMap.load(mapPath)
+			secondaryGestureMap.load(mapPath)
 		else:
-			allEntries = inputCore.manager.getAllGestureMappings(
-				obj=gui.mainFrame.prevFocus, ancestors=gui.mainFrame.prevFocusAncestors
-			)
-			addonEntries = allEntries[category_name]
-			entries = {
-				category_name: allEntries[category_name]
-			}
-			addonGestureMap.add(entries)
-			addonGestureMap.save()
+			secondaryGestureMap.load(defaultMapPath)
+			secondaryGestureMap.fileName = mapPath
+			secondaryGestureMap.save()
+
+
+loadAddonGestureMap()
 
 
 class LayeredGestureDialog(InputGesturesDialog):
 
 	def makeSettings(self, settingsSizer):
 		super(LayeredGestureDialog, self).makeSettings(settingsSizer)
-		log.io(self.gestures)
-		self.gestures = AddonGestureMapRetriever().results
-		log.io(self.gestures)
-		allEntries = inputCore.manager.getAllGestureMappings(
-			obj=gui.mainFrame.prevFocus, ancestors=gui.mainFrame.prevFocusAncestors
-		)
-		addonEntries = allEntries[category_name]
-		log.debug(addonEntries)
+		self.gestures = AddonGestureMapRetriever(
+			gui.mainFrame.prevFocus,
+			gui.mainFrame.prevFocusAncestors).results
+		self.tree.DeleteChildren(self.treeRoot)
+		self.populateTree()
 
 	def onOk(self, evt):
 		log.io(self.pendingAdds)
 		log.io(self.pendingRemoves)
 		for gesture, module, className, scriptName in self.pendingRemoves:
 			try:
-				addonGestureMap.remove(gesture, module, className, scriptName)
+				secondaryGestureMap.remove(gesture, module, className, scriptName)
 			except ValueError:
 				# The user wants to unbind a gesture they didn't define.
-				addonGestureMap.add(gesture, module, className, None)
+				secondaryGestureMap.add(gesture, module, className, None)
 
 		for gesture, module, className, scriptName in self.pendingAdds:
 			try:
 				# The user might have unbound this gesture,
 				# so remove this override first.
-				addonGestureMap.remove(gesture, module, className, None)
+				secondaryGestureMap.remove(gesture, module, className, None)
 			except ValueError:
 				pass
-			addonGestureMap.add(gesture, module, className, scriptName)
+			secondaryGestureMap.add(gesture, module, className, scriptName)
 
 		if self.pendingAdds or self.pendingRemoves:
 			# Only save if there is something to save.
 			try:
-				addonGestureMap.save()
+				secondaryGestureMap.save()
 			except:
 				log.debugWarning("", exc_info=True)
 				# Translators: An error displayed when saving user defined input gestures fails.
