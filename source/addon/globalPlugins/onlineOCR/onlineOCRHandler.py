@@ -915,4 +915,3 @@ class CustomOCRPanel(SettingsPanel):
 	
 	def onPanelActivated(self):
 		super(CustomOCRPanel, self).onPanelActivated()
-		self.descEngineSettingPanel.SetFocus()
