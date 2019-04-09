@@ -73,7 +73,7 @@ class MLDescriber(azure.MLDescriber):
 			_(u"Tags the image with a detailed list of words related to the image content."),
 		"Faces":
 			# Translators: Description of visual features
-			_(u"Describes the image content with a complete sentence in supported languages."),
+			_(u"Detects if faces are present. If present, generate coordinates, gender and age."),
 		"ImageType":
 			# Translators: Description of visual features
 			_(u"Detects if image is clip art or a line drawing."),

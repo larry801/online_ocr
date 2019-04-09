@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'customOCR' '0.1.1-dev'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@freelists.org'\n"
-"POT-Creation-Date: 2019-04-03 20:22+0800\n"
-"PO-Revision-Date: 2019-04-03 20:25+0800\n"
+"POT-Creation-Date: 2019-04-09 17:28+0800\n"
+"PO-Revision-Date: 2019-04-09 17:28+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,17 +28,22 @@ msgstr ""
 #. type: wx.CheckBox
 #. type: wx.Choice
 #. type: wx.CheckBox
-#: addon\globalPlugins\onlineOCR\LayeredGesture.py:27
+#: addon\globalPlugins\onlineOCR\LayeredGesture.py:26
 #: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:778
 #: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:792
 msgid "Online Image Describer"
 msgstr "在线图像描述"
 
-#: addon\globalPlugins\onlineOCR\LayeredGesture.py:139
+#. Translators: Name of script prefix category
+#: addon\globalPlugins\onlineOCR\LayeredGesture.py:28
+msgid "Prefix for sequential gesture"
+msgstr "顺序手势的前缀"
+
+#: addon\globalPlugins\onlineOCR\LayeredGesture.py:156
 msgid "Error saving user defined gestures - probably read only file system."
 msgstr "保存用户定义的手势时出错-可能只读取文件系统。"
 
-#: addon\globalPlugins\onlineOCR\LayeredGesture.py:140
+#: addon\globalPlugins\onlineOCR\LayeredGesture.py:157
 msgid "Error"
 msgstr "错误"
 
@@ -334,18 +339,25 @@ msgstr "代理类型(&T)"
 msgid "Proxy &Address"
 msgstr "代理地址(&A)"
 
+#. Translators: This is the label for a button in the
+#. online OCR settings panel.
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:863
+msgid ""
+"Test this OCR engine by recognizing a sample image with five numbers 12345."
+msgstr "通过识别具有五个数字12345的示例图像来测试此 OCR 引擎。"
+
 #. Translators: Reported when save proxy settings in online ocr panel
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:879
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:891
 msgid "Checking your proxy settings"
 msgstr "检查代理设置"
 
 #. Translators: Reported when proxy verification fails in online ocr settings panel
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:898
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:910
 msgid "Proxy is valid, , settings is saved."
 msgstr "代理服务器有效, 设置已保存。"
 
 #. Translators: Reported when proxy verification fails in online ocr settings panel
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:909
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:921
 msgid "Proxy is not valid, please check your proxy type and address."
 msgstr "代理服务器无效, 请检查您的代理类型和地址。"
 
@@ -1069,10 +1081,9 @@ msgstr "根据文档中定义的分类对图像内容进行分类。"
 
 #. Translators: Description of visual features
 #: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:67
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:76
 msgid ""
 "Describes the image content with a complete sentence in supported languages."
-msgstr "用支持的语言描述带有完整句子的图像内容。"
+msgstr "用完整句子描述图像内容。"
 
 #. Translators: Description of visual features
 #: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:70
@@ -1086,6 +1097,13 @@ msgstr "确定强调色、主导色以及图像是否为黑白。"
 msgid ""
 "Tags the image with a detailed list of words related to the image content."
 msgstr "使用与图像内容相关的标签描述图像。"
+
+#. Translators: Description of visual features
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:76
+msgid ""
+"Detects if faces are present. If present, generate coordinates, gender and "
+"age."
+msgstr "人脸-检测图像上是否有人脸。如果存在, 则生成坐标、性别和年龄。"
 
 #. Translators: Description of visual features
 #: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:79
@@ -1135,12 +1153,12 @@ msgstr "此图像不包含成人内容"
 #. Translators: Result label for azure image analyzer
 #: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:182
 msgid "This image contains racy content"
-msgstr "此图像包含活泼的内容"
+msgstr "此图像包含裸露的内容"
 
 #. Translators: Result label for azure image analyzer
 #: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:185
 msgid "This image does not contain racy content"
-msgstr "此图像不包含活泼的内容"
+msgstr "此图像不包含裸露的内容"
 
 #. Translators: Result label for azure image analyzer
 #: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:188
@@ -1287,7 +1305,7 @@ msgstr "塔吉克语"
 #. Translators: Text language for image description
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:155
 msgid "Ukrainian"
-msgstr "乌克兰语点字"
+msgstr "乌克兰语"
 
 #. Add-on summary, usually the user visible name of the addon.
 #. Translators: Summary for this add-on to be shown on installation and add-on information.
