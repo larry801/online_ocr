@@ -113,9 +113,6 @@ def loadAddonGestureMap():
 			secondaryGestureMap.save()
 
 
-loadAddonGestureMap()
-
-
 class LayeredGestureDialog(InputGesturesDialog):
 
 	def makeSettings(self, settingsSizer):
@@ -123,6 +120,11 @@ class LayeredGestureDialog(InputGesturesDialog):
 		self.gestures = AddonGestureMapRetriever(
 			gui.mainFrame.prevFocus,
 			gui.mainFrame.prevFocusAncestors).results
+		newResult = {}
+		for x in self.gestures:
+			if x == category_name:
+				newResult[x] = self.gestures[x]
+		self.gestures = newResult
 		self.tree.DeleteChildren(self.treeRoot)
 		self.populateTree()
 
