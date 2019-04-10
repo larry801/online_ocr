@@ -344,6 +344,12 @@ There is no additional configuration for these API.
 
 ## Change Log
 
+### 0.17
+
+Fixed following issues:
+Jump directly to panel when switch to onlineImageDescriber in settings dialog
+Fix wrong description in azure analyzer
+
 ### 0.16
 
 Add a cancel recognition gesture
@@ -351,8 +357,7 @@ Add a cancel recognition gesture
 Fixed following issues:
 CheckListBox state change not announced
 Swap the effect of repeated gesture not working in online image describer
-Jump directly to panel when switch to onlineImageDescriber in settings dialog
-Fix wrong description in azure analyzer
+
 
 ### 0.15
 
