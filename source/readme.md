@@ -21,7 +21,7 @@ It is highly recommended to register your own key according to guide in each eng
 
 The following settings are applicable to all engines.
 
-* Copy result to clipboard after recognition:
+* Copy recognition result to the clipboard:
 If enabled, recognition result text will be copied to clipboard after recognition.
 
 * Use browseable message for text result
@@ -30,7 +30,7 @@ If enabled, recognition result text will be shown in a popup window instead of s
 * Swap the effect of repeated gesture with none repeated ones:
 By default, a virtual result document is shown only if you press the corresponding gesture twice, if you use that frequently you can enable this option so that you only need to press once to get a result viewer.
 
-* Enable more verbose logging for debug purpose:
+* Enable more verbose logging for debug purposes:
 Some logs are essential for debugging but affects performance and takes up a lot of space. Only turn this on if specifically instructed to by the addon author or an NVDA developer.
 
 * Proxy type:
@@ -122,7 +122,7 @@ There are two settings for this engine.
 * Language
 The language in which the service will return a description of the image. English by default.
 
-* Max Candidates
+* Maximum Candidates
 Maximum number of candidate descriptions to be returned. The default is 1.
 
 ## Online OCR
@@ -373,7 +373,7 @@ Result from Microsoft Azure Image Describer is in the same line which makes it h
 ### 0.14
 
 Fixed some bugs:
-Cannot use your own api key in Microsoft Azure engines
+Cannot use your own API key in Microsoft Azure engines
 Cannot get text result if there is a braille display
 
 ### 0.13
@@ -394,7 +394,7 @@ Added image description capability
 Change addon summary to online image describer
 
 ### 0.10
-Fix error using user's own api key in sougou API.
+Fix error using user's own API key in sougou API.
 Fix unknown panel issue by adding settings to supportedSettings
 
 ### 0.9

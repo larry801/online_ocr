@@ -29,7 +29,7 @@ class MLDescriber(BaseDescriber):
 			BaseDescriber.ImageQualitySetting(),
 			BaseDescriber.NumericSettings(
 				"maxCandidates",
-				_(u"Max number of candidates")
+				_(u"Maximum number of candidates")
 			),
 			BaseDescriber.StringSettings(
 				"region",

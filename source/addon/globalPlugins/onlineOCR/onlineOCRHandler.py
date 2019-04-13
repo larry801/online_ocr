@@ -481,7 +481,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		
 	@staticmethod
 	def showBrowseableMessageInNetworkThread(message):
-		wx.CallAfter(ui.browseableMessage, message)
+		# Translators: the Title of recognition result pop up window.
+		wx.CallAfter(ui.browseableMessage, message, _(u"Image recognition result"))
 
 	def cleanUp(self):
 		self.onResult = None
@@ -638,7 +639,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	def _get_availableAccesstypes(self):
 		accessTypes = OrderedDict({
 			# Translators: Label for OCR engine settings.
-			"free": _("Use public api quota"),
+			"free": _("Use public API quota"),
 			# Translators: Label for OCR engine settings.
 			"own_key": _("Use api key registered by yourself"),
 		})
@@ -811,7 +812,7 @@ class CustomOCRPanel(SettingsPanel):
 		
 		# Translators: This is the label for a checkbox in the
 		# online OCR settings panel.
-		copyToClipboardText = _("&Copy result to clipboard after recognition")
+		copyToClipboardText = _("&Copy recognition result to the clipboard")
 		self.copyToClipboardCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=copyToClipboardText))
 		self.copyToClipboardCheckBox.SetValue(
 			config.conf[self.handler.configSectionName]["copyToClipboard"])
@@ -832,7 +833,7 @@ class CustomOCRPanel(SettingsPanel):
 			config.conf[self.handler.configSectionName]["swapRepeatedCountEffect"])
 		# Translators: This is the label for a checkbox in the
 		# online OCR settings panel.
-		verboseDebugLoggingText = _("&Enable more verbose logging for debug purpose")
+		verboseDebugLoggingText = _("&Enable more verbose logging for debug purposes")
 		self.verboseDebugLoggingCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=verboseDebugLoggingText))
 		self.verboseDebugLoggingCheckBox.SetValue(
 			config.conf[self.handler.configSectionName]["verboseDebugLogging"])
@@ -855,6 +856,18 @@ class CustomOCRPanel(SettingsPanel):
 			proxyAddressLabelText,
 			wx.TextCtrl)
 		self.proxyAddressTextCtrl.SetValue(config.conf[self.handler.configSectionName]["proxyAddress"])
+		self.testEngineButton = settingsSizerHelper.addItem(
+			wx.Button(
+				self,
+				# Translators: This is the label for a button in the
+				# online OCR settings panel.
+				label=_(u"Test this OCR engine by recognizing a sample image with five numbers 12345.")
+			)
+		)
+		from .LayeredGesture import onAddonInputGestureDialog
+		self.testEngineButton.Bind(
+			wx.EVT_BUTTON,
+			onAddonInputGestureDialog)
 	
 	def onSave(self):
 		self.descEngineSettingPanel.onSave()
@@ -895,7 +908,7 @@ class CustomOCRPanel(SettingsPanel):
 				log.io(msg)
 				gui.messageBox(
 					# Translators: Reported when proxy verification fails in online ocr settings panel
-					caption=_(u"Proxy is valid, , settings is saved."),
+					caption=_(u"Proxy is valid, settings is saved."),
 					message=_(r.data),
 				)
 				return True
