@@ -805,11 +805,7 @@ class CustomOCRPanel(SettingsPanel):
 	def makeSettings(self, sizer):
 		from gui.guiHelper import BoxSizerHelper
 		settingsSizerHelper = BoxSizerHelper(self, sizer=sizer)
-		self.ocrEngineSettingPanel = OnlineOCRPanel(self)
-		self.descEngineSettingPanel = OnlineImageDescriberPanel(self)
-		settingsSizerHelper.addItem(self.ocrEngineSettingPanel)
-		settingsSizerHelper.addItem(self.descEngineSettingPanel)
-		
+
 		# Translators: This is the label for a checkbox in the
 		# online OCR settings panel.
 		copyToClipboardText = _("&Copy recognition result to the clipboard")
@@ -849,25 +845,11 @@ class CustomOCRPanel(SettingsPanel):
 			if name == curType:
 				self.proxyTypeList.SetSelection(index)
 				break
-		# Translators: The label for a TextCtrl in the
-		# online OCR settings panel.
-		proxyAddressLabelText = _(u"Proxy &Address")
-		self.proxyAddressTextCtrl = settingsSizerHelper.addLabeledControl(
-			proxyAddressLabelText,
-			wx.TextCtrl)
-		self.proxyAddressTextCtrl.SetValue(config.conf[self.handler.configSectionName]["proxyAddress"])
-		self.testEngineButton = settingsSizerHelper.addItem(
-			wx.Button(
-				self,
-				# Translators: This is the label for a button in the
-				# online OCR settings panel.
-				label=_(u"Test this OCR engine by recognizing a sample image with five numbers 12345.")
-			)
-		)
-		from .LayeredGesture import onAddonInputGestureDialog
-		self.testEngineButton.Bind(
-			wx.EVT_BUTTON,
-			onAddonInputGestureDialog)
+
+		self.ocrEngineSettingPanel = OnlineOCRPanel(self)
+		self.descEngineSettingPanel = OnlineImageDescriberPanel(self)
+		settingsSizerHelper.addItem(self.ocrEngineSettingPanel)
+		settingsSizerHelper.addItem(self.descEngineSettingPanel)
 	
 	def onSave(self):
 		self.descEngineSettingPanel.onSave()
