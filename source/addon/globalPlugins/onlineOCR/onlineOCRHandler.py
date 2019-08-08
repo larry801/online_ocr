@@ -18,16 +18,14 @@ import wx
 import config
 from six import iterkeys
 
-from .abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine
 import addonHandler
-from . import imageDescribers
-from . import contentRecognizers
 from logHandler import log
 import ui
 from collections import OrderedDict
 from gui.settingsDialogs import SettingsPanel
 from six.moves.urllib_parse import urlencode
 from six import binary_type
+from six import PY2
 
 
 def safeJoin(a, b):
@@ -48,11 +46,19 @@ def safeJoin(a, b):
 		return os.path.join(a, b)
 
 
+if PY2:
+	contribPathName = u"_contrib"
+else:
+	contribPathName = u"_py3_contrib"
 contribPath = safeJoin(
 	os.path.dirname(os.path.dirname(__file__)),
-	u"_contrib",
+	contribPathName,
 )
 sys.path.insert(0, contribPath)
+sys.path.insert(0, os.path.dirname(__file__))
+from abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine
+import imageDescribers
+import contentRecognizers
 from PIL import Image
 from PIL.Image import LANCZOS
 _ = lambda x: x
@@ -733,6 +739,7 @@ class CustomOCRHandler(AbstractEngineHandler):
 	enginePackage = contentRecognizers
 	configSectionName = "onlineOCR"
 	defaultEnginePriorityList = ["azureOCR"]
+	mandatoryClassName = "CustomContentRecognizer"
 	configSpec = {
 		"engine": "string(default=auto)",
 		"copyToClipboard": "boolean(default=false)",
@@ -759,6 +766,7 @@ class BaseDescriber(BaseRecognizer):
 
 class OnlineImageDescriberHandler(AbstractEngineHandler):
 	engineClass = BaseDescriber
+	mandatoryClassName = "CustomContentRecognizer"
 	engineClassName = "BaseDescriber"
 	engineAddonName = "onlineImageDescriber"
 	enginePackageName = "imageDescribers"

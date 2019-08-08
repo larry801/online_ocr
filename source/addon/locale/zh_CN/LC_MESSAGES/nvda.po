@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'customOCR' '0.1.1-dev'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@freelists.org'\n"
-"POT-Creation-Date: 2019-04-09 17:28+0800\n"
-"PO-Revision-Date: 2019-04-09 17:28+0800\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2019-08-08 10:28+0800\n"
+"PO-Revision-Date: 2019-08-08 10:28+0800\n"
+"Last-Translator: Larry Wang <larry.wang.801@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.2.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Language: zh_CN\n"
 
@@ -29,8 +29,8 @@ msgstr ""
 #. type: wx.Choice
 #. type: wx.CheckBox
 #: addon\globalPlugins\onlineOCR\LayeredGesture.py:26
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:778
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:792
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:787
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:801
 msgid "Online Image Describer"
 msgstr "在线图像描述"
 
@@ -39,11 +39,11 @@ msgstr "在线图像描述"
 msgid "Prefix for sequential gesture"
 msgstr "顺序手势的前缀"
 
-#: addon\globalPlugins\onlineOCR\LayeredGesture.py:156
+#: addon\globalPlugins\onlineOCR\LayeredGesture.py:158
 msgid "Error saving user defined gestures - probably read only file system."
 msgstr "保存用户定义的手势时出错-可能只读取文件系统。"
 
-#: addon\globalPlugins\onlineOCR\LayeredGesture.py:157
+#: addon\globalPlugins\onlineOCR\LayeredGesture.py:159
 msgid "Error"
 msgstr "错误"
 
@@ -135,52 +135,52 @@ msgid "Recognition Language"
 msgstr "识别语言 (&L)"
 
 #. Developers: Please also specify a comment for translators
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:371
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:377
 msgid "Change Engine"
 msgstr "更改引擎"
 
 #. Translators: A label for the engines on the engine panel.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:379
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:385
 msgid "&Engines"
 msgstr "引擎(&E)"
 
 #. Translators: This is the label for the button used to change engines,
 #. it appears in the context of a engine group on the Online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:397
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:486
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:403
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:492
 msgid "C&hange..."
 msgstr "修改(&H)..."
 
 #. Developers: Please also specify a comment for translators
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:451
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:452
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:457
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:458
 msgid "Engine"
 msgstr "引擎"
 
 #. Translators: A label for the engines on the engine panel.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:468
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:474
 msgid " Engines"
 msgstr " 引擎"
 
 #. Translators: This is the label for the engine selection dialog
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:542
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:548
 msgid "Select Engines"
 msgstr "选择引擎"
 
 #. Translators: This is a label for the select
 #. engine combobox in the engine dialog.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:552
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:558
 msgid "&Engines:"
 msgstr "引擎(&E):"
 
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:583
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:589
 #, python-format
 msgid "Could not load the %s engine."
 msgstr "无法加载 %s 引擎。"
 
 #. Translators: Title of the message box presented when
 #. NVDA is unable to load the selected engine.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:586
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:592
 msgid "Engine Error"
 msgstr "引擎加载出错"
 
@@ -188,176 +188,170 @@ msgstr "引擎加载出错"
 #. type: dict
 #. type: wx.Window
 #. Translators: This is the label for the settings panel.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:605
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:611
 msgid "Engine Settings"
 msgstr "引擎设置"
 
 #. Translators: Label for image quality settings in settings panel
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:100
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:106
 msgid "Upload image quality"
 msgstr "上传图像的质量"
 
 #. Translators: Label in settings dialog
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:134
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:140
 msgid "Copy result text to clipboard after recognition"
 msgstr "识别后将结果文本复制到剪贴板"
 
 #. Translators: Reported when error occurred during image conversion
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:303
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:309
 msgid ""
 "Error occurred on Proxy server. Please try again or use your own API key "
 "instead"
 msgstr "代理服务器上出现错误。请重试或改用您自己的 api 密钥"
 
 #. Translators: Reported when error occurred during image resizing
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:336
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:342
 msgid "Image aspect ratio is too big. Cannot resize properly for this engine."
 msgstr "图像长宽比太大。无法为此引擎正确调整大小。"
 
 #. Translators: Reported when error occurred during image conversion
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:355
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:361
 msgid "Error occurred when converting images"
 msgstr "转换图像时出错"
 
 #. Translators: Reported when image size is not valid
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:359
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:369
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:365
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:375
 msgid "Image width is too big for this engine"
 msgstr "图像宽度对于此引擎来说太大了"
 
 #. Translators: Reported when error occurred during image conversion
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:365
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:374
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:371
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:380
 msgid "Image height is too small for this engine"
 msgstr "对于此引擎来说, 图像高度太小"
 
 #. Translators: Reported when error occurred during image resizing
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:400
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:406
 msgid "Image has too many pixels."
 msgstr "图像的像素太多。"
 
 #. Translators: Error message
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:461
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:558
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:467
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:565
 msgid "There is another recognition ongoing. Please wait."
 msgstr "前一个OCR正在进行中。请稍候再试。"
 
+#. Translators: the Title of recognition result pop up window.
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:491
+#, fuzzy
+msgid "Image recognition result"
+msgstr "识别结果："
+
 #. Translators: Message added before recognition result
 #. when user do not use result viewer
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:498
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:505
 msgid "Recognition result:"
 msgstr "识别结果："
 
 #. Translators: Reported when api result is invalid
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:518
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:544
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:525
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:551
 msgid "Recognition failed. Result is invalid."
 msgstr "识别失败。结果无效。"
 
 #. Translators: Reported when recognition result is empty
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:526
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:533
 msgid "Recognition result is blank. There may be no text on this image."
 msgstr "识别结果为空。此图像上可能没有文本。"
 
 #. Translators: Label for OCR engine settings.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:641
-msgid "Use public api quota"
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:648
+#, fuzzy
+msgid "Use public API quota"
 msgstr "使用公共免费 api 配额"
 
 #. Translators: Label for OCR engine settings.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:643
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:650
 msgid "Use api key registered by yourself"
 msgstr "使用您自己注册的 api 密钥"
 
 #. Translators: Label for OCR engine settings.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:652
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:659
 msgid "API Access Type"
 msgstr "API 访问类型"
 
 #. Translators: Label of OCR API quota balance control
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:660
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:667
 msgid "API quota Balance"
 msgstr "剩余OCR次数"
 
 #. Translators: Reported when error occurred during image serialization
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:690
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:697
 msgid "Image content is too big to upload."
 msgstr "图像太大, 无法上传。"
 
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:747
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:755
 msgid "Online OCR"
 msgstr "在线 OCR"
 
 #. Translators: One of the proxy types in online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:797
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:806
 msgid "Do not use proxy"
 msgstr "不使用代理"
 
 #. Translators: One of the proxy types in online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:799
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:808
 msgid "Use HTTP proxy"
 msgstr "使用 HTTP 代理"
 
 #. Translators: One of the proxy types  in online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:801
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:810
 msgid "Use socks proxy"
 msgstr "使用Socks代理"
 
 #. Translators: This is the label for a checkbox in the
 #. online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:814
-msgid "&Copy result to clipboard after recognition"
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:819
+msgid "&Copy recognition result to the clipboard"
 msgstr "识别后将结果文本复制到剪贴板(&C)"
 
 #. Translators: This is the label for a checkbox in the
 #. online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:821
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:826
 msgid "&Use browseable message for text result"
 msgstr "使用弹出对话框展示识别结果(&U)"
 
 #. Translators: This is the label for a checkbox in the
 #. online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:828
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:833
 msgid "&Swap the effect of repeated gesture with none repeated ones."
 msgstr "交换重复手势的效果(&S)"
 
 #. Translators: This is the label for a checkbox in the
 #. online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:835
-msgid "&Enable more verbose logging for debug purpose"
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:840
+msgid "&Enable more verbose logging for debug purposes"
 msgstr "启用更详细的日志记录方便调试(&E)"
 
 #. Translators: The label for a list in the
 #. online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:841
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:846
 msgid "Proxy &Type"
 msgstr "代理类型(&T)"
 
-#. Translators: The label for a TextCtrl in the
-#. online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:853
-msgid "Proxy &Address"
-msgstr "代理地址(&A)"
-
-#. Translators: This is the label for a button in the
-#. online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:863
-msgid ""
-"Test this OCR engine by recognizing a sample image with five numbers 12345."
-msgstr "通过识别具有五个数字12345的示例图像来测试此 OCR 引擎。"
-
 #. Translators: Reported when save proxy settings in online ocr panel
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:891
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:882
 msgid "Checking your proxy settings"
 msgstr "检查代理设置"
 
 #. Translators: Reported when proxy verification fails in online ocr settings panel
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:910
-msgid "Proxy is valid, , settings is saved."
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:901
+msgid "Proxy is valid, settings is saved."
 msgstr "代理服务器有效, 设置已保存。"
 
 #. Translators: Reported when proxy verification fails in online ocr settings panel
-#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:921
+#: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:912
 msgid "Proxy is not valid, please check your proxy type and address."
 msgstr "代理服务器无效, 请检查您的代理类型和地址。"
 
@@ -1040,8 +1034,8 @@ msgid "Microsoft Azure Image describer"
 msgstr "微软 Azure 图像描述器"
 
 #: addon\globalPlugins\onlineOCR\imageDescribers\azure.py:32
-msgid "Max number of candidates"
-msgstr "最多返回多少个可能的描述"
+msgid "Maximum number of candidates"
+msgstr "最多返回多少个结果"
 
 #. Translators: Text language for image description
 #: addon\globalPlugins\onlineOCR\imageDescribers\azure.py:157
@@ -1332,6 +1326,17 @@ msgstr ""
 "图像描述描述以文本形式描述图像中的视觉特征。\n"
 "如一般描述、颜色、类型、地标等 "
 
+#~ msgid "&Copy result to clipboard after recognition"
+#~ msgstr "识别后将结果文本复制到剪贴板(&C)"
+
+#~ msgid "Proxy &Address"
+#~ msgstr "代理地址(&A)"
+
+#~ msgid ""
+#~ "Test this OCR engine by recognizing a sample image with five numbers "
+#~ "12345."
+#~ msgstr "通过识别具有五个数字12345的示例图像来测试此 OCR 引擎。"
+
 #~ msgid "Image content size is too big"
 #~ msgstr "图像大小太大"
 
@@ -1383,9 +1388,6 @@ msgstr ""
 
 #~ msgid "Only one recognition can be performed at a time."
 #~ msgstr "一次只能执行一个识别。"
-
-#~ msgid "&Copy to clipboard"
-#~ msgstr "识别后复制结果到剪贴板"
 
 #~ msgid "SerbianCyrillic"
 #~ msgstr "塞尔维亚语（西里尔字母）"

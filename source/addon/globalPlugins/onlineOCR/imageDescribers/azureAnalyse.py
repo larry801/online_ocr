@@ -16,7 +16,7 @@ _ = lambda x: x
 addonHandler.initTranslation()
 
 
-class MLDescriber(azure.MLDescriber):
+class CustomContentRecognizer(azure.CustomContentRecognizer):
 	name = b"azureAnalyse"
 	
 	# Translators: Description of Online OCR Engine
@@ -37,17 +37,17 @@ class MLDescriber(azure.MLDescriber):
 	
 	def _get_supportedSettings(self):
 		return [
-			MLDescriber.AccessTypeSetting(),
-			MLDescriber.StringSettings(
+			self.AccessTypeSetting(),
+			self.StringSettings(
 				"detail",
 				_(u"Detect Details")),
-			MLDescriber.CheckListSetting(
+			self.CheckListSetting(
 				"feature",
 				# Translators: Label for engine settings
 				_("Configure visual features to extract")
 			),
-			MLDescriber.APIKeySetting(),
-			MLDescriber.StringSettings(
+			self.APIKeySetting(),
+			self.StringSettings(
 				"region",
 				# Translators: Label for engine settings
 				_(u"Azure resource Region")

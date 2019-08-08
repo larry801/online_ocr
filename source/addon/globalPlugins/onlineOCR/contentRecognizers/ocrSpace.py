@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
-from .. import onlineOCRHandler
+from onlineOCRHandler import BaseRecognizer
 from logHandler import log
 from collections import OrderedDict
 import addonHandler
@@ -14,7 +14,7 @@ _ = lambda x: x
 addonHandler.initTranslation()
 
 
-class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
+class CustomContentRecognizer(BaseRecognizer):
 	api_domain = "api.ocr.space"
 	api_url = "parse/image"
 

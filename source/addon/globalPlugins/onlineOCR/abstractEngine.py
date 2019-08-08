@@ -6,6 +6,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
+import importlib
 import pkgutil
 import baseObject
 from gui.settingsDialogs import SettingsPanel, SettingsDialog
@@ -19,7 +20,7 @@ import addonHandler
 import inspect
 from logHandler import log
 from gui.nvdaControls import CustomCheckListBox
-from .engineGUIHelper import (
+from engineGUIHelper import (
 	EngineSetting, EngineSettingChanger,
 	ReadOnlyEngineSetting, BooleanEngineSetting,
 	NumericEngineSetting, VoiceSettingsSlider,
@@ -57,6 +58,7 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 	engineClassName = None
 	isInitialized = False
 	currentEngine = None
+	mandatoryClassName = None
 	engine_class_list = None
 	defaultEnginePriorityList = ['empty']
 	configSpec = {
@@ -163,22 +165,38 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 
 	@classmethod
 	def getEngine(cls, name):
-		engine_module = cls.import_class(cls.enginePackageName, name)
-		for items in dir(engine_module):
-			obj = getattr(engine_module, items)
-			if obj == cls.engineClass:
-				continue
-			if inspect.isclass(obj) and issubclass(obj, cls.engineClass):
-				return obj
+		msg = "Engine name:\n{0}\n".format(name)
+		engine_module = cls.import_module(cls.enginePackageName, name)
+		msg += "Engine module:\n{0}\n".format(engine_module)
+		log.debug(msg)
+		if cls.mandatoryClassName:
+			engineAttr = getattr(engine_module, cls.mandatoryClassName)
+			return engineAttr
+		else:
+			for items in dir(engine_module):
+				module_attribute = getattr(engine_module, items)
+				attrMsg = "Attribute:\n{0}\n".format(module_attribute)
+				if inspect.isclass(module_attribute):
+					attrMsg += "It is a class.\n"
+					if issubclass(module_attribute, cls.engineClass):
+						attrMsg += "Is a subclass of {0}\n".format(cls.engineClass)
+						log.debug(attrMsg)
+						return module_attribute
+					else:
+						log.debug(attrMsg)
 
 	@classmethod
 	def getCurrentEngine(cls):
 		return cls.currentEngine
 
 	@classmethod
-	def import_class(cls, module_name, class_name):
-		imported_module = __import__(module_name, globals(), locals(), [class_name])
-		return getattr(imported_module, class_name)
+	def import_module(cls, packageName, moduleName):
+		import six
+		# if six.PY2:
+		# 	imported_module = __import__(moduleName, globals(), locals(), [packageName])
+		# else:
+		imported_module = importlib.import_module(packageName + '.' + moduleName)
+		return imported_module
 
 	@classmethod
 	def handlePostConfigProfileSwitch(cls):
@@ -188,24 +206,6 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 			cls.setCurrentEngine(conf["engine"])
 			return
 		cls.currentEngine.loadSettings(onlyChanged=True)
-
-	def saveSettings(self):
-		conf = config.conf[self.configSectionName]
-		for setting in self.supportedSettings:
-			conf[setting.name] = getattr(self, setting.name)
-
-	def loadSettings(self, onlyChanged=False):
-		c = config.conf[self.configSectionName]
-		for s in self.supportedSettings:
-			try:
-				val = c[s.name]
-			except KeyError:
-				continue
-			if val is None:
-				continue
-			if onlyChanged and getattr(self, s.name) == val:
-				continue
-			setattr(self, s.name, val)
 
 	def getHandlerConfigSpec(self):
 		# Unlike NVDA speech synth settings,
@@ -326,15 +326,21 @@ class AbstractEngine(baseObject.AutoPropertyObject):
 		pass
 
 	def saveSettings(self):
-		conf = config.conf[self.configSectionName][self.name]
+		try:
+			conf = config.conf[self.configSectionName][self.name]
+		except KeyError:
+			conf = config.conf[self.configSectionName][self.name.decode('utf-8')]
 		for setting in self.supportedSettings:
 			conf[setting.name] = getattr(self, setting.name)
 
 	def loadSettings(self, onlyChanged=False):
-		c = config.conf[self.configSectionName][self.name]
+		try:
+			conf = config.conf[self.configSectionName][self.name]
+		except KeyError:
+			conf = config.conf[self.configSectionName][self.name.decode('utf-8')]
 		for s in self.supportedSettings:
 			try:
-				val = c[s.name]
+				val = conf[s.name]
 			except KeyError:
 				continue
 			if val is None:

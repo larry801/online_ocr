@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
-from ..onlineOCRHandler import BaseDescriber
+from onlineOCRHandler import BaseDescriber
 import addonHandler
 from collections import OrderedDict
 from logHandler import log
@@ -14,7 +14,7 @@ _ = lambda x: x
 addonHandler.initTranslation()
 
 
-class MLDescriber(BaseDescriber):
+class CustomContentRecognizer(BaseDescriber):
 	name = b"azure"
 	
 	# Translators: Description of Online OCR Engine

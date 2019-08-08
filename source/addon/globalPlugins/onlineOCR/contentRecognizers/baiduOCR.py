@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
-from .. import onlineOCRHandler
+from onlineOCRHandler import BaseRecognizer
 import addonHandler
 from logHandler import log
 from collections import OrderedDict
@@ -14,7 +14,7 @@ _ = lambda x: x  # type: callable
 addonHandler.initTranslation()
 
 
-class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
+class CustomContentRecognizer(BaseRecognizer):
 	name = b"baiduOCR"
 
 	# Translators: Description of Online OCR Engine

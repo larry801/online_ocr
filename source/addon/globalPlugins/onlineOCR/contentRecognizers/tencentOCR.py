@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
-from .. import onlineOCRHandler
+from onlineOCRHandler import BaseRecognizer
 import addonHandler
 import hashlib
 from six.moves.urllib_parse import urlencode
@@ -16,7 +16,7 @@ _ = lambda x: x
 addonHandler.initTranslation()
 
 
-class CustomContentRecognizer(onlineOCRHandler.BaseRecognizer):
+class CustomContentRecognizer(BaseRecognizer):
 	name = b"tencentOCR"
 	api_domain = b"api.ai.qq.com"
 	api_url = "fcgi-bin/ocr/ocr_generalocr"
