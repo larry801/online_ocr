@@ -11,6 +11,7 @@ import pkgutil
 import baseObject
 from gui.settingsDialogs import SettingsPanel, SettingsDialog
 from gui import guiHelper
+import six
 import gui
 import wx
 from synthDriverHandler import StringParameterInfo
@@ -119,6 +120,13 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 
 	@classmethod
 	def setCurrentEngine(cls, name, isFallback=False):
+		from six import PY2
+		if PY2:
+			if isinstance(name, str):
+				name = name.decode('utf-8')
+		else:
+			if isinstance(name, bytes):
+				name = name.decode('utf-8')
 		if name == 'auto':
 			name = cls.defaultEnginePriorityList[0]
 		if cls.currentEngine:
@@ -153,6 +161,13 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 
 	@classmethod
 	def getEngineInstance(cls, name):
+		from six import PY2
+		if PY2:
+			if isinstance(name, str):
+				name = name.decode('utf-8')
+		else:
+			if isinstance(name, bytes):
+				name = name.decode('utf-8')
 		newEngine = cls.getEngine(str(name))()
 		if config.conf[cls.configSectionName].isSet(name):
 			newEngine.loadSettings()
@@ -195,7 +210,13 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 		# if six.PY2:
 		# 	imported_module = __import__(moduleName, globals(), locals(), [packageName])
 		# else:
-		imported_module = importlib.import_module(packageName + '.' + moduleName)
+		if isinstance(moduleName, bytes):
+			moduleNameStr = moduleName.decode('utf-8')
+		else:
+			moduleNameStr = moduleName
+		log.debug(type(moduleNameStr))
+		fullName = "{0}.{1}".format(packageName, moduleNameStr)
+		imported_module = importlib.import_module(fullName)
 		return imported_module
 
 	@classmethod
@@ -481,7 +502,13 @@ class AbstractEngineSettingsPanel(SettingsPanel):
 		# by default it renders as a single line. Standard TextCtrl with TE_MULTILINE has two lines,
 		# and a vertical scroll bar. This is not necessary for the single line of text we wish to
 		# display here.
-		engineDesc = self.handler.getCurrentEngine().description
+		engine = self.handler.getCurrentEngine()
+		engineDesc = engine.description
+		msg = "Engine:\n{0}\nDescription:\n{1}\n".format(
+			engine,
+			engineDesc
+		)
+		log.debug(msg)
 		self.descEngineNameCtrl = ExpandoTextCtrl(
 			self, size=(self.scaleSize(250), -1), value=engineDesc,
 			style=wx.TE_READONLY)
