@@ -9,59 +9,76 @@ A global plugin that add online ocr to NVDA
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
+from inputCore import InputGesture
 import addonHandler
 import globalPluginHandler
 import gui
 import globalVars
 import config
-from .onlineOCRHandler import (
-	CustomOCRPanel, OnlineImageDescriberHandler, CustomOCRHandler
-)
+import winUser
 from contentRecog import RecogImageInfo
 from contentRecog.recogUi import _recogOnResult
 from scriptHandler import script
 from logHandler import log
 import ui
+import winKernel
 import scriptHandler
-from PIL import ImageGrab, Image
 import inputCore
-from .LayeredGesture import category_name, secondaryGestureMap
+from ctypes import windll, create_unicode_buffer, c_uint32, wstring_at
+from . import onlineOCRHandler
+from PIL import ImageGrab, Image
+from onlineOCRHandler import (
+	CustomOCRPanel, OnlineImageDescriberHandler, CustomOCRHandler
+)
+from LayeredGesture import category_name, secondaryGestureMap
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
 
 
+CONFIGURABLE_RECOGNITION_TARGETS = {
+	# Translators: Target type for recognition
+	"clipboard": _("Clipboard"),
+	"foreGroundWindow": _("Foreground window"),
+	"wholeDesktop": _("The whole desktop"),
+	"navigatorObject": _("Navigator Objcect")
+}
+
+
+def PILImageToPixels(image):
+	"""
+	Convert PIL Image into pixels and imageInfo
+	@param image: Image to convert
+	@type image Image.Image
+	@return:
+	@rtype: tuple
+	"""
+	imageInfo = RecogImageInfo(0, 0, image.width, image.height, 1)
+	pixels = image.tobytes("raw", "BGRX")
+	return pixels, imageInfo
+
+
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
-	
-	def PILImageToPixels(self, image):
-		"""
-		Convert PIL Image into pixels and imageInfo
-		@param image: Image to convert
-		@type image Image.Image
-		@return:
-		@rtype: tuple
-		"""
-		imageInfo = RecogImageInfo(0, 0, image.width, image.height, 1)
-		pixels = image.tobytes("raw", "BGRX")
-		return pixels, imageInfo
-	
+
 	def __init__(self):
 		super(GlobalPlugin, self).__init__()
 		if globalVars.appArgs.secure:
 			return
 		if config.isAppX:
 			return
-		from . import onlineOCRHandler
-		onlineOCRHandler.CustomOCRHandler.initialize()
-		self.handler = onlineOCRHandler.CustomOCRHandler
-		gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(CustomOCRPanel)
-		
+		CustomOCRHandler.initialize()
+		self.handler = CustomOCRHandler
+		msg = u"OCR engine:\n{0}\n".format(self.handler.currentEngine)
+
 		OnlineImageDescriberHandler.initialize()
 		self.descHandler = OnlineImageDescriberHandler
+		msg += u"Describe handler:\n{0}\n".format(self.descHandler.currentEngine)
+		log.debug(msg)
 		self.prevCaptureFunc = None
 		self.capture_function_installed = False
-		
-	def captureFunction(self, gesture):
+		gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(CustomOCRPanel)
+
+	def captureFunction(self, gesture: InputGesture):
 		"""
 		Implement sequential gestures
 		@param gesture:
@@ -69,9 +86,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		@return:
 		@rtype:
 		"""
-		gestureIdentifiers = gesture.identifiers
+		gestureIdentifiers = gesture._get_identifiers()
 		msg = u"Name\n{0}\nidentifiers\n{2}\nisModifier\n{1}".format(
-			gesture.displayName,
+			gesture._get_displayName(),
 			gesture.isModifier,
 			gestureIdentifiers
 		)
@@ -112,7 +129,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		description=image_describe,
 		category=category_name,
 		gestures=["kb:NVDA+Alt+P"])
-	def script_describeNavigatorObject(self, gesture):
+	def script_describeNavigatorObject(self, gesture: InputGesture):
 		from contentRecog import recogUi
 		engine = OnlineImageDescriberHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
@@ -134,7 +151,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		description=describe_clipboard_msg,
 		category=category_name,
 		gestures=["kb:Control+Shift+NVDA+P"])
-	def script_describeClipboardImage(self, gesture):
+	def script_describeClipboardImage(self, gesture: InputGesture):
+		"""
+
+		@type gesture: InputGesture
+		"""
 		engine = OnlineImageDescriberHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
 		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
@@ -162,7 +183,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=["kb:NVDA+Alt+R"]
 	)
-	def script_recognizeWithOnlineOCREngine(self, gesture):
+	def script_recognizeWithOnlineOCREngine(self, gesture: InputGesture):
 		from contentRecog import recogUi
 		engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
@@ -182,7 +203,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=["kb:Control+Shift+NVDA+R"]
 	)
-	def script_recognizeClipboardImageWithOnlineOCREngine(self, gesture):
+	def script_recognizeClipboardImageWithOnlineOCREngine(self, gesture: InputGesture):
 		engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
 		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
@@ -204,8 +225,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		# Translators: Online Image Describer command name in input gestures dialog
 		description=_("Cancel current recognition if there is any."),
 		category=category_name,
-		gestures=[])
-	def script_cancelCurrentRecognition(self, gesture):
+		gestures=[]
+	)
+	def script_cancelCurrentRecognition(self, gesture: InputGesture):
 		ocrEngine = CustomOCRHandler.getCurrentEngine()
 		describeEngine = OnlineImageDescriberHandler.getCurrentEngine()
 		if ocrEngine.networkThread:
@@ -219,40 +241,88 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		else:
 			# Translators: Reported when cancelling recognition
 			ui.message(_("There is no recognition ongoing."))
-	
+
+	@script(
+		# Translators: Online Image Describer command name in input gestures dialog
+		description=_("Cycle through types of recognition target"),
+		category=category_name,
+		gestures=[]
+	)
+	def script_cycleRecognitionTarget(self, gestures):
+		"""
+
+		@type gestures: InputGesture
+		"""
+		curLevel = config.conf
+		for target in CONFIGURABLE_RECOGNITION_TARGETS:
+			if target > curLevel:
+				break
+		else:
+			target = CONFIGURABLE_RECOGNITION_TARGETS[0]
+		name = 0
+		# Translators: Reported when the user cycles through speech symbol levels
+		# which determine target of content recognition
+		# %s will be replaced with the symbol level; e.g. none, some, most and all.
+		ui.message(_("Recognition target: %s") % name)
+
 	@staticmethod
 	def enumerateClipboardFormat():
-		import win32clipboard
 		formats = []
-		win32clipboard.OpenClipboard(None)
 		fmt = 0
-		while True:
-			fmt = win32clipboard.EnumClipboardFormats(fmt)
-			if fmt == 0:
-				break
-			formats.append(fmt)
+		with winUser.openClipboard(gui.mainFrame.Handle):
+			while True:
+				fmt = windll.user32.EnumClipboardFormats(fmt)
+				if fmt == 0:
+					break
+				formats.append(fmt)
 		return formats
 	
 	@classmethod
 	def getImageFromClipboard(cls):
-		import win32clipboard
+		CF_DIB = 8
+		CF_HDROP = 15
+		CF_UNICODETEXT = 13
 		clipboardImage = None
 		formats = cls.enumerateClipboardFormat()
-		if win32clipboard.CF_DIB in formats:
+		if CF_DIB in formats:
 			clipboardImage = ImageGrab.grabclipboard()
-		elif win32clipboard.CF_HDROP in formats:
+		elif CF_HDROP in formats:
 			try:
-				win32clipboard.OpenClipboard()
-				rawData = win32clipboard.GetClipboardData(win32clipboard.CF_HDROP)
-				log.info(rawData)
-				if isinstance(rawData, tuple):
-					clipboardImage = Image.open(rawData[0])
-					clipboardImage = clipboardImage.convert("RGB")
+				filePathList = []
+				with winUser.openClipboard(gui.mainFrame.Handle):
+					rawData = windll.user32.GetClipboardData(CF_HDROP)
+
+					if not rawData:
+						ui.message(_("Error occurred while getting pasted file."))
+					rawData = winKernel.HGLOBAL(rawData, autoFree=False)
+					with rawData.lock() as addr:
+						fileCount = windll.shell32.DragQueryFileW(
+							c_uint32(addr),
+							c_uint32(0xFFFFFFFF),
+							c_uint32(0),
+							c_uint32(0)
+						)
+						for c in range(fileCount):
+							BUFFER_SIZE = 4096
+							filePath = create_unicode_buffer(BUFFER_SIZE)
+							windll.shell32.DragQueryFileW(
+								c_uint32(addr),
+								c_uint32(c),
+								c_uint32(filePath),
+								c_uint32(BUFFER_SIZE)
+							)
+							filePathList.append(wstring_at(filePath, size=BUFFER_SIZE).rstrip('\x00'))
+					log.debug("filePathList\n{0}".format(filePathList))
+					for fileName in filePathList:
+						# TODO Add a prompt for users to choose from
+						import os
+						if os.path.isfile(fileName):
+							clipboardImage = Image.open(rawData[0])
+							clipboardImage = clipboardImage.convert("RGB")
+							break
 			except TypeError as e:
 				log.io(e)
-			finally:
-				win32clipboard.CloseClipboard()
-		elif win32clipboard.CF_TEXT in formats:
+		elif CF_UNICODETEXT in formats:
 			# TODO extract url or file path from text then grab an image from it.
 			try:
 				from api import getClipData
@@ -267,7 +337,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				else:
 					# Translators: Reported when text in clipboard is not a valid path
 					ui.message(_(u"Text in clipboard is not a valid path."))
-			except IOError as e:
+			except IOError:
 				# Translators: Reported when cannot get content of the path specified
 				errMsg = _("The file specified in clipboard is not an image")
 				ui.message(errMsg)

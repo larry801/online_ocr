@@ -598,7 +598,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		@param payloads: data for API
 		@type payloads: dict
 		"""
-		from .winHttp import postContent
+		from winHttp import postContent
 		self.networkThread = Thread(
 			target=postContent,
 			args=(
@@ -779,6 +779,7 @@ class OnlineImageDescriberHandler(AbstractEngineHandler):
 		"swapRepeatedCountEffect": "boolean(default=false)",
 		"verboseDebugLogging": "boolean(default=false)",
 		"proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
+		"target": 'option("navigatorObject", "clipboard", "wholeDesktop", "foreGroundWindow", default="navigatorObject")',
 		"proxyAddress": 'string(default="")',
 	}
 
@@ -853,6 +854,9 @@ class CustomOCRPanel(SettingsPanel):
 			if name == curType:
 				self.proxyTypeList.SetSelection(index)
 				break
+
+		proxyAddressLabelText = _("Proxy address:")
+		self.proxyAddressTextCtrl = settingsSizerHelper.addLabeledControl(proxyAddressLabelText, wx.TextCtrl)
 
 		self.ocrEngineSettingPanel = OnlineOCRPanel(self)
 		self.descEngineSettingPanel = OnlineImageDescriberPanel(self)

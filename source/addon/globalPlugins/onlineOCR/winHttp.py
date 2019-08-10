@@ -77,11 +77,11 @@ httpConnectionPool = getConnectionPool()
 
 
 def refreshConnectionPool():
+	global httpConnectionPool, oldProxyType, oldProxyAddress
 	if oldProxyType == config.conf["onlineOCR"]["proxyType"] \
 		and oldProxyAddress == config.conf["onlineOCR"]["proxyAddress"]:
 		pass
 	else:
-		global httpConnectionPool, oldProxyType, oldProxyAddress
 		httpConnectionPool = getConnectionPool()
 		oldProxyType = config.conf["onlineOCR"]["proxyType"]
 		oldProxyAddress = config.conf["onlineOCR"]["proxyAddress"]
@@ -95,10 +95,11 @@ def doHTTPRequest(callback, method, url, **kwargs):
 	@param method:
 	@type method:
 	@param url:
-	@type url:
+	@type url: bytes
 	"""
 	refreshConnectionPool()
 	try:
+		url = url.decode('utf-8')
 		r = httpConnectionPool.request(method, url, **kwargs)
 	except urllib3.exceptions.TimeoutError as e:
 		# Translators: Message announced when network error occurred

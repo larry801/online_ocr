@@ -17,7 +17,7 @@ from baseObject import ScriptableObject
 import baseObject
 import os
 import globalVars
-from .onlineOCRHandler import safeJoin
+from onlineOCRHandler import safeJoin
 
 _ = lambda x: x
 # We need to initialize translation and localization support:

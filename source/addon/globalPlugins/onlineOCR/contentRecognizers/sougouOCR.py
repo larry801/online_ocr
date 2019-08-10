@@ -148,9 +148,13 @@ class CustomContentRecognizer(BaseRecognizer):
 		import base64
 		pre = "sac-auth-v1/" + ak + '/' + str(int(time.time())) + "/3600"
 		part2 = "\nPOST\napi.ai.sogou.com\n/pub/ocr\n"
-		message = bytes(pre + part2)
-		signature = hmac.new(bytes(sk), message, digestmod=hashlib.sha256).digest()
-		headerSig = pre + '/' + base64.b64encode(signature)
+		message = pre + part2
+		if not isinstance(message, bytes):
+			message = message.encode('utf-8')
+			pre = pre.encode('utf-8')
+			sk = sk.encode('utf-8')
+		signature = hmac.new(sk, message, digestmod=hashlib.sha256).digest()
+		headerSig = pre + b'/' + base64.b64encode(signature)
 		log.io(headerSig)
 		return str(headerSig)
 	
@@ -190,7 +194,10 @@ class CustomContentRecognizer(BaseRecognizer):
 		
 		import hashlib
 		m = hashlib.md5()
-		m.update(str(getIMEI(15)))
+		imei = getIMEI(15)
+		if not isinstance(imei, bytes):
+			imei = imei.encode('utf-8')
+		m.update(imei)
 		fNList.append(m.hexdigest())
 		fNList.append('_fyj.jpg')
 		return "".join(fNList)
