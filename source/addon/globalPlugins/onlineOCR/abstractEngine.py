@@ -240,7 +240,7 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 
 class AbstractEngine(baseObject.AutoPropertyObject):
 	"""Abstract base engine for external service like OCR Translation and so on.
-	Each engine should be a separate Python module in the enginePackage of handler containing a
+	Each engine should be a separate Python module in the enginePackage of ocrHandler containing a
 	class which inherits from this base class.
 
 	At a minimum, engines must set L{name} and L{description} and override the L{check} method.
@@ -392,7 +392,7 @@ class AbstractEngine(baseObject.AutoPropertyObject):
 class ChangeEnginePanel(SettingsPanel):
 	"""
 	Settings panel of external services.
-	handler must be specified before use.
+	ocrHandler must be specified before use.
 	"""
 	# Developers: Please also specify a comment for translators
 	title = _("Change Engine")
@@ -460,7 +460,7 @@ class ChangeEnginePanel(SettingsPanel):
 
 	def onPanelDeactivated(self):
 		self.engineSettingPanel.onPanelDeactivated()
-		super(AbstractEngineSettingsPanel, self).onPanelDeactivated()
+		super(ChangeEnginePanel, self).onPanelDeactivated()
 
 	def onDiscard(self):
 		self.engineSettingPanel.onDiscard()
@@ -472,7 +472,7 @@ class ChangeEnginePanel(SettingsPanel):
 class AbstractEngineSettingsPanel(SettingsPanel):
 	"""
 	Settings panel of external services.
-	handler must be specified before use.
+	ocrHandler must be specified before use.
 	"""
 	# Developers: Please also specify a comment for translators
 	name = _("Engine")
@@ -483,7 +483,7 @@ class AbstractEngineSettingsPanel(SettingsPanel):
 
 	def makeGeneralSettings(self, settingsSizerHelper):
 		"""
-		Generate general settings for engine handler
+		Generate general settings for engine ocrHandler
 		@param settingsSizerHelper:
 		@type settingsSizerHelper:
 		"""
@@ -620,6 +620,10 @@ class EnginesSelectionDialog(SettingsDialog):
 				wx.OK | wx.ICON_WARNING, self)
 			return
 		handler.setCurrentEngine(newEngineName)
+		if six.PY3 and isinstance(newEngineName, bytes):
+			newEngineName = newEngineName.decode('utf-8')
+		config.conf[handler.configSectionName]["engine"] = newEngineName
+		config.conf.save()
 		if self.IsModal():
 			# Hack: we need to update the engine in our parent window before closing.
 			# Otherwise, NVDA will report the old engine even though the new engine is reflected visually.

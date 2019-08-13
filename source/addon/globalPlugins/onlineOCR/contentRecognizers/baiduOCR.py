@@ -108,8 +108,8 @@ class CustomContentRecognizer(BaseRecognizer):
 
 	def getFullURL(self):
 		fullURL = super(CustomContentRecognizer, self).getFullURL()
-		from six import binary_type
-		if isinstance(fullURL, binary_type):
+		from six import string_types
+		if isinstance(fullURL, string_types):
 			fullURL = fullURL.encode("utf-8")
 		return fullURL
 

@@ -17,8 +17,26 @@ from baseObject import ScriptableObject
 import baseObject
 import os
 import globalVars
-from onlineOCRHandler import safeJoin
 
+
+def safeJoin(a, b):
+	"""
+	join pathes safely without unicode error
+	@param a:
+	@type a: str
+	@param b:
+	@type b: unicode
+	@return:
+	@rtype:
+	"""
+	if isinstance(a, binary_type):
+		# In Python2
+		return os.path.join(a, b.encode("mbcs"))
+	else:
+		# In Python3
+		return os.path.join(a, b)
+
+	
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()

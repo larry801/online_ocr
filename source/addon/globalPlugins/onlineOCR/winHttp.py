@@ -10,6 +10,7 @@ import addonHandler
 import ui
 from logHandler import log
 from urllib3.contrib.socks import SOCKSProxyManager
+import six
 import config
 import urllib3
 import wx
@@ -99,7 +100,8 @@ def doHTTPRequest(callback, method, url, **kwargs):
 	"""
 	refreshConnectionPool()
 	try:
-		url = url.decode('utf-8')
+		if isinstance(url, bytes) and six.PY3:
+			url = url.decode('utf-8')
 		r = httpConnectionPool.request(method, url, **kwargs)
 	except urllib3.exceptions.TimeoutError as e:
 		# Translators: Message announced when network error occurred

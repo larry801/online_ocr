@@ -8,6 +8,7 @@ from __future__ import absolute_import
 from __future__ import division
 from threading import Thread
 import gui
+import six
 import os
 import sys
 from io import BytesIO
@@ -24,38 +25,6 @@ import ui
 from collections import OrderedDict
 from gui.settingsDialogs import SettingsPanel
 from six.moves.urllib_parse import urlencode
-from six import binary_type
-from six import PY2
-
-
-def safeJoin(a, b):
-	"""
-	join pathes safely without unicode error
-	@param a:
-	@type a: str
-	@param b:
-	@type b: unicode
-	@return:
-	@rtype:
-	"""
-	if isinstance(a, binary_type):
-		# In Python2
-		return os.path.join(a, b.encode("mbcs"))
-	else:
-		# In Python3
-		return os.path.join(a, b)
-
-
-if PY2:
-	contribPathName = u"_contrib"
-else:
-	contribPathName = u"_py3_contrib"
-contribPath = safeJoin(
-	os.path.dirname(os.path.dirname(__file__)),
-	contribPathName,
-)
-sys.path.insert(0, contribPath)
-sys.path.insert(0, os.path.dirname(__file__))
 from abstractEngine import AbstractEngineHandler, AbstractEngineSettingsPanel, AbstractEngine
 import imageDescribers
 import contentRecognizers
@@ -162,7 +131,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		else:
 			return b"false"
 	
-	def _get_supportedSettings(self):
+	def _get_supportedSettings0(self):
 		raise NotImplementedError
 	
 	def _get_apiKey(self):
@@ -268,6 +237,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		@rtype:
 		"""
 		url = self.get_url()
+		if six.PY3 and isinstance(url, str):
+			url = url.encode('utf-8')
 		domain = self.get_domain()
 		if self.useHttps:
 			protocol = b"https:/"

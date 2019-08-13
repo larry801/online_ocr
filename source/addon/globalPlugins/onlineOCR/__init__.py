@@ -25,7 +25,40 @@ import winKernel
 import scriptHandler
 import inputCore
 from ctypes import windll, create_unicode_buffer, c_uint32, wstring_at
-from . import onlineOCRHandler
+from six import binary_type
+from six import PY2
+import sys
+import os
+
+
+def safeJoin(a, b):
+	"""
+	join path safely without unicode error
+	@param a:
+	@type a: str
+	@param b:
+	@type b: unicode
+	@return:
+	@rtype:
+	"""
+	if isinstance(a, binary_type):
+		# In Python2
+		return os.path.join(a, b.encode("mbcs"))
+	else:
+		# In Python3
+		return os.path.join(a, b)
+
+
+if PY2:
+	contribPathName = u"_contrib"
+else:
+	contribPathName = u"_py3_contrib"
+contribPath = safeJoin(
+	os.path.dirname(os.path.dirname(__file__)),
+	contribPathName,
+)
+sys.path.insert(0, contribPath)
+sys.path.insert(0, os.path.dirname(__file__))
 from PIL import ImageGrab, Image
 from onlineOCRHandler import (
 	CustomOCRPanel, OnlineImageDescriberHandler, CustomOCRHandler
@@ -67,12 +100,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if config.isAppX:
 			return
 		CustomOCRHandler.initialize()
-		self.handler = CustomOCRHandler
-		msg = u"OCR engine:\n{0}\n".format(self.handler.currentEngine)
+		self.ocrHandler = CustomOCRHandler
+		msg = u"OCR engine:\n{0}\n".format(self.ocrHandler.currentEngine)
 
 		OnlineImageDescriberHandler.initialize()
 		self.descHandler = OnlineImageDescriberHandler
-		msg += u"Describe handler:\n{0}\n".format(self.descHandler.currentEngine)
+		msg += u"Describe ocrHandler:\n{0}\n".format(self.descHandler.currentEngine)
 		log.debug(msg)
 		self.prevCaptureFunc = None
 		self.capture_function_installed = False
@@ -131,7 +164,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		gestures=["kb:NVDA+Alt+P"])
 	def script_describeNavigatorObject(self, gesture: InputGesture):
 		from contentRecog import recogUi
-		engine = OnlineImageDescriberHandler.getCurrentEngine()
+		engine = self.descHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
 		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
 		if repeatCount == 0:
@@ -156,7 +189,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 		@type gesture: InputGesture
 		"""
-		engine = OnlineImageDescriberHandler.getCurrentEngine()
+		engine = self.descHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
 		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
 		if repeatCount == 0:
@@ -185,7 +218,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	)
 	def script_recognizeWithOnlineOCREngine(self, gesture: InputGesture):
 		from contentRecog import recogUi
-		engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
+		engine = self.ocrHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
 		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
 		if repeatCount == 0:
@@ -204,7 +237,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		gestures=["kb:Control+Shift+NVDA+R"]
 	)
 	def script_recognizeClipboardImageWithOnlineOCREngine(self, gesture: InputGesture):
-		engine = onlineOCRHandler.CustomOCRHandler.getCurrentEngine()
+		engine = self.ocrHandler.getCurrentEngine()
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
 		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
 		if repeatCount == 0:
@@ -228,8 +261,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		gestures=[]
 	)
 	def script_cancelCurrentRecognition(self, gesture: InputGesture):
-		ocrEngine = CustomOCRHandler.getCurrentEngine()
-		describeEngine = OnlineImageDescriberHandler.getCurrentEngine()
+		ocrEngine = self.ocrHandler.getCurrentEngine()
+		describeEngine = self.descHandler.getCurrentEngine()
 		if ocrEngine.networkThread:
 			# Translators: Reported when cancelling recognition
 			ui.message(_("OCR cancelled"))
@@ -319,7 +352,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 						if os.path.isfile(fileName):
 							clipboardImage = Image.open(rawData[0])
 							clipboardImage = clipboardImage.convert("RGB")
-							break
+							return clipboardImage
 			except TypeError as e:
 				log.io(e)
 		elif CF_UNICODETEXT in formats:
