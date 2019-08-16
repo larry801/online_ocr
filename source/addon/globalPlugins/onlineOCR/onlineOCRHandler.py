@@ -9,7 +9,6 @@ from __future__ import division
 
 from abc import ABC
 from threading import Thread
-from typing import Any, Union
 
 import gui
 import six
@@ -21,7 +20,7 @@ import base64
 import wx
 import config
 from six import iterkeys
-from gui.guiHelper import BoxSizerHelper, ButtonHelper, PathSelectionHelper
+from gui.guiHelper import BoxSizerHelper
 import addonHandler
 from logHandler import log
 import ui
@@ -796,6 +795,9 @@ class CustomOCRPanel(SettingsPanel):
 	engineTypeList = None  # type: wx.Choice
 	proxyTypeList = None  # type: wx.Choice
 	copyToClipboardCheckBox = None  # type: wx.CheckBox
+	notifyIfResizeRequiredCheckBox = None  # type:wx.CheckBox
+	columnSplitModeList = None  # type: wx.Choice
+
 	title = _(u"General")
 	handler = CustomOCRHandler
 	configSpec = {
@@ -803,10 +805,12 @@ class CustomOCRPanel(SettingsPanel):
 		"swapRepeatedCountEffect": "boolean(default=false)",
 		"useBrowseableMessage": "boolean(default=false)",
 		"verboseDebugLogging": "boolean(default=false)",
-		"engineType": 'option("win10OCR", "onlineOCR", "onlineImageDescriber", default="win10OCR")',
+		"engineType": 'option("win10OCR", "onlineOCR", "onlineImageDescriber", default="onlineOCR")',
 		"targetType": 'option("navigatorObject", "clipboardImage", "clipboardURL", "wholeDesktop", "foreGroundWindow", default="navigatorObject")',
 		"proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
 		"proxyAddress": 'string(default="")',
+		"notifyIfResizeRequired": "boolean(default=true)",
+		"columnSplitMode": 'option("no", "two", "three", default="no")'
 	}
 
 	PROXY_TYPES = [
@@ -823,11 +827,11 @@ class CustomOCRPanel(SettingsPanel):
 		settingsSizerHelper = BoxSizerHelper(self, sizer=sizer)
 
 		try:
-			self.configSection = config.conf["onlineOCR"]["general"]
+			self.configSection = config.conf["onlineOCRGeneral"]
 		except KeyError:
-			config.conf["onlineOCR"]["general"] = {}
-			config.conf.spec["onlineOCR"]["general"] = self.configSpec
-			self.configSection = config.conf["onlineOCR"]["general"]
+			config.conf["onlineOCRGeneral"] = {}
+			config.conf.spec["onlineOCRGeneral"] = self.configSpec
+			self.configSection = config.conf["onlineOCRGeneral"]
 		log.debug("Set config section {0}".format(self.configSection.dict()))
 
 		# Translators: This is the label for a checkbox in the
@@ -835,7 +839,7 @@ class CustomOCRPanel(SettingsPanel):
 		copyToClipboardText = _("&Copy recognition result to the clipboard")
 		self.copyToClipboardCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=copyToClipboardText))
 		self.copyToClipboardCheckBox.SetValue(
-			self.configSection["copyToClipboard"] == "True"
+			config.conf["onlineOCRGeneral"]["copyToClipboard"]
 		)
 		
 		# Translators: This is the label for a checkbox in the
@@ -843,7 +847,7 @@ class CustomOCRPanel(SettingsPanel):
 		useBrowseableMessageText = _("&Use browseable message for text result")
 		self.useBrowseableMessageCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=useBrowseableMessageText))
 		self.useBrowseableMessageCheckBox.SetValue(
-			self.configSection["useBrowseableMessage"] == "True"
+			config.conf["onlineOCRGeneral"]["useBrowseableMessage"]
 		)
 		
 		# Translators: This is the label for a checkbox in the
@@ -852,13 +856,15 @@ class CustomOCRPanel(SettingsPanel):
 		self.swapRepeatedCountEffectCheckBox = settingsSizerHelper.addItem(
 			wx.CheckBox(self, label=swapRepeatedCountEffectText))
 		self.swapRepeatedCountEffectCheckBox.SetValue(
-			self.configSection["swapRepeatedCountEffect"] == "True")
+			config.conf["onlineOCRGeneral"]["swapRepeatedCountEffect"]
+		)
 		# Translators: This is the label for a checkbox in the
 		# online OCR settings panel.
 		verboseDebugLoggingText = _("&Enable more verbose logging for debug purposes")
 		self.verboseDebugLoggingCheckBox = settingsSizerHelper.addItem(wx.CheckBox(self, label=verboseDebugLoggingText))
 		self.verboseDebugLoggingCheckBox.SetValue(
-			self.configSection["verboseDebugLogging"] == "True")
+			config.conf["onlineOCRGeneral"]["verboseDebugLogging"]
+		)
 
 		# Translators: The label for a list in the
 		# online OCR settings panel.
@@ -871,7 +877,7 @@ class CustomOCRPanel(SettingsPanel):
 			wx.Choice,
 			choices=targetTypeChoices
 		)
-		curTargetType = self.configSection["targetType"]
+		curTargetType = config.conf["onlineOCRGeneral"]["targetType"]
 		for index, (name, desc) in enumerate(TARGET_TYPES):
 			if name == curTargetType:
 				self.targetTypeList.SetSelection(index)
@@ -888,10 +894,33 @@ class CustomOCRPanel(SettingsPanel):
 			wx.Choice,
 			choices=engineTypeChoices
 		)
-		curEngineType = self.configSection["engineType"]
+		curEngineType = config.conf["onlineOCRGeneral"]["engineType"]
 		for index, (name, desc) in enumerate(ENGINE_TYPES):
 			if name == curEngineType:
 				self.engineTypeList.SetSelection(index)
+				break
+
+				# Translators: This is the label for a checkbox in the
+		# online OCR settings panel.
+		notifyIfResizeRequiredText = _("&Notify if image resizing is requried.")
+		self.notifyIfResizeRequiredCheckBox = settingsSizerHelper.addItem(
+			wx.CheckBox(self, label=notifyIfResizeRequiredText)
+		)
+		self.notifyIfResizeRequiredCheckBox.SetValue(
+			config.conf["onlineOCR"]["imageProcessing"]["notifyIfResizeRequired"]
+		)
+
+		# Translators: The label for a list in the
+		# online OCR settings panel.
+		self.columnSplitModeList = settingsSizerHelper.addLabeledControl(
+			_("Column &split mode:"),
+			wx.Choice,
+			choices=[desc for (name, desc) in COLUMN_SPLIT_TYPES]
+		)
+		curColMode = config.conf["onlineOCR"]["imageProcessing"]["columnSplitMode"]
+		for index, (name, desc) in enumerate(COLUMN_SPLIT_TYPES):
+			if name == curColMode:
+				self.columnSplitModeList.SetSelection(index)
 				break
 
 		# Translators: The label for a list in the
@@ -902,7 +931,7 @@ class CustomOCRPanel(SettingsPanel):
 		]
 		self.proxyTypeList = settingsSizerHelper.addLabeledControl(
 			proxyTypeText, wx.Choice, choices=proxyTypeChoices)
-		curTargetType = self.configSection["proxyType"]
+		curTargetType = config.conf["onlineOCRGeneral"]["proxyType"]
 		for index, (name, desc) in enumerate(self.PROXY_TYPES):
 			if name == curTargetType:
 				self.proxyTypeList.SetSelection(index)
@@ -912,33 +941,34 @@ class CustomOCRPanel(SettingsPanel):
 		self.proxyAddressTextCtrl = settingsSizerHelper.addLabeledControl(proxyAddressLabelText, wx.TextCtrl)
 
 	def onSave(self):
-		self.configSection["copyToClipboard"] = self.copyToClipboardCheckBox.GetValue()
-		self.configSection["verboseDebugLogging"] = self.verboseDebugLoggingCheckBox.GetValue()
-		self.configSection["useBrowseableMessage"] = self.useBrowseableMessageCheckBox.GetValue()
-		self.configSection[
+		config.conf["onlineOCRGeneral"]["copyToClipboard"] = self.copyToClipboardCheckBox.GetValue()
+		config.conf["onlineOCRGeneral"]["verboseDebugLogging"] = self.verboseDebugLoggingCheckBox.GetValue()
+		config.conf["onlineOCRGeneral"]["useBrowseableMessage"] = self.useBrowseableMessageCheckBox.GetValue()
+		config.conf["onlineOCRGeneral"][
 			"swapRepeatedCountEffect"] = self.swapRepeatedCountEffectCheckBox.GetValue()
-		self.configSection["engineType"] = ENGINE_TYPES[
+		config.conf["onlineOCRGeneral"]["engineType"] = ENGINE_TYPES[
 			self.engineTypeList.GetSelection()
 		][0]
-		self.configSection["targetType"] = TARGET_TYPES[
+		config.conf["onlineOCRGeneral"]["targetType"] = TARGET_TYPES[
 			self.targetTypeList.GetSelection()
 		][0]
-		self.configSection["proxyType"] = self.PROXY_TYPES[self.proxyTypeList.GetSelection()][
+		config.conf["onlineOCRGeneral"]["proxyType"] = self.PROXY_TYPES[self.proxyTypeList.GetSelection()][
 			0]
-		self.configSection["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
-		config.conf["onlineOCR"]["general"] = self.configSection
+		config.conf["onlineOCRGeneral"]["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
+		config.conf["onlineOCR"]["imageProcessing"]["notifyIfResizeRequired"] = self.notifyIfResizeRequiredCheckBox.GetValue()
+		config.conf["onlineOCR"]["imageProcessing"]["columnSplitMode"] = COLUMN_SPLIT_TYPES[self.columnSplitModeList.GetSelection()][0]
 
 	def isValid(self):
-		oldProxy = self.configSection["proxyAddress"]
-		oldProxyType = self.configSection["proxyType"]
+		oldProxy = config.conf["onlineOCRGeneral"]["proxyAddress"]
+		oldProxyType = config.conf["onlineOCRGeneral"]["proxyType"]
 		newProxyType = self.PROXY_TYPES[
 			self.proxyTypeList.GetSelection()
 		][0]
 		if newProxyType != u"noProxy":
 			# Translators: Reported when save proxy settings in online ocr panel
 			ui.message(_(u"Checking your proxy settings"))
-			self.configSection["proxyType"] = newProxyType
-			self.configSection["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
+			config.conf["onlineOCRGeneral"]["proxyType"] = newProxyType
+			config.conf["onlineOCRGeneral"]["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
 			from .winHttp import httpConnectionPool, refreshConnectionPool
 			try:
 				refreshConnectionPool()
@@ -960,8 +990,8 @@ class CustomOCRPanel(SettingsPanel):
 				)
 				return True
 			except Exception as e:
-				self.configSection["proxyType"] = oldProxyType
-				self.configSection["proxyAddress"] = oldProxy
+				config.conf["onlineOCRGeneral"]["proxyType"] = oldProxyType
+				config.conf["onlineOCRGeneral"]["proxyAddress"] = oldProxy
 				refreshConnectionPool()
 				
 				gui.messageBox(
@@ -972,59 +1002,4 @@ class CustomOCRPanel(SettingsPanel):
 				return False
 		else:
 			return True
-	
-	def onPanelActivated(self):
-		super(CustomOCRPanel, self).onPanelActivated()
 
-
-class ImageProcessingSettingsPanel(SettingsPanel):
-
-	# Translators: Title of image processing settings panel
-	title = _("Image processing")
-	notifyIfResizeRequiredCheckBox = None  # type:wx.CheckBox
-	columnSplitModeList = None  # type: wx.Choice
-
-	configSection = None  # type: Section
-	configSpec = {
-		"notifyIfResizeRequired": "boolean(default=true)",
-		"columnSplitMode": 'option("no", "two", "three", default="no")'
-	}
-
-	def makeSettings(self, sizer):
-		settingsSizerHelper = BoxSizerHelper(self, sizer=sizer)
-
-		try:
-			self.configSection = config.conf["onlineOCR"]["imageProcessing"]
-		except KeyError:
-			config.conf["onlineOCR"]["imageProcessing"] = {}
-			config.conf.spec["onlineOCR"]["imageProcessing"] = self.configSpec
-			self.configSection = config.conf["onlineOCR"]["imageProcessing"]
-		log.debug("Set config section {0}".format(self.configSection.dict()))
-
-		# Translators: This is the label for a checkbox in the
-		# online OCR settings panel.
-		notifyIfResizeRequiredText = _("&Notify if image resizing is requried.")
-		self.notifyIfResizeRequiredCheckBox = settingsSizerHelper.addItem(
-			wx.CheckBox(self, label=notifyIfResizeRequiredText)
-		)
-		self.notifyIfResizeRequiredCheckBox.SetValue(
-			self.configSection["notifyIfResizeRequired"]
-		)
-
-		# Translators: The label for a list in the
-		# online OCR settings panel.
-		self.columnSplitModeList = settingsSizerHelper.addLabeledControl(
-			_("Column &split mode:"),
-			wx.Choice,
-			choices=[desc for (name, desc) in COLUMN_SPLIT_TYPES]
-		)
-		curColMode = self.configSection["columnSplitMode"]
-		for index, (name, desc) in enumerate(COLUMN_SPLIT_TYPES):
-			if name == curColMode:
-				self.columnSplitModeList.SetSelection(index)
-				break
-
-	def onSave(self):
-		self.configSection["notifyIfResizeRequired"] = self.notifyIfResizeRequiredCheckBox.GetValue()
-		self.configSection["columnSplitMode"] = COLUMN_SPLIT_TYPES[self.columnSplitModeList.GetSelection()][0]
-		config.conf["onlineOCR"]["imageProcessing"] = self.configSection

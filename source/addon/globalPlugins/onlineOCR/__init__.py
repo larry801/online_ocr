@@ -33,7 +33,7 @@ from six import PY2
 import sys
 import os
 import winVersion
-from gui.settingsDialogs import UwpOcrPanel, MultiCategorySettingsDialog, NVDASettingsDialog
+from gui.settingsDialogs import UwpOcrPanel, NVDASettingsDialog
 
 
 def safeJoin(a, b):
@@ -67,7 +67,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from PIL import ImageGrab, Image
 from onlineOCRHandler import (
 	CustomOCRPanel, OnlineImageDescriberHandler, CustomOCRHandler,
-	OnlineImageDescriberPanel, OnlineOCRPanel, ImageProcessingSettingsPanel,
+	OnlineImageDescriberPanel, OnlineOCRPanel,
 	TARGET_TYPES, ENGINE_TYPES, COLUMN_SPLIT_TYPES
 )
 from LayeredGesture import category_name
@@ -81,7 +81,6 @@ class OCRMultiCategorySettingsDialog(NVDASettingsDialog):
 	title = _("Online Image Describer Settings")
 	categoryClasses = [
 		CustomOCRPanel,
-		ImageProcessingSettingsPanel,
 		OnlineOCRPanel,
 		OnlineImageDescriberPanel,
 	]

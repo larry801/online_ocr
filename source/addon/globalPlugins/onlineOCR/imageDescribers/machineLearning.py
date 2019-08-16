@@ -28,8 +28,8 @@ class CustomContentRecognizer(BaseDescriber):
 
 	def _get_supportedSettings(self):
 		return [
-			MLDescriber.AccessTypeSetting(),
-			MLDescriber.LanguageSetting(),
+			CustomContentRecognizer.AccessTypeSetting(),
+			CustomContentRecognizer.LanguageSetting(),
 		]
 
 	def convert_to_line_result_format(self, apiResult):
@@ -176,7 +176,7 @@ class CustomContentRecognizer(BaseDescriber):
 			)
 			self.networkThread.start()
 		else:
-			super(MLDescriber, self).sendRequest(
+			super(CustomContentRecognizer, self).sendRequest(
 				callback,
 				fullURL,
 				payloads,
