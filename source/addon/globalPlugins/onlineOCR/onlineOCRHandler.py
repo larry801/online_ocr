@@ -907,7 +907,7 @@ class CustomOCRPanel(SettingsPanel):
 			wx.CheckBox(self, label=notifyIfResizeRequiredText)
 		)
 		self.notifyIfResizeRequiredCheckBox.SetValue(
-			config.conf["onlineOCR"]["imageProcessing"]["notifyIfResizeRequired"]
+			config.conf["onlineOCRGeneral"]["notifyIfResizeRequired"]
 		)
 
 		# Translators: The label for a list in the
@@ -917,7 +917,7 @@ class CustomOCRPanel(SettingsPanel):
 			wx.Choice,
 			choices=[desc for (name, desc) in COLUMN_SPLIT_TYPES]
 		)
-		curColMode = config.conf["onlineOCR"]["imageProcessing"]["columnSplitMode"]
+		curColMode = config.conf["onlineOCRGeneral"]["columnSplitMode"]
 		for index, (name, desc) in enumerate(COLUMN_SPLIT_TYPES):
 			if name == curColMode:
 				self.columnSplitModeList.SetSelection(index)
@@ -955,8 +955,8 @@ class CustomOCRPanel(SettingsPanel):
 		config.conf["onlineOCRGeneral"]["proxyType"] = self.PROXY_TYPES[self.proxyTypeList.GetSelection()][
 			0]
 		config.conf["onlineOCRGeneral"]["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
-		config.conf["onlineOCR"]["imageProcessing"]["notifyIfResizeRequired"] = self.notifyIfResizeRequiredCheckBox.GetValue()
-		config.conf["onlineOCR"]["imageProcessing"]["columnSplitMode"] = COLUMN_SPLIT_TYPES[self.columnSplitModeList.GetSelection()][0]
+		config.conf["onlineOCRGeneral"]["notifyIfResizeRequired"] = self.notifyIfResizeRequiredCheckBox.GetValue()
+		config.conf["onlineOCRGeneral"]["columnSplitMode"] = COLUMN_SPLIT_TYPES[self.columnSplitModeList.GetSelection()][0]
 
 	def isValid(self):
 		oldProxy = config.conf["onlineOCRGeneral"]["proxyAddress"]
