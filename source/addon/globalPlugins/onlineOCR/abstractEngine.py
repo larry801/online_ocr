@@ -16,6 +16,7 @@ import gui
 import wx
 from synthDriverHandler import StringParameterInfo
 from wx.lib.expando import ExpandoTextCtrl
+from gui import MultiCategorySettingsDialog
 import config
 import addonHandler
 import inspect
