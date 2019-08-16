@@ -33,7 +33,7 @@ from six import PY2
 import sys
 import os
 import winVersion
-from gui.settingsDialogs import UwpOcrPanel
+from gui.settingsDialogs import UwpOcrPanel, MultiCategorySettingsDialog, NVDASettingsDialog
 
 
 def safeJoin(a, b):
@@ -70,14 +70,13 @@ from onlineOCRHandler import (
 	OnlineImageDescriberPanel, OnlineOCRPanel, ImageProcessingSettingsPanel,
 	TARGET_TYPES, ENGINE_TYPES, COLUMN_SPLIT_TYPES
 )
-from gui import MultiCategorySettingsDialog
 from LayeredGesture import category_name
 _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
 
 
-class OCRMultiCategorySettingsDialog(MultiCategorySettingsDialog):
+class OCRMultiCategorySettingsDialog(NVDASettingsDialog):
 	# Translators: This is the label for the NVDA settings dialog.
 	title = _("Online Image Describer Settings")
 	categoryClasses = [
@@ -88,22 +87,6 @@ class OCRMultiCategorySettingsDialog(MultiCategorySettingsDialog):
 	]
 	if winVersion.isUwpOcrAvailable():
 		categoryClasses.append(UwpOcrPanel)
-	NvdaSettingsDialogActiveConfigProfile = ""
-
-	def makeSettings(self, settingsSizer):
-		super(OCRMultiCategorySettingsDialog, self).makeSettings(settingsSizer)
-		self.NvdaSettingsDialogActiveConfigProfile = config.conf.profiles[-1].name
-		if not self.NvdaSettingsDialogActiveConfigProfile:
-			# Translators: The profile name for normal configuration
-			self.NvdaSettingsDialogActiveConfigProfile = _("normal configuration")
-		self.SetTitle(self._getDialogTitle())
-
-	def _getDialogTitle(self):
-		return u"{dialogTitle}: {panelTitle} ({configProfile})".format(
-			dialogTitle=self.title,
-			panelTitle=self.currentCategory.title,
-			configProfile=self.NvdaSettingsDialogActiveConfigProfile
-		)
 
 
 def PILImageToPixels(image):

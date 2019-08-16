@@ -6,6 +6,8 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
+
+from abc import ABC
 from threading import Thread
 from typing import Any, Union
 
@@ -60,7 +62,7 @@ TARGET_TYPES = [
 ]
 
 
-class BaseRecognizer(ContentRecognizer, AbstractEngine):
+class BaseRecognizer(ContentRecognizer, AbstractEngine, ABC):
 	"""
 	Abstract base BaseRecognizer
 	"""
@@ -924,8 +926,8 @@ class CustomOCRPanel(SettingsPanel):
 		self.configSection["proxyType"] = self.PROXY_TYPES[self.proxyTypeList.GetSelection()][
 			0]
 		self.configSection["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
-		# config.conf.save()
-	
+		config.conf["onlineOCR"]["general"] = self.configSection
+
 	def isValid(self):
 		oldProxy = self.configSection["proxyAddress"]
 		oldProxyType = self.configSection["proxyType"]
@@ -1025,3 +1027,4 @@ class ImageProcessingSettingsPanel(SettingsPanel):
 	def onSave(self):
 		self.configSection["notifyIfResizeRequired"] = self.notifyIfResizeRequiredCheckBox.GetValue()
 		self.configSection["columnSplitMode"] = COLUMN_SPLIT_TYPES[self.columnSplitModeList.GetSelection()][0]
+		config.conf["onlineOCR"]["imageProcessing"] = self.configSection
