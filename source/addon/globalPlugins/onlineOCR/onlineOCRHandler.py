@@ -825,13 +825,13 @@ class CustomOCRPanel(SettingsPanel):
 
 	def makeSettings(self, sizer):
 		settingsSizerHelper = BoxSizerHelper(self, sizer=sizer)
-
+		config.conf.spec["onlineOCRGeneral"] = self.configSpec
 		try:
 			self.configSection = config.conf["onlineOCRGeneral"]
 		except KeyError:
 			config.conf["onlineOCRGeneral"] = {}
-			config.conf.spec["onlineOCRGeneral"] = self.configSpec
 			self.configSection = config.conf["onlineOCRGeneral"]
+			log.debug("Add new section")
 		log.debug("Set config section {0}".format(self.configSection.dict()))
 
 		# Translators: This is the label for a checkbox in the
