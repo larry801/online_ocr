@@ -1,7 +1,7 @@
 # Online image describer addon #
 
 * Author: Larry Wang
-* NVDA compatibility: from 2018.3 to 2019.1
+* NVDA compatibility: from 2018.3 to 2019.2
 * Download [development version][2]
 
 This addon aims at adding online image recognition engines to NVDA.
@@ -11,6 +11,19 @@ Image describer describe visual features in image in text form.
 Such as general description, color type landmarks and so on.
 Internet connection is required to use this addon, since image describe services are provided by API endpoints on the Internet.
 They are called engines in this addon.
+There are three types of engine for this addon.
+
+* Online OCR engine
+* Online image describer engine
+* Windows 10 OCR engine (offline)
+
+You also need to choose the source of recognition image.
+
+* Current navigator object
+* Current foreground window
+* The whole screen
+* Image data or file from clipboard
+* Image file pathname or image url from clipboard
 
 ## Engine Configuration
 
@@ -335,14 +348,16 @@ If you press the gesture which shows an result viewer, you are using endpoints w
 
 Though it provides a quite generous free quota, its website is Chinese only and not quite accessible.
 
-### Sougou OCR and Tencent AI OCR
-These two API are free to use with frequency limit.
-If you want to bypass the limit you can register your own API key. The website of these two APIs are also Chinese only and not quite accessible.
-There is no information about language support in these API document
-According to my test Chinese and English and their mixture is supported.
-There is no additional configuration for these API.
-
 ## Change Log
+
+### 0.18
+
+Compatible with python3
+Introduce the concept of recognition source type and engine type to reduce gesture usage.
+Add a new gesture to cycle through different recognition target between different items.
+Add a new gesture to recognize according to source and engine type setting.
+Add a new gesture to review recognition history.
+Remove sougou and tencent OCR engines since they are no longer free.
 
 ### 0.17
 
