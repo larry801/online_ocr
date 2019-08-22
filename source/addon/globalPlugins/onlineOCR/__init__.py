@@ -9,7 +9,7 @@ A global plugin that add online ocr to NVDA
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
-from inputCore import InputGesture
+import six
 import addonHandler
 import globalPluginHandler
 import gui
@@ -75,6 +75,19 @@ _ = lambda x: x
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
 
+generalConfigSpec = {
+	"copyToClipboard": "boolean(default=false)",
+	"swapRepeatedCountEffect": "boolean(default=false)",
+	"useBrowseableMessage": "boolean(default=false)",
+	"verboseDebugLogging": "boolean(default=false)",
+	"engineType": 'option("win10OCR", "onlineOCR", "onlineImageDescriber", default="onlineOCR")',
+	"targetType": 'option("navigatorObject", "clipboardImage", "clipboardURL", "wholeDesktop", "foreGroundWindow", default="navigatorObject")',
+	"proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
+	"proxyAddress": 'string(default="")',
+	"notifyIfResizeRequired": "boolean(default=true)",
+	"columnSplitMode": 'option("no", "two", "three", default="no")'
+}
+
 
 class OCRMultiCategorySettingsDialog(NVDASettingsDialog):
 	# Translators: This is the label for the NVDA settings dialog.
@@ -109,6 +122,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			return
 		if config.isAppX:
 			return
+		config.conf.spec["onlineOCRGeneral"] = generalConfigSpec
 		CustomOCRHandler.initialize()
 		self.ocrHandler = CustomOCRHandler
 		msg = u"OCR engine:\n{0}\n".format(self.ocrHandler.currentEngine)
@@ -147,7 +161,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		description=image_describe,
 		category=category_name,
 		gestures=["kb:NVDA+Alt+P"])
-	def script_describeNavigatorObject(self, gesture: InputGesture):
+	def script_describeNavigatorObject(self, gesture):
 		self.startRecognition("navigatorObject", "onlineImageDescribe")
 	
 	# Translators: OCR command name in input gestures dialog
@@ -161,10 +175,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		description=describe_clipboard_msg,
 		category=category_name,
 		gestures=["kb:Control+Shift+NVDA+P"])
-	def script_describeClipboardImage(self, gesture: InputGesture):
+	def script_describeClipboardImage(self, gesture):
 		"""
 
-		@type gesture: InputGesture
+		@type gesture
 		"""
 		self.startRecognition("clipboardImage", "onlineImageDescribe")
 	
@@ -178,7 +192,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=["kb:NVDA+Alt+R"]
 	)
-	def script_recognizeWithOnlineOCREngine(self, gesture: InputGesture):
+	def script_recognizeWithOnlineOCREngine(self, gesture):
 		self.startRecognition("navigatorObject", "onlineOCR")
 	
 	# Translators: OCR command name in input gestures dialog
@@ -190,7 +204,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=["kb:Control+Shift+NVDA+R"]
 	)
-	def script_recognizeClipboardImageWithOnlineOCREngine(self, gesture: InputGesture):
+	def script_recognizeClipboardImageWithOnlineOCREngine(self, gesture):
 		self.startRecognition("clipboardImage", "onlineOCR")
 
 	@script(
@@ -199,7 +213,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=[]
 	)
-	def script_cancelCurrentRecognition(self, gesture: InputGesture):
+	def script_cancelCurrentRecognition(self, gesture):
 		ocrEngine = self.ocrHandler.getCurrentEngine()
 		describeEngine = self.descHandler.getCurrentEngine()
 		if ocrEngine.networkThread:
@@ -225,9 +239,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=["kb:NVDA+R"]
 	)
-	def script_recognizeAccordingToSettings(self, gestures: InputGesture):
-		current_target = config.conf["onlineOCR"]["general"]["targetType"]
-		current_engine_type = config.conf["onlineOCR"]["general"]["engineType"]
+	def script_recognizeAccordingToSettings(self, gestures):
+		current_target = config.conf["onlineOCRGeneral"]["targetType"]
+		current_engine_type = config.conf["onlineOCRGeneral"]["engineType"]
 		self.startRecognition(
 			current_target,
 			current_engine_type
@@ -258,9 +272,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=[]
 	)
-	def script_cycleRecognitionEngineType(self, gestures: InputGesture):
+	def script_cycleRecognitionEngineType(self, gestures):
 		name = self.cycleThroughSettings(
-			config.conf["onlineOCR"]["general"],
+			config.conf["onlineOCRGeneral"],
 			"engineType",
 			ENGINE_TYPES
 		)
@@ -274,9 +288,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=[]
 	)
-	def script_cycleRecognitionTarget(self, gestures: InputGesture):
+	def script_cycleRecognitionTarget(self, gestures):
 		name = self.cycleThroughSettings(
-			config.conf["onlineOCR"]["general"],
+			config.conf["onlineOCRGeneral"],
 			"targetType",
 			TARGET_TYPES
 		)
@@ -415,7 +429,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				windowRectLTRB.height
 			), True)
 		elif current_target == "wholeDesktop":
-			return ImageGrab.grab(include_layered_windows=True)
+			if six.PY2:
+				return ImageGrab.grab()
+			else:
+				return ImageGrab.grab(include_layered_windows=True)
 		else:
 			# Translators: Reported when target is not correct.
 			ui.message(_("Unknown target: %s" % current_target))

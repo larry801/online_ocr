@@ -7,9 +7,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
 
-from abc import ABC
 from threading import Thread
-
 import gui
 import six
 from configobj import Section
@@ -32,6 +30,7 @@ import imageDescribers
 import contentRecognizers
 from PIL import Image
 from PIL.Image import LANCZOS
+import recogHistory
 _ = lambda x: x
 addonHandler.initTranslation()
 
@@ -61,7 +60,7 @@ TARGET_TYPES = [
 ]
 
 
-class BaseRecognizer(ContentRecognizer, AbstractEngine, ABC):
+class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	"""
 	Abstract base BaseRecognizer
 	"""
@@ -324,6 +323,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine, ABC):
 		isImageValid = True
 		width = image.width
 		height = image.height
+		widthResizeFactor = 1
+		heightResizeFactor = 1
 		msg = u"Original size\nwidth:\n{w}\nheight:\n{h}".format(
 			w=width,
 			h=height
@@ -377,6 +378,15 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine, ABC):
 				# Translators: Reported when error occurred during image conversion
 				errorMsg = _(u"Image height is too small for this engine")
 		self.imageInfo.resizeFactor = int(max(widthResizeFactor, heightResizeFactor))
+		if heightResizeFactor != 1 and widthResizeFactor != 1 and config.conf["onlineOCR"]["notifyIfResizeRequired"]:
+			if gui.messageBox(
+				# Translators: The confirmation prompt displayed when the image need to be resized.
+				_("Image size is not proper for recognition. Do you want to resize? Press OK to continue. Press Cancel to cancel recognition"),
+				# Translators: The title of the confirmation dialog for the image need to be resized.
+				_("Confirm Resize"),
+				wx.OK | wx.CANCEL | wx.ICON_QUESTION, gui.mainFrame
+			) != wx.OK:
+				return
 		if isImageValid:
 			image = self.getResizedImage()
 			width = image.width
@@ -502,6 +512,9 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine, ABC):
 		# when user do not use result viewer
 		result_prefix = _(u"Recognition result:")
 		# Network error occurred
+
+		recogHistory.historyAppend(self.originalImage, result)
+
 		if not result:
 			self.cleanUp()
 			return
@@ -800,18 +813,6 @@ class CustomOCRPanel(SettingsPanel):
 
 	title = _(u"General")
 	handler = CustomOCRHandler
-	configSpec = {
-		"copyToClipboard": "boolean(default=false)",
-		"swapRepeatedCountEffect": "boolean(default=false)",
-		"useBrowseableMessage": "boolean(default=false)",
-		"verboseDebugLogging": "boolean(default=false)",
-		"engineType": 'option("win10OCR", "onlineOCR", "onlineImageDescriber", default="onlineOCR")',
-		"targetType": 'option("navigatorObject", "clipboardImage", "clipboardURL", "wholeDesktop", "foreGroundWindow", default="navigatorObject")',
-		"proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
-		"proxyAddress": 'string(default="")',
-		"notifyIfResizeRequired": "boolean(default=true)",
-		"columnSplitMode": 'option("no", "two", "three", default="no")'
-	}
 
 	PROXY_TYPES = [
 		# Translators: One of the proxy types in online OCR settings panel.
@@ -825,7 +826,6 @@ class CustomOCRPanel(SettingsPanel):
 
 	def makeSettings(self, sizer):
 		settingsSizerHelper = BoxSizerHelper(self, sizer=sizer)
-		config.conf.spec["onlineOCRGeneral"] = self.configSpec
 		try:
 			self.configSection = config.conf["onlineOCRGeneral"]
 		except KeyError:
