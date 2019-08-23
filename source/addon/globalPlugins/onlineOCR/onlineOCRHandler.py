@@ -44,18 +44,22 @@ COLUMN_SPLIT_TYPES = [
 ENGINE_TYPES = [
 	# Translators: One of the engine types in online OCR settings panel.
 	("onlineOCR", _(u"Online OCR Engines")),
+	# Translators: One of the engine types in online OCR settings panel.
 	("onlineImageDescriber", _(u"Online Image Describer Engines")),
+	# Translators: One of the engine types in online OCR settings panel.
 	("win10OCR", _(u"Windows 10 Offline OCR Engine")),
 ]
 
-TARGET_TYPES = [
-	# Translators: One of the proxy types in online OCR settings panel.
-	("wholeDesktop", _(u"The whole desktop")),
-	# Translators: One of the proxy types in online OCR settings panel.
-	("clipboardImage", _(u"Image data or image file in clipboard")),
-	# Translators: One of the proxy types  in online OCR settings panel.
-	("foreGroundWindow", _(u"Current foreground window")),
+SOURCE_TYPES = [
+	# Translators: One of the source types in online OCR settings panel.
 	("navigatorObject", _(u"Navigator object")),
+	# Translators: One of the source types in online OCR settings panel.
+	("wholeDesktop", _(u"The whole screen")),
+	# Translators: One of the source types  in online OCR settings panel.
+	("foreGroundWindow", _(u"Current foreground window")),
+	# Translators: One of the source types in online OCR settings panel.
+	("clipboardImage", _(u"Image data or image file in clipboard")),
+	# Translators: One of the source types in online OCR settings panel.
 	("clipboardURL", _(u"Image path or url in clipboard")),
 ]
 
@@ -804,7 +808,7 @@ class CustomOCRPanel(SettingsPanel):
 	proxyAddressTextCtrl = None  # type: wx.TextCtrl
 	swapRepeatedCountEffectCheckBox = None  # type: wx.CheckBox
 	verboseDebugLoggingCheckBox = None  # type: wx.CheckBox
-	targetTypeList = None  # type: wx.Choice
+	sourceTypeList = None  # type: wx.Choice
 	engineTypeList = None  # type: wx.Choice
 	proxyTypeList = None  # type: wx.Choice
 	copyToClipboardCheckBox = None  # type: wx.CheckBox
@@ -868,19 +872,19 @@ class CustomOCRPanel(SettingsPanel):
 
 		# Translators: The label for a list in the
 		# online OCR settings panel.
-		targetTypeText = _("Recognition &target:")
-		targetTypeChoices = [
-			desc for (name, desc) in TARGET_TYPES
+		sourceTypeText = _("Recognition &source:")
+		sourceTypeChoices = [
+			desc for (name, desc) in SOURCE_TYPES
 		]
-		self.targetTypeList = settingsSizerHelper.addLabeledControl(
-			targetTypeText,
+		self.sourceTypeList = settingsSizerHelper.addLabeledControl(
+			sourceTypeText,
 			wx.Choice,
-			choices=targetTypeChoices
+			choices=sourceTypeChoices
 		)
-		curTargetType = config.conf["onlineOCRGeneral"]["targetType"]
-		for index, (name, desc) in enumerate(TARGET_TYPES):
-			if name == curTargetType:
-				self.targetTypeList.SetSelection(index)
+		curSourceType = config.conf["onlineOCRGeneral"]["sourceType"]
+		for index, (name, desc) in enumerate(SOURCE_TYPES):
+			if name == curSourceType:
+				self.sourceTypeList.SetSelection(index)
 				break
 
 		# Translators: The label for a list in the
@@ -931,9 +935,9 @@ class CustomOCRPanel(SettingsPanel):
 		]
 		self.proxyTypeList = settingsSizerHelper.addLabeledControl(
 			proxyTypeText, wx.Choice, choices=proxyTypeChoices)
-		curTargetType = config.conf["onlineOCRGeneral"]["proxyType"]
+		curSourceType = config.conf["onlineOCRGeneral"]["proxyType"]
 		for index, (name, desc) in enumerate(self.PROXY_TYPES):
-			if name == curTargetType:
+			if name == curSourceType:
 				self.proxyTypeList.SetSelection(index)
 				break
 
@@ -949,8 +953,8 @@ class CustomOCRPanel(SettingsPanel):
 		config.conf["onlineOCRGeneral"]["engineType"] = ENGINE_TYPES[
 			self.engineTypeList.GetSelection()
 		][0]
-		config.conf["onlineOCRGeneral"]["targetType"] = TARGET_TYPES[
-			self.targetTypeList.GetSelection()
+		config.conf["onlineOCRGeneral"]["sourceType"] = SOURCE_TYPES[
+			self.sourceTypeList.GetSelection()
 		][0]
 		config.conf["onlineOCRGeneral"]["proxyType"] = self.PROXY_TYPES[self.proxyTypeList.GetSelection()][
 			0]

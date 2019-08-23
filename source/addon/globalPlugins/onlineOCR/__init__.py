@@ -68,7 +68,7 @@ from PIL import ImageGrab, Image
 from onlineOCRHandler import (
 	CustomOCRPanel, OnlineImageDescriberHandler, CustomOCRHandler,
 	OnlineImageDescriberPanel, OnlineOCRPanel,
-	TARGET_TYPES, ENGINE_TYPES, COLUMN_SPLIT_TYPES
+	SOURCE_TYPES, ENGINE_TYPES, COLUMN_SPLIT_TYPES
 )
 from LayeredGesture import category_name
 _ = lambda x: x
@@ -81,7 +81,7 @@ generalConfigSpec = {
 	"useBrowseableMessage": "boolean(default=false)",
 	"verboseDebugLogging": "boolean(default=false)",
 	"engineType": 'option("win10OCR", "onlineOCR", "onlineImageDescriber", default="onlineOCR")',
-	"targetType": 'option("navigatorObject", "clipboardImage", "clipboardURL", "wholeDesktop", "foreGroundWindow", default="navigatorObject")',
+	"sourceType": 'option("navigatorObject", "clipboardImage", "clipboardURL", "wholeDesktop", "foreGroundWindow", default="navigatorObject")',
 	"proxyType": 'option("noProxy", "http", "socks", default="noProxy")',
 	"proxyAddress": 'string(default="")',
 	"notifyIfResizeRequired": "boolean(default=true)",
@@ -235,40 +235,40 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	@script(
 		# Translators: Online Image Describer command name in input gestures dialog
-		description=_("Recognize image according to engine and target in settings"),
+		description=_("Recognize image according to engine and source in settings"),
 		category=category_name,
 		gestures=["kb:NVDA+R"]
 	)
 	def script_recognizeAccordingToSettings(self, gestures):
-		current_target = config.conf["onlineOCRGeneral"]["targetType"]
+		current_source = config.conf["onlineOCRGeneral"]["sourceType"]
 		current_engine_type = config.conf["onlineOCRGeneral"]["engineType"]
 		self.startRecognition(
-			current_target,
+			current_source,
 			current_engine_type
 		)
 
 	@staticmethod
 	def cycleThroughSettings(config_section, config_name, config_list):
-		current_target = config_section[config_name]
-		available_targets = [name for (name, desc) in config_list]
-		current_target_index = available_targets.index(current_target)
-		available_target_names = [name for (name, desc) in config_list]
-		for target in available_targets:
-			target_index = available_targets.index(target)
-			if target_index > current_target_index:
-				current_target_index = target_index
-				current_target = available_targets[current_target_index]
+		current_source = config_section[config_name]
+		available_sources = [name for (name, desc) in config_list]
+		current_source_index = available_sources.index(current_source)
+		available_source_names = [name for (name, desc) in config_list]
+		for source in available_sources:
+			source_index = available_sources.index(source)
+			if source_index > current_source_index:
+				current_source_index = source_index
+				current_source = available_sources[current_source_index]
 				break
 		else:
-			current_target_index = 0
-			current_target = available_targets[0]
-		name = available_target_names[current_target_index]
-		config_section[config_name] = current_target
+			current_source_index = 0
+			current_source = available_sources[0]
+		name = available_source_names[current_source_index]
+		config_section[config_name] = current_source
 		return name
 
 	@script(
 		# Translators: Online Image Describer command name in input gestures dialog
-		description=_("Cycle through types of recognition target"),
+		description=_("Cycle through types of recognition source"),
 		category=category_name,
 		gestures=[]
 	)
@@ -284,20 +284,20 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	@script(
 		# Translators: Online Image Describer command name in input gestures dialog
-		description=_("Cycle through types of recognition target"),
+		description=_("Cycle through types of recognition source"),
 		category=category_name,
 		gestures=[]
 	)
 	def script_cycleRecognitionTarget(self, gestures):
 		name = self.cycleThroughSettings(
 			config.conf["onlineOCRGeneral"],
-			"targetType",
-			TARGET_TYPES
+			"sourceType",
+			SOURCE_TYPES
 		)
-		# Translators: Reported when the user cycles through target types
-		# which determine target of content recognition
-		# %s will be replaced with the target type: e.g. Clipboard image, foreground window
-		ui.message(_("Recognition target: %s") % name)
+		# Translators: Reported when the user cycles through source types
+		# which determine source of content recognition
+		# %s will be replaced with the source type: e.g. Clipboard image, foreground window
+		ui.message(_("Recognition source: %s") % name)
 
 	@staticmethod
 	def enumerateClipboardFormat():
@@ -382,8 +382,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		OnlineImageDescriberHandler.terminate()
 		CustomOCRHandler.terminate()
 
-	def getImageFromTarget(self, current_target):
-		if current_target == "navigatorObject":
+	def getImageFromSource(self, current_source):
+		if current_source == "navigatorObject":
 			nav = api.getNavigatorObject()
 			# Translators: Reported when content recognition (e.g. OCR) is attempted,
 			# but the content is not visible.
@@ -397,11 +397,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			# Translators: Reporting when content recognition (e.g. OCR) begins.
 			ui.message(_("Recognizing"))
 			return ImageGrab.grab((left, top, width, height), True)
-		elif current_target == "clipboardImage":
+		elif current_source == "clipboardImage":
 			return self.getImageFromClipboard()
-		elif current_target == "clipboardURL":
+		elif current_source == "clipboardURL":
 			return None
-		elif current_target == "foreGroundWindow":
+		elif current_source == "foreGroundWindow":
 			foregroundWindow = winUser.getForegroundWindow()
 			desktopWindow = winUser.getDesktopWindow()
 			foregroundRect = RECT()
@@ -428,14 +428,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				windowRectLTRB.width,
 				windowRectLTRB.height
 			), True)
-		elif current_target == "wholeDesktop":
+		elif current_source == "wholeDesktop":
 			if six.PY2:
 				return ImageGrab.grab()
 			else:
 				return ImageGrab.grab(include_layered_windows=True)
 		else:
-			# Translators: Reported when target is not correct.
-			ui.message(_("Unknown target: %s" % current_target))
+			# Translators: Reported when source is not correct.
+			ui.message(_("Unknown source: %s" % current_source))
 			return None
 
 	def getCurrentEngine(self, current_engine_type):
@@ -449,8 +449,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			engine = None
 		return engine
 
-	def startRecognition(self, current_target, current_engine_type):
-		recognizeImage = self.getImageFromTarget(current_target)
+	def startRecognition(self, current_source, current_engine_type):
+		recognizeImage = self.getImageFromSource(current_source)
 		if not recognizeImage:
 			return
 		engine = self.getCurrentEngine(current_engine_type)
