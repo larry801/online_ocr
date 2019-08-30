@@ -19,8 +19,8 @@ urllib3.disable_warnings()
 # import urllib3.contrib.pyopenssl
 # urllib3.contrib.pyopenssl.inject_into_urllib3()
 
-oldProxyType = config.conf["onlineOCR"]["proxyType"]
-oldProxyAddress = config.conf["onlineOCR"]["proxyAddress"]
+oldProxyType = config.conf["onlineOCRGeneral"]["proxyType"]
+oldProxyAddress = config.conf["onlineOCRGeneral"]["proxyAddress"]
 _ = lambda x: x
 addonHandler.initTranslation()
 
@@ -30,8 +30,8 @@ def showMessageInNetworkThread(message):
 
 
 def getConnectionPool():
-	proxyType = config.conf["onlineOCR"]["proxyType"]
-	proxyAddress = config.conf["onlineOCR"]["proxyAddress"]
+	proxyType = config.conf["onlineOCRGeneral"]["proxyType"]
+	proxyAddress = config.conf["onlineOCRGeneral"]["proxyAddress"]
 	msg = u"type:\n{0}\naddress:\n{1}".format(
 		proxyType,
 		proxyAddress
@@ -79,13 +79,13 @@ httpConnectionPool = getConnectionPool()
 
 def refreshConnectionPool():
 	global httpConnectionPool, oldProxyType, oldProxyAddress
-	if oldProxyType == config.conf["onlineOCR"]["proxyType"] \
-		and oldProxyAddress == config.conf["onlineOCR"]["proxyAddress"]:
+	if oldProxyType == config.conf["onlineOCRGeneral"]["proxyType"] \
+		and oldProxyAddress == config.conf["onlineOCRGeneral"]["proxyAddress"]:
 		pass
 	else:
 		httpConnectionPool = getConnectionPool()
-		oldProxyType = config.conf["onlineOCR"]["proxyType"]
-		oldProxyAddress = config.conf["onlineOCR"]["proxyAddress"]
+		oldProxyType = config.conf["onlineOCRGeneral"]["proxyType"]
+		oldProxyAddress = config.conf["onlineOCRGeneral"]["proxyAddress"]
 
 
 def doHTTPRequest(callback, method, url, **kwargs):

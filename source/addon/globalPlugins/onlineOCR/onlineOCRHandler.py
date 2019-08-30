@@ -246,7 +246,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			})
 			encoded_option += query
 		payload = encoded_option[1:]
-		if config.conf["onlineOCR"]["verboseDebugLogging"]:
+		if config.conf["onlineOCRGeneral"]["verboseDebugLogging"]:
 			log.io(payload)
 		return payload
 	
@@ -382,7 +382,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				# Translators: Reported when error occurred during image conversion
 				errorMsg = _(u"Image height is too small for this engine")
 		self.imageInfo.resizeFactor = int(max(widthResizeFactor, heightResizeFactor))
-		if heightResizeFactor != 1 and widthResizeFactor != 1 and config.conf["onlineOCR"]["notifyIfResizeRequired"]:
+		if heightResizeFactor != 1 and widthResizeFactor != 1 and config.conf["onlineOCRGeneral"]["notifyIfResizeRequired"]:
 			if gui.messageBox(
 				# Translators: The confirmation prompt displayed when the image need to be resized.
 				_("Image size is not proper for recognition. Do you want to resize? Press OK to continue. Press Cancel to cancel recognition"),
@@ -405,7 +405,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				while pixelCount >= self.maxPixels and image.width >= self.minWidth and image.height >= self.minHeight:
 					self.imageInfo.resizeFactor = self.imageInfo.resizeFactor * self.asymptoticResizeFactor
 					image = self.getResizedImage()
-					if config.conf["onlineOCR"]["verboseDebugLogging"]:
+					if config.conf["onlineOCRGeneral"]["verboseDebugLogging"]:
 						msg = "newWidth\n{0}\nnewHeight\n{1}\npixelCount\n{2}".format(
 							image.width,
 							image.height,
@@ -483,7 +483,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		fullURL = self.getFullURL()
 		headers = self.getHTTPHeaders()
 		
-		if config.conf["onlineOCR"]["verboseDebugLogging"]:
+		if config.conf["onlineOCRGeneral"]["verboseDebugLogging"]:
 			log.io(type(fullURL))
 			msg = u"{0}\n{1}\n{2}".format(
 				fullURL,
@@ -549,11 +549,11 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 				self.cleanUp()
 				return
 			resultText = result_prefix + ocrResult
-			if config.conf["onlineOCR"]["copyToClipboard"]:
+			if config.conf["onlineOCRGeneral"]["copyToClipboard"]:
 				import api
 				api.copyToClip(resultText)
 			if self.text_result:
-				if config.conf["onlineOCR"]["useBrowseableMessage"]:
+				if config.conf["onlineOCRGeneral"]["useBrowseableMessage"]:
 					self.showBrowseableMessageInNetworkThread(resultText)
 				else:
 					self.showMessageInNetworkThread(resultText)
@@ -591,7 +591,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		payloads = self.getPayload(imageContent)
 		fullURL = self.getFullURL()
 		headers = self.getHTTPHeaders()
-		if config.conf["onlineOCR"]["verboseDebugLogging"]:
+		if config.conf["onlineOCRGeneral"]["verboseDebugLogging"]:
 			log.io(type(fullURL))
 			msg = u"{0}\n{1}\n{2}".format(
 				fullURL,
@@ -699,7 +699,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			newImage = self.getResizedImage()
 			imageContent = self.serializeImage(newImage)
 			imageSize = len(imageContent)
-			if config.conf["onlineOCR"]["verboseDebugLogging"]:
+			if config.conf["onlineOCRGeneral"]["verboseDebugLogging"]:
 				msg = "newWidth\n{0}\nnewHeight\n{1}\nsize\n{2}".format(
 					newImage.width,
 					newImage.height,
@@ -710,7 +710,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		if imageSize > self.maxSize:
 			# Translators: Reported when error occurred during image serialization
 			ui.message(_(u"Image content is too big to upload."))
-			if config.conf["onlineOCR"]["verboseDebugLogging"]:
+			if config.conf["onlineOCRGeneral"]["verboseDebugLogging"]:
 				newImage = self.getResizedImage()
 				msg = "newWidth\n{0}\nnewHeight\n{1}\nsize\n{2}".format(
 					newImage.width,

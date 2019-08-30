@@ -457,7 +457,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if not engine:
 			return
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
-		textResultWhenRepeatGesture = not config.conf["onlineOCR"]["swapRepeatedCountEffect"]
+		textResultWhenRepeatGesture = not config.conf["onlineOCRGeneral"]["swapRepeatedCountEffect"]
 		if repeatCount == 0:
 			engine.text_result = textResultWhenRepeatGesture
 			imageInfo = RecogImageInfo(0, 0, recognizeImage.width, recognizeImage.height, 1)
