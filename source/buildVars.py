@@ -34,8 +34,8 @@ Such as general description, color type landmarks and so on.
 
     # Documentation file name
     "addon_docFileName": "readme.html",
-    "addon_minimumNVDAVersion": "2018.3.0",
-    "addon_lastTestedNVDAVersion": "2019.3.0",
+    "addon_minimumNVDAVersion": "2018.4",
+    "addon_lastTestedNVDAVersion": "2019.3",
     "addon_updateChannel": "dev",
 }
 

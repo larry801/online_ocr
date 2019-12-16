@@ -1,7 +1,7 @@
 # Online image describer addon #
 
 * Author: Larry Wang
-* NVDA compatibility: from 2018.3 to 2019.2
+* NVDA compatibility: from 2018.3 to 2019.3
 * Download [development version][2]
 
 This addon aims at adding online image recognition engines to NVDA.
@@ -24,6 +24,34 @@ You also need to choose the source of recognition image.
 * The whole screen
 * Image data or file from clipboard
 * Image file pathname or image url from clipboard
+
+### Keyboard commands
+
+After choosing these types, you can start recognition with one gesture. 
+NVDA+Alt+P  Perform recognize according to source and engine type setting, Then read result. If pressed twice, open a virtual result document.
+
+There are four additional gestures left unassigned. Please assign them before using.
+Cycle through different recognition engine types.
+cycle through different recognition source types.
+Cancel current recognition
+This gesture can be useful if you think you have waited for too long and want to cancel.
+Also sometimes you do not want to be disturbed by recognition message because you need to review some messages arrived after recognition start.
+
+Show previous result in a virtual result document.
+Though there is a feature to copy result to clipboard. Character position information cannot be preserved, so this gesture is added to solve this problem.
+
+
+There are also four old gestures are left unassigned for users who prefer gestures in previous versions. 
+It is recommended to use new gesture and switch engine type according to your need.
+
+Recognize current navigator object with online OCR engine Then read result. If pressed twice, open a virtual result document.
+
+Recognizes image in clipboard with online OCR engine. Then read result. If pressed twice, open a virtual result document.
+
+Recognize current navigator object Then read result. If pressed twice, open a virtual result document.
+
+Recognizes image in clipboard . Then read result. If pressed twice, open a virtual result document.
+
 
 ## Engine Configuration
 
@@ -74,18 +102,6 @@ Note that the quality and accuracy of results are affected by many factors.
  
 
 ## Online image description
-
-### Keyboard commands
-
-NVDA+Alt+P Recognize current navigator object Then read result. If pressed twice, open a virtual result document.
-
-Control+Shift+NVDA+P Recognizes image in clipboard . Then read result. If pressed twice, open a virtual result document.
-It accepts two kinds of content.
-First is an actual image(CF_DIB), you can put that into clipboard by taking a screenshot with Print Screen key or copy image in a browser.
-
-Second is a file copied in  explorer.(CF_HDROP)
-If it is not an image. This addon will tell you, No image in clipboard.
-If there is only text in clipboard, this addon will try to use it as a path of local file. If it is not a path, this addon will tell you: Text in clipboard is not a valid path. If the corresponding file is not an image this addon will tell you: The file specified in clipboard is not an image.
 
 Here are three engines available.
 
@@ -153,24 +169,6 @@ http://ai.qq.com
 http://ai.baidu.com
 
 http://ai.sogou.com/
-
-
-### Keyboard commands
-
-NVDA+Alt+R Recognize current navigator object with online OCR engine Then read result. If pressed twice, open a virtual result document.
-
-Control+Shift+NVDA+R Recognizes image in clipboard with online OCR engine. Then read result. If pressed twice, open a virtual result document.
-It accepts two kinds of content.
-First is an actual image(CF_DIB), you can put that into clipboard by taking a screenshot with Print Screen key or copy image in a browser.
-
-Second is a file copied in  explorer.(CF_HDROP)
-If it is not an image. This addon will tell you, No image in clipboard.
-If there is only text in clipboard, this addon will try to use it as a path of local file. If it is not a path, this addon will tell you: Text in clipboard is not a valid path. If the corresponding file is not an image this addon will tell you: The file specified in clipboard is not an image.
-
-There is also a gesture to cancel current recognition. 
-This gesture can be useful if you think you have waited for too long and want to cancel.
-Also sometimes you do not want to be disturbed by recognition message because you need to review some messages arrived after recognition start.
-This gesture is left unassigned. Please assign it before using.
 
 ## Engines
 
@@ -354,10 +352,10 @@ Though it provides a quite generous free quota, its website is Chinese only and 
 
 Compatible with python3
 Introduce the concept of recognition source type and engine type to reduce gesture usage.
-Add a new gesture to cycle through different recognition target between different items.
-Add a new gesture to recognize according to source and engine type setting.
-Add a new gesture to review recognition history.
-Remove sougou and tencent OCR engines since they are no longer free.
+Add a new unassigned gesture to cycle through different recognition source types.
+Add a new unassigned gesture to cycle through different recognition engine types.
+Add a new gesture to recognize according to image source and engine type setting.
+Add a new unassigned gesture to show previous result in a virtual result document.
 
 ### 0.17
 
