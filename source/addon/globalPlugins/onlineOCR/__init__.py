@@ -162,7 +162,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=["kb:NVDA+Alt+P"])
 	def script_describeNavigatorObject(self, gesture):
-		self.startRecognition("navigatorObject", "onlineImageDescribe")
+		self.startRecognition("navigatorObject", "onlineImageDescriber")
 	
 	# Translators: OCR command name in input gestures dialog
 	describe_clipboard_msg = _(
@@ -177,7 +177,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		gestures=["kb:Control+Shift+NVDA+P"])
 	def script_describeClipboardImage(self, gesture):
 		"""
-
 		@type gesture
 		"""
 		self.startRecognition("clipboardImage", "onlineImageDescribe")
@@ -190,7 +189,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		description=full_ocr_msg,
 		category=category_name,
-		gestures=["kb:NVDA+Alt+R"]
+		gestures=[]
 	)
 	def script_recognizeWithOnlineOCREngine(self, gesture):
 		self.startRecognition("navigatorObject", "onlineOCR")
@@ -202,10 +201,27 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		description=clipboard_ocr_msg,
 		category=category_name,
-		gestures=["kb:Control+Shift+NVDA+R"]
+		gestures=[]
 	)
 	def script_recognizeClipboardImageWithOnlineOCREngine(self, gesture):
 		self.startRecognition("clipboardImage", "onlineOCR")
+
+	@script(
+		# Translators: Online Image Describer command name in input gestures dialog
+		description=_("Show previous recognition result, if any."),
+		category=category_name,
+		gestures=[]
+	)
+	def showPreviousResult(self, gesture):
+		import recogHistory
+		result = recogHistory.getPreviousResult()
+		if result:
+			engine = result["engine"]
+			engine.text_result = False
+			engine.showResult(result["response"])
+		else:
+			# Translators: Reported when there is no previous result.
+			ui.message(_("No previous result"))
 
 	@script(
 		# Translators: Online Image Describer command name in input gestures dialog
@@ -237,7 +253,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		# Translators: Online Image Describer command name in input gestures dialog
 		description=_("Recognize image according to engine and source in settings"),
 		category=category_name,
-		gestures=["kb:NVDA+R"]
+		gestures=["kb:NVDA+Alt+R"]
 	)
 	def script_recognizeAccordingToSettings(self, gestures):
 		current_source = config.conf["onlineOCRGeneral"]["sourceType"]
@@ -383,22 +399,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		CustomOCRHandler.terminate()
 
 	def getImageFromSource(self, current_source):
-		if current_source == "navigatorObject":
-			nav = api.getNavigatorObject()
-			# Translators: Reported when content recognition (e.g. OCR) is attempted,
-			# but the content is not visible.
-			notVisibleMsg = _("Content is not visible")
-			try:
-				left, top, width, height = nav.location
-			except TypeError:
-				log.debugWarning("Object returned location %r" % nav.location)
-				ui.message(notVisibleMsg)
-				return
-			# Translators: Reporting when content recognition (e.g. OCR) begins.
-			ui.message(_("Recognizing"))
-			return ImageGrab.grab((left, top, width, height), True)
-		elif current_source == "clipboardImage":
-			return self.getImageFromClipboard()
+		if current_source == "clipboardImage":
+			recognizeImage = self.getImageFromClipboard()
+			imageInfo = RecogImageInfo(0, 0, recognizeImage.width, recognizeImage.height, 1)
+			return imageInfo, recognizeImage
 		elif current_source == "clipboardURL":
 			return None
 		elif current_source == "foreGroundWindow":
@@ -422,17 +426,24 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				top=top,
 				bottom=bottom
 			)
-			return ImageGrab.grab((
+			imageInfo = RecogImageInfo(
+				windowRectLTRB.left,
+				windowRectLTRB.top,
+				windowRectLTRB.width,
+				windowRectLTRB.height,
+				1
+			)
+			recognizeImage = ImageGrab.grab((
 				windowRectLTRB.top,
 				windowRectLTRB.left,
 				windowRectLTRB.width,
 				windowRectLTRB.height
-			), True)
+			))
+			return imageInfo, recognizeImage
 		elif current_source == "wholeDesktop":
-			if six.PY2:
-				return ImageGrab.grab()
-			else:
-				return ImageGrab.grab(include_layered_windows=True)
+			recognizeImage = ImageGrab.grab()
+			imageInfo = RecogImageInfo(0, 0, recognizeImage.width, recognizeImage.height, 1)
+			return imageInfo, recognizeImage
 		else:
 			# Translators: Reported when source is not correct.
 			ui.message(_("Unknown source: %s" % current_source))
@@ -450,20 +461,25 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		return engine
 
 	def startRecognition(self, current_source, current_engine_type):
-		recognizeImage = self.getImageFromSource(current_source)
-		if not recognizeImage:
-			return
 		engine = self.getCurrentEngine(current_engine_type)
-		if not engine:
-			return
 		repeatCount = scriptHandler.getLastScriptRepeatCount()
 		textResultWhenRepeatGesture = not config.conf["onlineOCRGeneral"]["swapRepeatedCountEffect"]
 		if repeatCount == 0:
+			if not engine:
+				ui.message(_("Cannot get recognition engine"))
+				return
 			engine.text_result = textResultWhenRepeatGesture
-			imageInfo = RecogImageInfo(0, 0, recognizeImage.width, recognizeImage.height, 1)
-			pixels = recognizeImage.tobytes("raw", "BGRX")
-			# Translators: Reported when content recognition begins.
-			ui.message(_("Recognizing"))
-			engine.recognize(pixels, imageInfo, recogUi._recogOnResult)
+			if current_source == "navigatorObject":
+				recogUi.recognizeNavigatorObject(engine)
+				return
+			else:
+				imageInfo, recognizeImage = self.getImageFromSource(current_source)
+				if not recognizeImage:
+					ui.message(_("Clipboard URL source is not implemented."))
+					return
+				pixels = recognizeImage.tobytes("raw", "BGRX")
+				# Translators: Reported when content recognition begins.
+				ui.message(_("Recognizing"))
+				engine.recognize(pixels, imageInfo, recogUi._recogOnResult)
 		elif repeatCount == 1:
 			engine.text_result = not textResultWhenRepeatGesture
