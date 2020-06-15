@@ -7,10 +7,16 @@ history = []
 MAX_HISTORY = 20
 
 
-def historyAppend(image, result):
+def historyAppend(engine, image, response):
 	history.append({
+		"engine": engine,
 		"image": image,
-		"result": result
+		"response": response
 	})
 	if len(history) > MAX_HISTORY:
 		history.pop(0)
+
+
+def getPreviousResult():
+	if len(history) > 0:
+		return history[-1]

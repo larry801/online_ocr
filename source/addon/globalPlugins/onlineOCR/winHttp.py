@@ -119,6 +119,14 @@ def doHTTPRequest(callback, method, url, **kwargs):
 
 
 def postContent(callback, url, data, headers=None):
-	doHTTPRequest(
-		callback, b'POST', url, fields=data,
-		headers=headers)
+	if six.PY2:
+		doHTTPRequest(
+			callback, b'POST', url, fields=data,
+			headers=headers
+		)
+	elif six.PY3:
+
+		doHTTPRequest(
+			callback, 'POST', url, fields=data,
+			headers=headers
+		)

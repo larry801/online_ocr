@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
-from logHandler import log
+import six
 from gui.nvdaControls import CustomCheckListBox
 import wx
 import winUser
@@ -38,9 +38,13 @@ class StringEngineSettingChanger(EngineSettingChanger):
 		super(StringEngineSettingChanger, self).__init__(setting, engine)
 	
 	def __call__(self, evt):
+		if six.PY2:
+			newValue = getattr(self.panel, "_%ss" % self.setting.name)[evt.GetSelection()].ID
+		elif six.PY3:
+			newValue = getattr(self.panel, "_%ss" % self.setting.name)[evt.GetSelection()].id
 		setattr(
-			self.engine, self.setting.name,
-			getattr(self.panel, "_%ss" % self.setting.name)[evt.GetSelection()].ID)
+			self.engine, self.setting.name, newValue
+		)
 
 
 class VoiceSettingsSlider(wx.Slider):
@@ -100,10 +104,16 @@ class CheckListEngineSettingChanger(EngineSettingChanger):
 	def __call__(self, evt):
 		itemIndices = self.checkList.GetCheckedStrings()
 		availableSettings = getattr(self.engine, "available%ss" % self.setting.name.capitalize())
-		descToParamID = {
-			availableSettings[x].name: availableSettings[x].ID
-			for x in availableSettings
-		}
+		if six.PY2:
+			descToParamID = {
+				availableSettings[x].name: availableSettings[x].ID
+				for x in availableSettings
+			}
+		elif six.PY3:
+			descToParamID = {
+				availableSettings[x].displayName: availableSettings[x].id
+				for x in availableSettings
+			}
 		result = [descToParamID[x] for x in itemIndices]
 		setattr(self.engine, self.setting.name, result)
 		evt.Skip()

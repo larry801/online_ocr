@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
 from . import azure
+import six
 import addonHandler
 from collections import OrderedDict
 from logHandler import log
@@ -128,11 +129,19 @@ class CustomContentRecognizer(azure.CustomContentRecognizer):
 			domain,
 			url
 		])
-		queryString = b"?visualFeatures={2}&language={0}&details={1}".format(
-			self._language,
-			self._detail,
-			self.getFeatures(),
-		)
+		if six.PY2:
+			queryString = b"?visualFeatures={2}&language={0}&details={1}".format(
+				self._language,
+				self._detail,
+				self.getFeatures(),
+			)
+		else:
+			queryString = "?visualFeatures={2}&language={0}&details={1}".format(
+				self._language,
+				self._detail,
+				self.getFeatures(),
+			)
+			queryString = queryString.encode('utf-8')
 		fullURL = fullURL + queryString
 		# Unicode URL cause urllib3 to decode raw image data as if they were unicode.
 		if isinstance(fullURL, string_types):

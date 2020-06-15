@@ -174,7 +174,7 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 			newEngine.loadSettings()
 		else:
 			config.conf[cls.configSectionName][name] = {}
-			c = config.conf[cls.configSectionName][newEngine.name]
+			c = config.conf[cls.configSectionName][name]
 			c.spec = newEngine.getConfigSpec()
 			newEngine.saveSettings()
 		return newEngine
@@ -203,6 +203,7 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 
 	@classmethod
 	def getCurrentEngine(cls):
+		log.debug(cls.currentEngine)
 		return cls.currentEngine
 
 	@classmethod
@@ -682,12 +683,24 @@ class SpecificEnginePanel(SettingsPanel):
 		engine = self.handler.getCurrentEngine()
 		setattr(self, "_%ss" % setting.name, getattr(engine, "available%ss" % setting.name.capitalize()).values())
 		l = getattr(self, "_%ss" % setting.name)
-		labeledControl = guiHelper.LabeledControlHelper(self, labelText, wx.Choice, choices=[x.name for x in l])
+		choices = []
+		if six.PY3:
+			choices = [x.displayName for x in l]
+		elif six.PY2:
+			choices = [x.name for x in l]
+		labeledControl = guiHelper.LabeledControlHelper(
+			self, labelText, wx.Choice,
+			choices=choices
+		)
 		lCombo = labeledControl.control
 		setattr(self, "%sList" % setting.name, lCombo)
 		try:
 			cur = getattr(engine, setting.name)
-			i = [x.ID for x in l].index(cur)
+			i = []
+			if six.PY2:
+				i = [x.ID for x in l].index(cur)
+			elif six.PY3:
+				i = [x.id for x in l].index(cur)
 			lCombo.SetSelection(i)
 		except ValueError:
 			pass
@@ -716,13 +729,19 @@ class SpecificEnginePanel(SettingsPanel):
 		label = wx.StaticText(self, wx.ID_ANY, label="%s:" % setting.displayNameWithAccelerator)
 		sizer.Add(label)
 		availableSettings = getattr(self, "_%ss" % setting.name)
-		items = [x.name for x in availableSettings]
+		if six.PY2:
+			items = [x.name for x in availableSettings]
+		elif six.PY3:
+			items = [x.displayName for x in availableSettings]
 		checkListBox = CustomCheckListBox(
 			self,
 			choices=items
 		)
 		paramIDs = getattr(engine, setting.name)
-		idToDesc = {x.ID: x.name for x in availableSettings}
+		if six.PY2:
+			idToDesc = {x.ID: x.name for x in availableSettings}
+		elif six.PY3:
+			idToDesc = {x.id: x.displayName for x in availableSettings}
 		if len(paramIDs) > 0:
 			checkedStrings = [idToDesc[x] for x in paramIDs]
 			checkListBox.SetCheckedStrings(checkedStrings)

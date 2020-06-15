@@ -16,6 +16,7 @@ import json
 from contentRecog import LinesWordsResult, ContentRecognizer, RecogImageInfo
 import base64
 import wx
+import api
 import config
 from six import iterkeys
 from gui.guiHelper import BoxSizerHelper
@@ -508,33 +509,32 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		self.originalImage = None
 		self.networkThread = None
 	
-	def callback(self, result):
+	def callback(self, response):
 		if not self.networkThread:
 			# Recognition has been cancelled
 			return
-		# Translators: Message added before recognition result
-		# when user do not use result viewer
-		result_prefix = _(u"Recognition result:")
+
 		# Network error occurred
 
-		recogHistory.historyAppend(self.originalImage, result)
-
-		if not result:
+		if not response:
+			log.warning("Response: \n{0}".format(response))
 			self.cleanUp()
 			return
+		# Process Curl error from proxy server with public quota
 		if not self._use_own_api_key:
-			curl_error_message = self.processCURLError(result)  # type: str
+			curl_error_message = self.processCURLError(response)  # type: str
 			if curl_error_message:
 				self.showMessageInNetworkThread(curl_error_message)
 				self.cleanUp()
 				return
-		apiErrorMessage = self.process_api_result(result)  # type: str
+
+		apiErrorMessage = self.process_api_result(response)  # type: str
 		if apiErrorMessage:
 			self.showMessageInNetworkThread(apiErrorMessage)
 			self.cleanUp()
 			return
 		try:
-			result = self.convert_to_json(result)
+			response = self.convert_to_json(response)
 		except ValueError as e:
 			# Translators: Reported when api result is invalid
 			self.showMessageInNetworkThread(_(u"Recognition failed. Result is invalid."))
@@ -542,30 +542,41 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			return
 		
 		try:
-			ocrResult = self.extract_text(result)
-			if ocrResult.isspace():
-				# Translators: Reported when recognition result is empty
-				self.showMessageInNetworkThread(_(u"Recognition result is blank. There may be no text on this image."))
-				self.cleanUp()
-				return
-			resultText = result_prefix + ocrResult
-			if config.conf["onlineOCRGeneral"]["copyToClipboard"]:
-				import api
-				api.copyToClip(resultText)
-			if self.text_result:
-				if config.conf["onlineOCRGeneral"]["useBrowseableMessage"]:
-					self.showBrowseableMessageInNetworkThread(resultText)
-				else:
-					self.showMessageInNetworkThread(resultText)
-			else:
-				self.onResult(LinesWordsResult(
-					self.convert_to_line_result_format(result),
-					self.imageInfo))
+			self.showResult(response)
+			recogHistory.historyAppend(
+				self,
+				self.originalImage,
+				response
+			)
 		except (KeyError, ValueError):
 			# Translators: Reported when api result is invalid
 			self.showMessageInNetworkThread(_(u"Recognition failed. Result is invalid."))
 		finally:
 			self.cleanUp()
+
+	def showResult(self, response):
+		# Translators: Message added before recognition result
+		# when user do not use result viewer
+		result_prefix = _(u"Recognition result:")
+
+		ocrResult = self.extract_text(response)
+		if ocrResult.isspace():
+			# Translators: Reported when recognition result is empty
+			self.showMessageInNetworkThread(_(u"Recognition result is blank. This engine cannot extract anny content from this image."))
+			self.cleanUp()
+			return
+		resultText = result_prefix + ocrResult
+		if config.conf["onlineOCRGeneral"]["copyToClipboard"]:
+			api.copyToClip(resultText)
+		if self.text_result:
+			if config.conf["onlineOCRGeneral"]["useBrowseableMessage"]:
+				self.showBrowseableMessageInNetworkThread(resultText)
+			else:
+				self.showMessageInNetworkThread(resultText)
+		else:
+			self.onResult(LinesWordsResult(
+				self.convert_to_line_result_format(response),
+				self.imageInfo))
 
 	def recognize(self, pixels, imageInfo, onResult):
 		"""
@@ -787,7 +798,7 @@ class OnlineImageDescriberHandler(AbstractEngineHandler):
 	enginePackageName = "imageDescribers"
 	enginePackage = imageDescribers
 	configSectionName = "onlineImageDescriber"
-	defaultEnginePriorityList = ["machineLearning"]
+	defaultEnginePriorityList = ["azureAnalyseNarrator"]
 	configSpec = {
 		"engine": "string(default=auto)",
 		"copyToClipboard": "boolean(default=false)",
@@ -914,18 +925,18 @@ class CustomOCRPanel(SettingsPanel):
 			config.conf["onlineOCRGeneral"]["notifyIfResizeRequired"]
 		)
 
-		# Translators: The label for a list in the
-		# online OCR settings panel.
-		self.columnSplitModeList = settingsSizerHelper.addLabeledControl(
-			_("Column &split mode:"),
-			wx.Choice,
-			choices=[desc for (name, desc) in COLUMN_SPLIT_TYPES]
-		)
-		curColMode = config.conf["onlineOCRGeneral"]["columnSplitMode"]
-		for index, (name, desc) in enumerate(COLUMN_SPLIT_TYPES):
-			if name == curColMode:
-				self.columnSplitModeList.SetSelection(index)
-				break
+		# # Translators: The label for a list in the
+		# # online OCR settings panel.
+		# self.columnSplitModeList = settingsSizerHelper.addLabeledControl(
+		# 	_("Column &split mode:"),
+		# 	wx.Choice,
+		# 	choices=[desc for (name, desc) in COLUMN_SPLIT_TYPES]
+		# )
+		# curColMode = config.conf["onlineOCRGeneral"]["columnSplitMode"]
+		# for index, (name, desc) in enumerate(COLUMN_SPLIT_TYPES):
+		# 	if name == curColMode:
+		# 		self.columnSplitModeList.SetSelection(index)
+		# 		break
 
 		# Translators: The label for a list in the
 		# online OCR settings panel.
@@ -960,7 +971,7 @@ class CustomOCRPanel(SettingsPanel):
 			0]
 		config.conf["onlineOCRGeneral"]["proxyAddress"] = self.proxyAddressTextCtrl.GetValue()
 		config.conf["onlineOCRGeneral"]["notifyIfResizeRequired"] = self.notifyIfResizeRequiredCheckBox.GetValue()
-		config.conf["onlineOCRGeneral"]["columnSplitMode"] = COLUMN_SPLIT_TYPES[self.columnSplitModeList.GetSelection()][0]
+		# config.conf["onlineOCRGeneral"]["columnSplitMode"] = COLUMN_SPLIT_TYPES[self.columnSplitModeList.GetSelection()][0]
 
 	def isValid(self):
 		oldProxy = config.conf["onlineOCRGeneral"]["proxyAddress"]
