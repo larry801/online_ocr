@@ -22,7 +22,7 @@ class CustomContentRecognizer(BaseDescriber):
 
 	@classmethod
 	def check(cls):
-		return True
+		return False
 	
 	maxSize = 11 * 1024
 
