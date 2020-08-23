@@ -19,6 +19,7 @@ class EngineSettingChanger(object):
 		self.setting = setting
 	
 	def __call__(self, evt):
+		evt.Skip()  # allow other handlers to also process this event.
 		val = evt.GetSelection()
 		setattr(self.engine, self.setting.name, val)
 
@@ -41,7 +42,7 @@ class StringEngineSettingChanger(EngineSettingChanger):
 		if six.PY2:
 			newValue = getattr(self.panel, "_%ss" % self.setting.name)[evt.GetSelection()].ID
 		elif six.PY3:
-			newValue = getattr(self.panel, "_%ss" % self.setting.name)[evt.GetSelection()].id
+			newValue = getattr(self.panel, "_%ss" % self.setting.id)[evt.GetSelection()].id
 		setattr(
 			self.engine, self.setting.name, newValue
 		)

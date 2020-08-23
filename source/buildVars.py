@@ -30,12 +30,12 @@ Such as general description, color type landmarks and so on.
     "addon_author": "Larry Wang <larry.wang.801@gmail.com>",
     # URL for the add-on documentation support
 
-    "addon_url": r"https://github.com/larry801/online_ocr/tree/master/source",
+    "addon_url": r"https://github.com/larry801/online_ocr",
 
     # Documentation file name
     "addon_docFileName": "readme.html",
     "addon_minimumNVDAVersion": "2018.4",
-    "addon_lastTestedNVDAVersion": "2019.3",
+    "addon_lastTestedNVDAVersion": "2020.1",
     "addon_updateChannel": "dev",
 }
 
@@ -45,7 +45,7 @@ import os.path
 # You can use glob expressions here, they will be expanded.
 pythonSources = [
     os.path.join("addon", "globalPlugins", "onlineOCR", "*.py"),
-r".\addon\globalPlugins\onlineOCR\**\*.py"
+    r".\addon\globalPlugins\onlineOCR\**\*.py"
 ]
 
 # Files that contain strings for translation. Usually your python sources

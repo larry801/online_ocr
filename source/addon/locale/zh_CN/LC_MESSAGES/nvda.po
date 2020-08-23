@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'customOCR' '0.1.1-dev'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@freelists.org'\n"
-"POT-Creation-Date: 2019-08-31 11:13+0800\n"
-"PO-Revision-Date: 2019-08-31 11:19+0800\n"
+"POT-Creation-Date: 2020-06-15 09:52+0800\n"
+"PO-Revision-Date: 2020-06-15 09:53+0800\n"
 "Last-Translator: Larry Wang <larry.wang.801@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.2.4\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Language: zh_CN\n"
 
@@ -66,61 +66,61 @@ msgstr "使用在线图像描述引擎识别剪贴板内的图像。"
 msgid "No image in clipboard"
 msgstr "剪贴板中没有图像"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:187
+#: addon\globalPlugins\onlineOCR\__init__.py:186
 msgid ""
 "Recognizes the content of the current navigator object with online OCR "
 "engine."
 msgstr "使用在线 OCR 引擎识别当前导航对象的内容。"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:200
+#: addon\globalPlugins\onlineOCR\__init__.py:199
 msgid "Recognizes the text in clipboard images with online OCR engine."
 msgstr "使用在线OCR引擎识别剪贴板内的图像。"
 
 #. Translators: Online Image Describer command name in input gestures dialog
-#: addon\globalPlugins\onlineOCR\__init__.py:212
+#: addon\globalPlugins\onlineOCR\__init__.py:211
 msgid "Show previous recognition result, if any."
 msgstr "显示上一次识别结果。"
 
 #. Translators: Reported when there is no previous result.
-#: addon\globalPlugins\onlineOCR\__init__.py:225
+#: addon\globalPlugins\onlineOCR\__init__.py:224
 msgid "No previous result"
 msgstr "没有以前的结果"
 
 #. Translators: Online Image Describer command name in input gestures dialog
-#: addon\globalPlugins\onlineOCR\__init__.py:229
+#: addon\globalPlugins\onlineOCR\__init__.py:228
 msgid "Cancel current recognition if there is any."
 msgstr "取消正在进行的识别操作。"
 
 #. Translators: Reported when cancelling recognition
-#: addon\globalPlugins\onlineOCR\__init__.py:238
-#: addon\globalPlugins\onlineOCR\__init__.py:246
+#: addon\globalPlugins\onlineOCR\__init__.py:237
+#: addon\globalPlugins\onlineOCR\__init__.py:245
 msgid "OCR cancelled"
 msgstr "OCR已取消"
 
 #. Translators: Reported when cancelling recognition
-#: addon\globalPlugins\onlineOCR\__init__.py:242
+#: addon\globalPlugins\onlineOCR\__init__.py:241
 msgid "Image describe cancelled"
 msgstr "图像描述已取消"
 
 #. Translators: Reported when cancelling recognition
-#: addon\globalPlugins\onlineOCR\__init__.py:251
+#: addon\globalPlugins\onlineOCR\__init__.py:250
 msgid "There is no recognition ongoing."
 msgstr "没有可以取消的图像识别操作。"
 
 #. Translators: Online Image Describer command name in input gestures dialog
-#: addon\globalPlugins\onlineOCR\__init__.py:255
+#: addon\globalPlugins\onlineOCR\__init__.py:254
 msgid "Recognize image according to engine and source in settings"
 msgstr "根据文档中定义的分类对图像内容进行分类"
 
 #. Translators: Online Image Describer command name in input gestures dialog
-#: addon\globalPlugins\onlineOCR\__init__.py:288
-#: addon\globalPlugins\onlineOCR\__init__.py:304
+#: addon\globalPlugins\onlineOCR\__init__.py:287
+#: addon\globalPlugins\onlineOCR\__init__.py:303
 msgid "Cycle through types of recognition source"
 msgstr "切换识别图像的来源"
 
 #. Translators: Reported when the user cycles through recognition engine type
 #. %s will be replaced with the engine type: e.g. Online OCR Windows 10 Offline OCR
-#: addon\globalPlugins\onlineOCR\__init__.py:300
+#: addon\globalPlugins\onlineOCR\__init__.py:299
 #, python-format
 msgid "Recognition engine type: %s"
 msgstr "识别引擎： %s"
@@ -128,120 +128,121 @@ msgstr "识别引擎： %s"
 #. Translators: Reported when the user cycles through source types
 #. which determine source of content recognition
 #. %s will be replaced with the source type: e.g. Clipboard image, foreground window
-#: addon\globalPlugins\onlineOCR\__init__.py:317
+#: addon\globalPlugins\onlineOCR\__init__.py:316
 #, python-format
 msgid "Recognition source: %s"
 msgstr "图像来源： %s"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:347
+#: addon\globalPlugins\onlineOCR\__init__.py:346
 msgid "Error occurred while getting pasted file."
 msgstr "获取粘贴文件时出错。"
 
 #. Translators: Reported when text in clipboard is not a valid path
-#: addon\globalPlugins\onlineOCR\__init__.py:387
+#: addon\globalPlugins\onlineOCR\__init__.py:386
 msgid "Text in clipboard is the name of a directory."
 msgstr "剪贴板中的文本是目录的名称。"
 
 #. Translators: Reported when text in clipboard is not a valid path
-#: addon\globalPlugins\onlineOCR\__init__.py:390
+#: addon\globalPlugins\onlineOCR\__init__.py:389
 msgid "Text in clipboard is not a valid path."
 msgstr "剪贴板中的文本不是有效的路径."
 
 #. Translators: Reported when cannot get content of the path specified
-#: addon\globalPlugins\onlineOCR\__init__.py:393
+#: addon\globalPlugins\onlineOCR\__init__.py:392
 msgid "The file specified in clipboard is not an image"
 msgstr "剪贴板中指定的文件不是图像"
 
-#. Translators: Reported when content recognition (e.g. OCR) is attempted,
-#. but the content is not visible.
-#: addon\globalPlugins\onlineOCR\__init__.py:407
-msgid "Content is not visible"
-msgstr "内容不可见"
-
-#. Translators: Reporting when content recognition (e.g. OCR) begins.
-#. Translators: Reported when content recognition begins.
-#: addon\globalPlugins\onlineOCR\__init__.py:415
-#: addon\globalPlugins\onlineOCR\__init__.py:483
-msgid "Recognizing"
-msgstr "正在识别"
-
-#: addon\globalPlugins\onlineOCR\__init__.py:433
+#: addon\globalPlugins\onlineOCR\__init__.py:420
 msgid "Current window position is invalid."
 msgstr "当前窗口位置无效。"
 
 #. Translators: Reported when source is not correct.
-#: addon\globalPlugins\onlineOCR\__init__.py:455
+#: addon\globalPlugins\onlineOCR\__init__.py:449
 #, python-format
 msgid "Unknown source: %s"
 msgstr "未知来源： %s"
 
+#: addon\globalPlugins\onlineOCR\__init__.py:469
+#, fuzzy
+msgid "Cannot get recognition engine"
+msgstr "图像识别结果"
+
+#: addon\globalPlugins\onlineOCR\__init__.py:478
+msgid "Clipboard URL source is not implemented."
+msgstr ""
+
+#. Translators: Reported when content recognition begins.
+#: addon\globalPlugins\onlineOCR\__init__.py:482
+msgid "Recognizing"
+msgstr "正在识别"
+
 #. Translators: Label for a setting in voice settings dialog.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:271
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:272
 msgid "App &ID"
 msgstr "用户ID"
 
 #. Translators: Label for a setting in voice settings dialog.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:277
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:278
 msgid "API &Key"
 msgstr "API凭证(&K)"
 
 #. Translators: Label for API secret key setting in settings dialog.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:283
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:284
 msgid "API &Secret Key"
 msgstr "API密钥(&S)"
 
 #. Translators: Label for a setting in engine settings dialog.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:289
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:290
 msgid "Recognition Language"
 msgstr "识别语言 (&L)"
 
 #. Developers: Please also specify a comment for translators
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:399
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:400
 msgid "Change Engine"
 msgstr "更改引擎"
 
 #. Translators: A label for the engines on the engine panel.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:407
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:408
 msgid "&Engines"
 msgstr "引擎(&E)"
 
 #. Translators: This is the label for the button used to change engines,
 #. it appears in the context of a engine group on the Online OCR settings panel.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:425
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:520
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:426
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:521
 msgid "C&hange..."
 msgstr "修改(&H)..."
 
 #. Developers: Please also specify a comment for translators
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:479
 #: addon\globalPlugins\onlineOCR\abstractEngine.py:480
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:481
 msgid "Engine"
 msgstr "引擎"
 
 #. Translators: A label for the engines on the engine panel.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:496
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:497
 msgid " Engines"
 msgstr " 引擎"
 
 #. Translators: This is the label for the engine selection dialog
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:576
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:577
 msgid "Select Engines"
 msgstr "选择引擎"
 
 #. Translators: This is a label for the select
 #. engine combobox in the engine dialog.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:586
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:587
 msgid "&Engines:"
 msgstr "引擎(&E):"
 
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:617
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:618
 #, python-format
 msgid "Could not load the %s engine."
 msgstr "无法加载 %s 引擎。"
 
 #. Translators: Title of the message box presented when
 #. NVDA is unable to load the selected engine.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:620
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:621
 msgid "Engine Error"
 msgstr "引擎加载出错"
 
@@ -249,7 +250,7 @@ msgstr "引擎加载出错"
 #. type: dict
 #. type: wx.Window
 #. Translators: This is the label for the settings panel.
-#: addon\globalPlugins\onlineOCR\abstractEngine.py:643
+#: addon\globalPlugins\onlineOCR\abstractEngine.py:644
 msgid "Engine Settings"
 msgstr "引擎设置"
 
@@ -547,7 +548,7 @@ msgstr "微软 azure ocr"
 #. Translators: Label for engine settings
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:33
 #: addon\globalPlugins\onlineOCR\imageDescribers\azure.py:37
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:53
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:54
 msgid "Azure resource Region"
 msgstr "Azure 资源区域"
 
@@ -688,6 +689,7 @@ msgstr "捷克语"
 #. Translators: Text language for image description
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:175
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:119
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:92
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:102
 msgid "Danish"
 msgstr "丹麦语"
@@ -696,6 +698,7 @@ msgstr "丹麦语"
 #. Translators: Text language for image description
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:177
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:121
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:86
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:133
 msgid "Dutch"
 msgstr "荷兰语"
@@ -714,6 +717,7 @@ msgstr "英文"
 #. Translators: Text language for image description
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:181
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:125
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:90
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:112
 msgid "Finnish"
 msgstr "芬兰语"
@@ -723,6 +727,7 @@ msgstr "芬兰语"
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:183
 #: addon\globalPlugins\onlineOCR\contentRecognizers\baiduOCR.py:287
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:127
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:70
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:114
 msgid "French"
 msgstr "法语"
@@ -732,6 +737,7 @@ msgstr "法语"
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:185
 #: addon\globalPlugins\onlineOCR\contentRecognizers\baiduOCR.py:288
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:129
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:72
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:104
 msgid "German"
 msgstr "德语"
@@ -748,6 +754,7 @@ msgstr "希腊语"
 #. Translators: Text language for image description
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:189
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:133
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:97
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:119
 msgid "Hungarian"
 msgstr "匈牙利语"
@@ -757,6 +764,7 @@ msgstr "匈牙利语"
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:191
 #: addon\globalPlugins\onlineOCR\contentRecognizers\baiduOCR.py:289
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:137
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:83
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:121
 msgid "Italian"
 msgstr "意大利语"
@@ -766,6 +774,7 @@ msgstr "意大利语"
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:193
 #: addon\globalPlugins\onlineOCR\contentRecognizers\baiduOCR.py:292
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:139
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:63
 #: addon\globalPlugins\onlineOCR\imageDescribers\azure.py:161
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:123
 msgid "Japanese"
@@ -776,6 +785,7 @@ msgstr "日语"
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:195
 #: addon\globalPlugins\onlineOCR\contentRecognizers\baiduOCR.py:293
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:135
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:65
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:125
 msgid "Korean"
 msgstr "韩语"
@@ -783,6 +793,7 @@ msgstr "韩语"
 #. Translators: Text language for OCR
 #. Translators: Text language for image description
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:197
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:95
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:131
 msgid "Norwegian"
 msgstr "挪威语"
@@ -800,6 +811,7 @@ msgstr "波兰语"
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:201
 #: addon\globalPlugins\onlineOCR\contentRecognizers\baiduOCR.py:286
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:143
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:74
 #: addon\globalPlugins\onlineOCR\imageDescribers\azure.py:163
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:137
 msgid "Portuguese"
@@ -810,6 +822,7 @@ msgstr "葡萄牙语"
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:203
 #: addon\globalPlugins\onlineOCR\contentRecognizers\baiduOCR.py:291
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:145
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:81
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:141
 msgid "Russian"
 msgstr "俄语"
@@ -819,6 +832,7 @@ msgstr "俄语"
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:205
 #: addon\globalPlugins\onlineOCR\contentRecognizers\baiduOCR.py:290
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:149
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:68
 #: addon\globalPlugins\onlineOCR\imageDescribers\azure.py:165
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:110
 msgid "Spanish"
@@ -828,6 +842,7 @@ msgstr "西班牙语"
 #. Translators: Text language for image description
 #: addon\globalPlugins\onlineOCR\contentRecognizers\azureOCR.py:207
 #: addon\globalPlugins\onlineOCR\contentRecognizers\ocrSpace.py:151
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:88
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:149
 msgid "Swedish"
 msgstr "瑞典语"
@@ -1105,6 +1120,7 @@ msgstr "图像识别错误"
 
 #. Translators: Text language for OCR
 #: addon\globalPlugins\onlineOCR\contentRecognizers\baiduOCR.py:284
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:59
 msgid "Chinese and English"
 msgstr "中英文混合"
 
@@ -1193,6 +1209,36 @@ msgid "Sougou API error occurred. Recognition failed"
 msgstr "搜狗 api 发生了错误。识别失败"
 
 #. Translators: Description of Online OCR Engine
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:26
+msgid "Tencent Cloud OCR"
+msgstr "腾讯云OCR"
+
+#. Translators: Text language for OCR
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:61
+msgid "Detect automatically"
+msgstr "自动检测"
+
+#. Translators: Text language for OCR
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:77
+msgid "Vietnamese"
+msgstr "越南语"
+
+#. Translators: Text language for OCR
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:79
+msgid "Malay Language"
+msgstr "马来语"
+
+#. Translators: Text language for OCR
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:99
+msgid "Tai"
+msgstr "泰语"
+
+#. Translators: Text language for OCR
+#: addon\globalPlugins\onlineOCR\contentRecognizers\tencentCloud.py:101
+msgid "Latin"
+msgstr "拉丁字母"
+
+#. Translators: Description of Online OCR Engine
 #: addon\globalPlugins\onlineOCR\contentRecognizers\tencentOCR.py:25
 msgid "Tencent AI OCR"
 msgstr "腾讯优图"
@@ -1217,123 +1263,125 @@ msgid "Simplified Chinese"
 msgstr "简体中文"
 
 #. Translators: Description of Online OCR Engine
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:23
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:24
 msgid "Microsoft Azure Image Analyser"
 msgstr "微软 Azure 图像分析"
 
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:43
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:44
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyseNarrator.py:29
 msgid "Detect Details"
 msgstr "检测详细信息"
 
 #. Translators: Label for engine settings
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:47
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:48
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyseNarrator.py:33
 msgid "Configure visual features to extract"
 msgstr "配置要提取的视觉特征"
 
 #. Translators: Description of visual features
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:59
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:60
 msgid "Detect adult content."
 msgstr "检测成人内容。"
 
 #. Translators: Description of visual features
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:61
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:62
 msgid ""
 "Detects various brands within an image, including the approximate location. "
 msgstr "检测图像中的各种品牌, 包括大致位置 "
 
 #. Translators: Description of visual features
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:64
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:65
 msgid ""
 "Categorizes image content according to a taxonomy defined in documentation."
 msgstr "根据文档中定义的分类对图像内容进行分类。"
 
 #. Translators: Description of visual features
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:67
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:68
 msgid ""
 "Describes the image content with a complete sentence in supported languages."
 msgstr "用完整句子描述图像内容。"
 
 #. Translators: Description of visual features
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:70
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:71
 msgid ""
 "Determines the accent color, dominant color, and whether an image is "
 "black&white."
 msgstr "确定强调色、主导色以及图像是否为黑白。"
 
 #. Translators: Description of visual features
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:73
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:74
 msgid ""
 "Tags the image with a detailed list of words related to the image content."
 msgstr "使用与图像内容相关的标签描述图像。"
 
 #. Translators: Description of visual features
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:76
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:77
 msgid ""
 "Detects if faces are present. If present, generate coordinates, gender and "
 "age."
 msgstr "人脸-检测图像上是否有人脸。如果存在, 则生成坐标、性别和年龄。"
 
 #. Translators: Description of visual features
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:79
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:80
 msgid "Detects if image is clip art or a line drawing."
 msgstr "检测图像是剪贴画还是简笔画。"
 
 #. Translators: Description of visual features
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:82
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:83
 msgid ""
 "Detects various objects within an image, including the approximate location. "
 "The Objects argument is only available in English."
 msgstr "检测图像中的各种对象, 包括大致位置，仅支持英语。"
 
 #. Translators: Regions for azure ocr resource
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:106
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:107
 msgid "identifies celebrities if detected in the image."
 msgstr "如果在图像中检测到名人，给出详细信息。"
 
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:107
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:108
 msgid "identifies landmarks if detected in the image."
 msgstr "如果在图像中检测到地标时，给出详细信息。"
 
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:108
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:109
 msgid "identifies landmarks and celebrities if detected in the image."
 msgstr "识别地标和名人的详细信息。"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:149
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:158
 msgid "Categories:"
 msgstr "类型:"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:173
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:182
 msgid "Adult content detection:"
 msgstr "成人内容检测:"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:176
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:185
 msgid "This image contains adult content"
 msgstr "此图像包含成人内容"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:179
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:188
 msgid "This image does not contain adult content"
 msgstr "此图像不包含成人内容"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:182
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:191
 msgid "This image contains racy content"
 msgstr "此图像包含裸露的内容"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:185
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:194
 msgid "This image does not contain racy content"
 msgstr "此图像不包含裸露的内容"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:188
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:197
 msgid "Color detection:"
 msgstr "颜色检测:"
 
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:191
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:200
 msgid ""
 "Dominant foreground color is {foreGroundColor}.\n"
 " Dominant background color is {backGroundColor}."
@@ -1342,89 +1390,94 @@ msgstr ""
 " 主导背景色为 {背景色}。"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:200
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:209
 msgid "Accent color is {color}, its hex code is {hex}."
 msgstr "重音颜色为 {颜色}, 其十六进制代码为 {十六进制}。"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:205
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:214
 msgid "Dominant colors:"
 msgstr "主要颜色:"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:210
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:219
 msgid "The image is black and white."
 msgstr "图像是黑色和白色的。"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:213
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:222
 msgid "The image is not black and white."
 msgstr "图像不是黑白的。"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:223
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:232
 msgid "Detected image type:"
 msgstr "检测到的图像类型:"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:226
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:235
 msgid "The image is not a clip-art."
 msgstr "图像不是剪贴画。"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:229
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:238
 msgid "Cannot tell whether is image is clip-art"
 msgstr "无法判断图像是否是剪贴画"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:232
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:241
 msgid "The image is Normal-clip-art"
 msgstr "图像是正常剪贴画"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:235
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:244
 msgid "The image is Good-clip-art"
 msgstr "图像是高级剪贴画"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:238
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:247
 msgid "The image is a lineDrawing"
 msgstr "图像是一个简笔画"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:241
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:250
 msgid "The image is not a lineDrawing"
 msgstr "图像不是简笔画"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:251
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:260
 msgid "{number} objects detected."
 msgstr "检测到 {number}个对象。"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:260
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:269
 msgid "{number} brands detected."
 msgstr "检测到 {number}个品牌。"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:269
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:278
 msgid "{number} faces detected."
 msgstr "检测到  {number}个人脸。"
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:346
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:355
 msgid "Face:"
 msgstr "人脸："
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:348
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:357
 msgid "Age:"
 msgstr "年龄："
 
 #. Translators: Result label for azure image analyzer
-#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:351
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyse.py:360
 msgid "Gender:"
 msgstr "性别："
+
+#. Translators: Description of Online OCR Engine
+#: addon\globalPlugins\onlineOCR\imageDescribers\azureAnalyseNarrator.py:23
+msgid "Microsoft Narrator Image Analyser"
+msgstr "微软讲述人图像分析"
 
 #: addon\globalPlugins\onlineOCR\imageDescribers\machineLearning.py:21
 msgid "Machine Learning Engine by Oliver Edholm"
@@ -1499,6 +1552,9 @@ msgstr ""
 "OCR 从图像中提取文本。\n"
 "图像描述描述以文本形式描述图像中的视觉特征。\n"
 "如一般描述、颜色、类型、地标等 "
+
+#~ msgid "Content is not visible"
+#~ msgstr "内容不可见"
 
 #~ msgid "&Copy result to clipboard after recognition"
 #~ msgstr "识别后将结果文本复制到剪贴板(&C)"

@@ -212,7 +212,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		category=category_name,
 		gestures=[]
 	)
-	def showPreviousResult(self, gesture):
+	def script_showPreviousResult(self, gesture):
 		import recogHistory
 		result = recogHistory.getPreviousResult()
 		if result:
