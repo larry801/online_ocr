@@ -913,8 +913,8 @@ class SpecificEnginePanel(SettingsPanel):
 		for setting in engine.supportedSettings:
 			if isinstance(setting, (NumericEngineSetting, BooleanEngineSetting, TextInputEngineSetting)):
 				continue
-			if isinstance(setting, (CheckListEngineSetting)):
-				getattr(self, "%ss" % setting.name).Unbind(wx.EVT_CHOICE)
+			if isinstance(setting, CheckListEngineSetting):
+				getattr(self, "%sCheckListBox" % setting.name).Unbind(wx.EVT_CHOICE)
 			else:
 				getattr(self, "%sList" % setting.name).Unbind(wx.EVT_CHOICE)
 		# restore settings
