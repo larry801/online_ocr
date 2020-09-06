@@ -61,7 +61,7 @@ SOURCE_TYPES = [
 	# Translators: One of the source types in online OCR settings panel.
 	("clipboardImage", _(u"Image data or image file in clipboard")),
 	# Translators: One of the source types in online OCR settings panel.
-	("clipboardURL", _(u"Image path or url in clipboard")),
+	# ("clipboardURL", _(u"Image path or url in clipboard")),
 ]
 
 
