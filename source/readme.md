@@ -1,7 +1,7 @@
 # Online image describer addon #
 
 * Author: Larry Wang
-* NVDA compatibility: from 2018.3 to 2020.3
+* NVDA compatibility: from 2018.3 to 2020.2
 * Download [development version][2]
 
 This addon aims at adding online image recognition engines to NVDA.
@@ -153,14 +153,42 @@ http://ai.baidu.com
 
 http://ai.sogou.com/
 
+https://intl.cloud.tencent.com
+
+
 ## Engines
 
 There are five engines available.
 
 ### Tencent Cloud OCR
 
-This API is provided by Tencent Cloud, 15000 per day.
+This API is sponsored by [Tencent Cloud](https://intl.cloud.tencent.com) and [Aceessibility Research Association](http://www.siaa.org.cn), with a quota of 15000 per day.
 
+This engine support 19 languages.
+
+Chinese-English mix
+Japanese
+Korean
+Spanish
+French
+German
+Portuguese
+Vietnamese
+Malay
+Russian
+Italian
+Dutch
+Swedish
+Finnish
+Danish
+Norwegian
+Hungarian
+Thai
+Latin
+
+Here is the settings of this engine.
+
+Language: Text language for recognition. Auto detection by default.
 
 ### OCR space
 This one is a paid API with free quota provided by https://ocr.space
@@ -345,9 +373,11 @@ There is no additional configuration for this API.
 
 ### 0.19
 
-Compatible with NVDA 2019.3 and later.
-Removed unavailable engines Sougou OCR and Machine Learning Engine by Oliver Edholm
-Fix public endpoint on https://www.nvdacn.com
+Add Tencent Cloud OCR engine sponsored by [Tencent Cloud](https://intl.cloud.tencent.com) and [Aceessibility Research Association](http://www.siaa.org.cn)
+Compatible with NVDA 2020.2
+Removed unavailable Sougou OCR and Machine Learning Engine by Oliver Edholm
+Fix public endpoint on [NVDA China Site](https://www.nvdacn.com)
+
 
 ### 0.18
 

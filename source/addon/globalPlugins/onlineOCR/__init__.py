@@ -284,7 +284,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	@script(
 		# Translators: Online Image Describer command name in input gestures dialog
-		description=_("Cycle through types of recognition source"),
+		description=_("Cycle through types of recognition engine"),
 		category=category_name,
 		gestures=[]
 	)
@@ -296,7 +296,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		)
 		# Translators: Reported when the user cycles through recognition engine type
 		# %s will be replaced with the engine type: e.g. Online OCR Windows 10 Offline OCR
-		ui.message(_("Recognition engine type: %s") % name)
+		ui.message(_("%s as recognition engine") % name)
 
 	@script(
 		# Translators: Online Image Describer command name in input gestures dialog
@@ -313,7 +313,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		# Translators: Reported when the user cycles through source types
 		# which determine source of content recognition
 		# %s will be replaced with the source type: e.g. Clipboard image, foreground window
-		ui.message(_("Recognition source: %s") % name)
+		ui.message(_("%s as source") % name)
 
 	@staticmethod
 	def enumerateClipboardFormat():
