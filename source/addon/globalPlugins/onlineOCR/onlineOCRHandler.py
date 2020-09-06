@@ -770,7 +770,7 @@ class CustomOCRHandler(AbstractEngineHandler):
 	enginePackageName = "contentRecognizers"
 	enginePackage = contentRecognizers
 	configSectionName = "onlineOCR"
-	defaultEnginePriorityList = ["azureOCR"]
+	defaultEnginePriorityList = ["tencentCloudOCR"]
 	mandatoryClassName = "CustomContentRecognizer"
 	configSpec = {
 		"engine": "string(default=auto)",
@@ -804,7 +804,7 @@ class OnlineImageDescriberHandler(AbstractEngineHandler):
 	enginePackageName = "imageDescribers"
 	enginePackage = imageDescribers
 	configSectionName = "onlineImageDescriber"
-	defaultEnginePriorityList = ["azureAnalyseNarrator"]
+	defaultEnginePriorityList = ["azureAnalyse"]
 	configSpec = {
 		"engine": "string(default=auto)",
 		"copyToClipboard": "boolean(default=false)",
