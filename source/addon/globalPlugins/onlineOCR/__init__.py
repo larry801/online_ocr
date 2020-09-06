@@ -70,8 +70,9 @@ from onlineOCRHandler import (
 	OnlineImageDescriberPanel, OnlineOCRPanel,
 	SOURCE_TYPES, ENGINE_TYPES, COLUMN_SPLIT_TYPES
 )
-from LayeredGesture import category_name
+
 _ = lambda x: x
+category_name = _(u"Online Image Describer")
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
 

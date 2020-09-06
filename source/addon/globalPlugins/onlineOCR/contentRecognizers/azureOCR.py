@@ -158,7 +158,7 @@ class CustomContentRecognizer(BaseRecognizer):
 	def _set_detectDirection(self, detectDirection):
 		self._detectDirection = detectDirection
 
-	_language = b"unk"
+	_language = "unk"
 
 	def _get_language(self):
 		return self._language
@@ -169,59 +169,59 @@ class CustomContentRecognizer(BaseRecognizer):
 	def _get_availableLanguages(self):
 		languages = OrderedDict({
 			# Translators: Text language for OCR
-			b"unk": _(u"Auto Detect"),
+			"unk": _(u"Auto Detect"),
 			# Translators: Text language for OCR
-			b"zh-Hans": _(u"Chinese Simplified"),
+			"zh-Hans": _(u"Chinese Simplified"),
 			# Translators: Text language for OCR
-			b"zh-Hant": _(u"Chinese Traditional"),
+			"zh-Hant": _(u"Chinese Traditional"),
 			# Translators: Text language for OCR
-			b"cs": _(u"Czech"),
+			"cs": _(u"Czech"),
 			# Translators: Text language for OCR
-			b"da": _(u"Danish"),
+			"da": _(u"Danish"),
 			# Translators: Text language for OCR
-			b"nl": _(u"Dutch"),
+			"nl": _(u"Dutch"),
 			# Translators: Text language for OCR
-			b"en": _(u"English"),
+			"en": _(u"English"),
 			# Translators: Text language for OCR
-			b"fi": _(u"Finnish"),
+			"fi": _(u"Finnish"),
 			# Translators: Text language for OCR
-			b"fr": _(u"French"),
+			"fr": _(u"French"),
 			# Translators: Text language for OCR
-			b"de": _(u"German"),
+			"de": _(u"German"),
 			# Translators: Text language for OCR
-			b"el": _(u"Greek"),
+			"el": _(u"Greek"),
 			# Translators: Text language for OCR
-			b"hu": _(u"Hungarian"),
+			"hu": _(u"Hungarian"),
 			# Translators: Text language for OCR
-			b"it": _(u"Italian"),
+			"it": _(u"Italian"),
 			# Translators: Text language for OCR
-			b"ja": _(u"Japanese"),
+			"ja": _(u"Japanese"),
 			# Translators: Text language for OCR
-			b"ko": _(u"Korean"),
+			"ko": _(u"Korean"),
 			# Translators: Text language for OCR
 			"nb": _(u"Norwegian"),
 			# Translators: Text language for OCR
-			b"pl": _(u"Polish"),
+			"pl": _(u"Polish"),
 			# Translators: Text language for OCR
-			b"pt": _(u"Portuguese"),
+			"pt": _(u"Portuguese"),
 			# Translators: Text language for OCR
-			b"ru": _(u"Russian"),
+			"ru": _(u"Russian"),
 			# Translators: Text language for OCR
-			b"es": _(u"Spanish"),
+			"es": _(u"Spanish"),
 			# Translators: Text language for OCR
-			b"sv": _(u"Swedish"),
+			"sv": _(u"Swedish"),
 			# Translators: Text language for OCR
-			b"tr": _(u"Turkish"),
+			"tr": _(u"Turkish"),
 			# Translators: Text language for OCR
-			b"ar": _(u"Arabic"),
+			"ar": _(u"Arabic"),
 			# Translators: Text language for OCR
-			b"ro": _(u"Romanian"),
+			"ro": _(u"Romanian"),
 			# Translators: Text language for OCR
-			b"sr-Cyrl": _(u"Cyrillic Serbian"),
+			"sr-Cyrl": _(u"Cyrillic Serbian"),
 			# Translators: Text language for OCR
-			b"sr-Latn": _(u"Latin Serbian"),
+			"sr-Latn": _(u"Latin Serbian"),
 			# Translators: Text language for OCR
-			b"sk": _(u"Slovak"),
+			"sk": _(u"Slovak"),
 		})
 		return self.generate_string_settings(languages)
 
