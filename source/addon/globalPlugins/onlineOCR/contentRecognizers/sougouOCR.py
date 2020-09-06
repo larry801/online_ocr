@@ -33,7 +33,7 @@ class CustomContentRecognizer(BaseRecognizer):
 	
 	@classmethod
 	def check(cls):
-		return True
+		return False
 	
 	def process_api_result(self, result):
 		import json
