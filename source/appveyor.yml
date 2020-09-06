@@ -23,7 +23,7 @@ deploy:
   description: $(APPVEYOR_REPO_TAG_NAME)
   provider: GitHub
   auth_token:
-    secure: uK31tp+xqv78Wvxvl5nRI6vBL97we6/8qQHA2YK5mRn2Q40tkikzZbOm9r+otdpR
+    secure: eqibl5n9U38QcWMDN8wgntjC1zrPC6Nu2mWbLfjKMfb5viAS6R7YdLBvBBKy0Cm7
   artifact: addon
   draft: false
   prerelease: false
