@@ -42,7 +42,7 @@ class StringEngineSettingChanger(EngineSettingChanger):
 		if six.PY2:
 			newValue = getattr(self.panel, "_%ss" % self.setting.name)[evt.GetSelection()].ID
 		elif six.PY3:
-			newValue = getattr(self.panel, "_%ss" % self.setting.id)[evt.GetSelection()].id
+			newValue = list(getattr(self.panel, "_%ss" % self.setting.name))[evt.GetSelection()].id
 		setattr(
 			self.engine, self.setting.name, newValue
 		)

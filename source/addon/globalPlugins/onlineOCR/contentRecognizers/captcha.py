@@ -103,7 +103,7 @@ class CustomContentRecognizer(BaseRecognizer):
 			}
 		return payload
 
-	def getHTTPHeaders(self):
+	def getHTTPHeaders(self, imageData):
 		if self._use_own_api_key:
 			return {
 				"Content-type": "application/x-www-form-urlencoded"

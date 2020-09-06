@@ -91,7 +91,7 @@ class CustomContentRecognizer(BaseRecognizer):
 		md5.update(encoded_option)
 		return md5.hexdigest()
 	
-	def getHTTPHeaders(self):
+	def getHTTPHeaders(self, imageData):
 		if self._use_own_api_key:
 			return {
 				b"Authorization": str(self.getSignature(self._api_key, self._api_secret_key, b""))

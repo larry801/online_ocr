@@ -36,9 +36,9 @@ class CustomContentRecognizer(azureAnalyse.CustomContentRecognizer):
 
 	@classmethod
 	def check(cls):
-		return True
+		return False
 
-	def getHTTPHeaders(self):
+	def getHTTPHeaders(self, imageData):
 		return {
 			b'Ocp-Apim-Subscription-Key': b'5365b76c568743ffa7ae0dc192e16879'
 		}
@@ -48,3 +48,4 @@ class CustomContentRecognizer(azureAnalyse.CustomContentRecognizer):
 
 	def get_url(self):
 		return b'/captionapi/analyze'
+

@@ -179,7 +179,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"""
 		@type gesture
 		"""
-		self.startRecognition("clipboardImage", "onlineImageDescribe")
+		self.startRecognition("clipboardImage", "onlineImageDescriber")
 	
 	# Translators: OCR command name in input gestures dialog
 	full_ocr_msg = _(

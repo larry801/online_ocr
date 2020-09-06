@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 import gui
 import wx
-from gui.settingsDialogs import InputGesturesDialog
 from inputCore import (
 	GlobalGestureMap,
 	_AllGestureMappingsRetriever,
@@ -17,6 +16,13 @@ from baseObject import ScriptableObject
 import baseObject
 import os
 import globalVars
+from six import binary_type
+
+# noinspection PyUnresolvedReferences
+try:
+	from gui.inputGestures import InputGesturesDialog
+except ImportError:
+	from gui.settingsDialogs import InputGestureDialog
 
 
 def safeJoin(a, b):

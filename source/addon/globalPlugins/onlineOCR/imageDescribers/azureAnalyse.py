@@ -82,13 +82,29 @@ class CustomContentRecognizer(azure.CustomContentRecognizer):
 			# Translators: Description of visual features
 			"Detects various objects within an image, including the approximate location. The Objects argument is only available in English.")
 	})
+
+	def get_domain(self):
+		if self._use_own_api_key:
+			return self._region
+		else:
+			return b'narrator.azure-api.net'
 	
 	def getFeatures(self):
 		visualFeatures = []
 		for i in self._feature:
 			visualFeatures.append(i)
 		return str(",".join(visualFeatures))
-	
+
+	def getHTTPHeaders(self, imageData):
+		if self._use_own_api_key:
+			return {
+				b'Ocp-Apim-Subscription-Key': str(self._api_key)
+			}
+		else:
+			return {
+				b'Ocp-Apim-Subscription-Key': b'5365b76c568743ffa7ae0dc192e16879'
+			}
+
 	@classmethod
 	def check(cls):
 		return True
@@ -114,7 +130,7 @@ class CustomContentRecognizer(azure.CustomContentRecognizer):
 		if self._use_own_api_key:
 			return b"vision/v2.0/analyze"
 		else:
-			return b"ocr/msAnalyse.php"
+			return b"/captionapi/analyze"
 	
 	def getFullURL(self):
 		from six import string_types
@@ -131,7 +147,7 @@ class CustomContentRecognizer(azure.CustomContentRecognizer):
 		])
 		if six.PY2:
 			queryString = b"?visualFeatures={2}&language={0}&details={1}".format(
-				self._language,
+				self._language.decode("utf-8"),
 				self._detail,
 				self.getFeatures(),
 			)
@@ -146,11 +162,16 @@ class CustomContentRecognizer(azure.CustomContentRecognizer):
 		# Unicode URL cause urllib3 to decode raw image data as if they were unicode.
 		if isinstance(fullURL, string_types):
 			if not isinstance(fullURL, str):
+				# URL is unicode in py2
 				log.io("Decode URL to str")
-				return str(fullURL)
+				return fullURL.decode("utf-8")
 			else:
+				# is str in py2
 				return fullURL
-	
+		else:
+			# is bytes in py3
+			return fullURL
+
 	def extract_text(self, apiResult):
 		entries = []
 		if "categories" in apiResult:

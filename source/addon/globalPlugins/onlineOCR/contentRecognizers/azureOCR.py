@@ -122,14 +122,19 @@ class CustomContentRecognizer(BaseRecognizer):
 			fileName = b'ocr.png'
 			paramName = fileName
 		else:
-			paramName = b'foo'
-			fileName = b'foo'
+			import six
+			if six.PY2:
+				paramName = b'foo'
+				fileName = b'foo'
+			else:
+				paramName = 'foo'
+				fileName = 'foo'
 		payloads = {
 			paramName: (fileName, jpegBytes)
 		}
 		return payloads
 
-	def getHTTPHeaders(self):
+	def getHTTPHeaders(self, imageData):
 		if self._use_own_api_key:
 			return {
 				b'Ocp-Apim-Subscription-Key': str(self._api_key)

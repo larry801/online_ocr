@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import division
 from onlineOCRHandler import BaseDescriber
+import six
 import addonHandler
 from collections import OrderedDict
 from logHandler import log
@@ -37,7 +38,6 @@ class CustomContentRecognizer(BaseDescriber):
 				_(u"Azure resource Region")
 			),
 			BaseDescriber.APIKeySetting(),
-		
 		]
 	
 	_api_key = ""
@@ -120,14 +120,19 @@ class CustomContentRecognizer(BaseDescriber):
 			fileName = b'img.png'
 			paramName = fileName
 		else:
-			paramName = b'foo'
-			fileName = b'foo'
+			if six.PY3:
+				paramName = 'foo'
+				fileName = 'foo'
+			else:
+				paramName = b'foo'
+				fileName = b'foo'
+
 		payloads = {
 			paramName: (fileName, jpegBytes)
 		}
 		return payloads
 	
-	def getHTTPHeaders(self):
+	def getHTTPHeaders(self, imageData):
 		if self._use_own_api_key:
 			return {
 				b'Ocp-Apim-Subscription-Key': str(self._api_key)
@@ -143,7 +148,7 @@ class CustomContentRecognizer(BaseDescriber):
 	def _set_maxCandidates(self, maxCandidates):
 		self._maxCandidates = maxCandidates
 	
-	_language = b"en"
+	_language = "en"
 	
 	def _get_language(self):
 		return self._language
@@ -154,15 +159,15 @@ class CustomContentRecognizer(BaseDescriber):
 	def _get_availableLanguages(self):
 		languages = OrderedDict({
 			# Translators: Text language for image description
-			b"zh": _(u"Simplified Chinese"),
+			"zh": _(u"Simplified Chinese"),
 			# Translators: Text language for image description
-			b"en": _(u"English"),
+			"en": _(u"English"),
 			# Translators: Text language for image description
-			b"ja": _(u"Japanese"),
+			"ja": _(u"Japanese"),
 			# Translators: Text language for image description
-			b"pt": _(u"Portuguese"),
+			"pt": _(u"Portuguese"),
 			# Translators: Text language for image description
-			b"es": _(u"Spanish"),
+			"es": _(u"Spanish"),
 		})
 		return self.generate_string_settings(languages)
 	

@@ -104,7 +104,9 @@ class CustomContentRecognizer(BaseRecognizer):
 			self._access_token = result["access_token"]
 			self.saveSettings()
 		except Exception as e:
-			log.error(e)
+			log.debug(e)
+			import ui
+			ui.message(_("Cannot refresh token. Please check your client id and secret."))
 
 	def getFullURL(self):
 		fullURL = super(CustomContentRecognizer, self).getFullURL()

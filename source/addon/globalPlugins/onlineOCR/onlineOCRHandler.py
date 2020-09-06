@@ -253,6 +253,8 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 	
 	@staticmethod
 	def convert_to_json(data):
+		if isinstance(data, six.binary_type):
+			data = data.decode("utf-8")
 		return json.loads(data)
 	
 	def get_url(self):
@@ -268,9 +270,11 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		@rtype:
 		"""
 		url = self.get_url()
-		if six.PY3 and isinstance(url, str):
+		if six.PY3 and isinstance(url, six.string_types):
 			url = url.encode('utf-8')
 		domain = self.get_domain()
+		if six.PY3 and isinstance(domain, six.string_types):
+			domain = domain.encode('utf-8')
 		if self.useHttps:
 			protocol = b"https:/"
 		else:
@@ -427,9 +431,11 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			ui.message(errorMsg)
 			return False
 	
-	def getHTTPHeaders(self):
+	def getHTTPHeaders(self, imageData):
 		"""
 		Generate HTTP Header for request
+		@param imageData:
+		@type imageData:
 		@return:
 		@rtype:
 		"""
@@ -482,7 +488,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 		
 		payloads = self.getPayloadForHyperLink(link)
 		fullURL = self.getFullURL()
-		headers = self.getHTTPHeaders()
+		headers = self.getHTTPHeaders("")
 		
 		if config.conf["onlineOCRGeneral"]["verboseDebugLogging"]:
 			log.io(type(fullURL))
@@ -601,7 +607,7 @@ class BaseRecognizer(ContentRecognizer, AbstractEngine):
 			return
 		payloads = self.getPayload(imageContent)
 		fullURL = self.getFullURL()
-		headers = self.getHTTPHeaders()
+		headers = self.getHTTPHeaders(imageContent)
 		if config.conf["onlineOCRGeneral"]["verboseDebugLogging"]:
 			log.io(type(fullURL))
 			msg = u"{0}\n{1}\n{2}".format(
