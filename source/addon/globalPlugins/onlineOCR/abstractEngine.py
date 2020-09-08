@@ -142,7 +142,7 @@ class AbstractEngineHandler(baseObject.AutoPropertyObject):
 			cls.currentEngine = new_engine
 			if not isFallback:
 				config.conf[cls.configSectionName]["engine"] = name
-			log.info("Loaded engine %s" % name)
+			log.debug("Loaded engine %s" % name)
 			return True
 		except:
 			log.error("setCurrentEngine", exc_info=True)

@@ -462,25 +462,30 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		return engine
 
 	def startRecognition(self, current_source, current_engine_type):
-		engine = self.getCurrentEngine(current_engine_type)
-		repeatCount = scriptHandler.getLastScriptRepeatCount()
-		textResultWhenRepeatGesture = not config.conf["onlineOCRGeneral"]["swapRepeatedCountEffect"]
-		if repeatCount == 0:
-			if not engine:
-				ui.message(_("Cannot get recognition engine"))
-				return
-			engine.text_result = textResultWhenRepeatGesture
-			if current_source == "navigatorObject":
-				recogUi.recognizeNavigatorObject(engine)
-				return
-			else:
-				imageInfo, recognizeImage = self.getImageFromSource(current_source)
-				if not recognizeImage:
-					ui.message(_("Clipboard URL source is not implemented."))
+		try:
+			engine = self.getCurrentEngine(current_engine_type)
+			repeatCount = scriptHandler.getLastScriptRepeatCount()
+			textResultWhenRepeatGesture = not config.conf["onlineOCRGeneral"]["swapRepeatedCountEffect"]
+			if repeatCount == 0:
+				if not engine:
+					ui.message(_("Cannot get recognition engine"))
 					return
-				pixels = recognizeImage.tobytes("raw", "BGRX")
-				# Translators: Reported when content recognition begins.
-				ui.message(_("Recognizing"))
-				engine.recognize(pixels, imageInfo, recogUi._recogOnResult)
-		elif repeatCount == 1:
-			engine.text_result = not textResultWhenRepeatGesture
+				engine.text_result = textResultWhenRepeatGesture
+				if current_source == "navigatorObject":
+					recogUi.recognizeNavigatorObject(engine)
+					return
+				else:
+					imageInfo, recognizeImage = self.getImageFromSource(current_source)
+					if not recognizeImage:
+						ui.message(_("Clipboard URL source is not implemented."))
+						return
+					pixels = recognizeImage.tobytes("raw", "BGRX")
+					# Translators: Reported when content recognition begins.
+					ui.message(_("Recognizing"))
+					engine.recognize(pixels, imageInfo, recogUi._recogOnResult)
+			elif repeatCount == 1:
+				engine.text_result = not textResultWhenRepeatGesture
+		except Exception as e:
+			from logHandler import log
+			log.error(getattr(e, 'message', repr(e)))
+			ui.message(_("Error occurred, when trying to start recognition, Please change source or engine and try again."))
