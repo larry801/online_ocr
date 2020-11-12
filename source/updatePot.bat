@@ -1,0 +1,1 @@
+del readme.pot && del onlineOCR.pot && scons pot && msgmerge -U  addon\locale\zh_CN\LC_MESSAGES\nvda.po onlineOCR.pot && addon\locale\zh_CN\LC_MESSAGES\nvda.po

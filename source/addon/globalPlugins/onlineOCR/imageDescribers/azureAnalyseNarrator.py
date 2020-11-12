@@ -36,7 +36,7 @@ class CustomContentRecognizer(azureAnalyse.CustomContentRecognizer):
 
 	@classmethod
 	def check(cls):
-		return False
+		return True
 
 	def getHTTPHeaders(self, imageData):
 		return {

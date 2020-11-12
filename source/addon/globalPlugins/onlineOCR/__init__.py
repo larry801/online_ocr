@@ -70,7 +70,7 @@ from onlineOCRHandler import (
 	OnlineImageDescriberPanel, OnlineOCRPanel,
 	SOURCE_TYPES, ENGINE_TYPES, COLUMN_SPLIT_TYPES
 )
-
+from paddleocr import PaddleOCR,draw_ocr
 _ = lambda x: x
 category_name = _(u"Online Image Describer")
 # We need to initialize translation and localization support:
