@@ -489,3 +489,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			from logHandler import log
 			log.error(getattr(e, 'message', repr(e)))
 			ui.message(_("Error occurred, when trying to start recognition, Please change source or engine and try again."))
+
+	def terminate(self):
+		try:
+			gui.mainFrame.sysTrayIcon.preferencesMenu.Remove(self.ocrSettingMenuItem)
+		except Exception:
+			pass
