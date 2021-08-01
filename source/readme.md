@@ -1,7 +1,7 @@
 # Online image describer addon #
 
 * Author: Larry Wang
-* NVDA compatibility: from 2018.3 to 2020.2
+* NVDA compatibility: from 2018.3 to 2021.1
 * Download [development version][2]
 
 This addon aims at adding online image recognition engines to NVDA.
