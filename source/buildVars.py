@@ -25,7 +25,7 @@ Image describer describe visual features in image in text form.
 Such as general description, color type landmarks and so on.
     """),
     # version
-    "addon_version": "0.19-dev",
+    "addon_version": "0.20",
     # Author(s)
     "addon_author": "Larry Wang <larry.wang.801@gmail.com>",
     # URL for the add-on documentation support
@@ -35,7 +35,7 @@ Such as general description, color type landmarks and so on.
     # Documentation file name
     "addon_docFileName": "readme.html",
     "addon_minimumNVDAVersion": "2018.4",
-    "addon_lastTestedNVDAVersion": "2020.2",
+    "addon_lastTestedNVDAVersion": "2021.1",
     "addon_updateChannel": "dev",
 }
 

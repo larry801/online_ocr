@@ -17,6 +17,7 @@ import globalVars
 import config
 import winUser
 import api
+import vision
 from ctypes.wintypes import RECT
 from contentRecog import uwpOcr
 from contentRecog import RecogImageInfo
@@ -72,9 +73,9 @@ from onlineOCRHandler import (
 )
 
 _ = lambda x: x
-category_name = _(u"Online Image Describer")
 # We need to initialize translation and localization support:
 addonHandler.initTranslation()
+category_name = _(u"Online Image Describer")
 
 generalConfigSpec = {
 	"copyToClipboard": "boolean(default=false)",
@@ -392,12 +393,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				# Translators: Reported when cannot get content of the path specified
 				errMsg = _("The file specified in clipboard is not an image")
 				ui.message(errMsg)
-
 		return clipboardImage
-
-	def terminate(self):
-		OnlineImageDescriberHandler.terminate()
-		CustomOCRHandler.terminate()
 
 	def getImageFromSource(self, current_source):
 		if current_source == "clipboardImage":
@@ -461,11 +457,20 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			engine = None
 		return engine
 
+	def isScreenCurtainRunning(self):
+		from visionEnhancementProviders.screenCurtain import ScreenCurtainProvider
+		screenCurtainId = ScreenCurtainProvider.getSettings().getId()
+		screenCurtainProviderInfo = vision.handler.getProviderInfo(screenCurtainId)
+		return bool(vision.handler.getProviderInstance(screenCurtainProviderInfo))
+
 	def startRecognition(self, current_source, current_engine_type):
 		try:
 			engine = self.getCurrentEngine(current_engine_type)
 			repeatCount = scriptHandler.getLastScriptRepeatCount()
 			textResultWhenRepeatGesture = not config.conf["onlineOCRGeneral"]["swapRepeatedCountEffect"]
+			if not current_source=="clipboardImage" and self.isScreenCurtainRunning():
+				ui.message(_("Please disable screen curtain before recognition."))
+				return
 			if repeatCount == 0:
 				if not engine:
 					ui.message(_("Cannot get recognition engine"))
@@ -491,6 +496,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			ui.message(_("Error occurred, when trying to start recognition, Please change source or engine and try again."))
 
 	def terminate(self):
+		OnlineImageDescriberHandler.terminate()
+		CustomOCRHandler.terminate()
 		try:
 			gui.mainFrame.sysTrayIcon.preferencesMenu.Remove(self.ocrSettingMenuItem)
 		except Exception:
