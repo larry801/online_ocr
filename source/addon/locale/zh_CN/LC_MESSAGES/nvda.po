@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'customOCR' '0.1.1-dev'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@freelists.org'\n"
-"POT-Creation-Date: 2021-07-31 02:01+0800\n"
-"PO-Revision-Date: 2021-07-31 02:02+0800\n"
+"POT-Creation-Date: 2021-08-03 07:58+0800\n"
+"PO-Revision-Date: 2021-08-03 07:58+0800\n"
 "Last-Translator: Larry Wang <larry.wang.801@gmail.com>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -18,158 +18,158 @@ msgstr ""
 "X-Generator: Poedit 2.4.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:78
+#: addon\globalPlugins\onlineOCR\__init__.py:77
 #: addon\globalPlugins\onlineOCR\onlineOCRHandler.py:819
 msgid "Online Image Describer"
 msgstr "在线图像描述"
 
 #. Translators: This is the label for the NVDA settings dialog.
-#: addon\globalPlugins\onlineOCR\__init__.py:96
+#: addon\globalPlugins\onlineOCR\__init__.py:97
 msgid "Online Image Describer Settings"
 msgstr "在线图像描述设置"
 
 #. Translators: The label for the menu item to open online image settings dialog.
-#: addon\globalPlugins\onlineOCR\__init__.py:141
+#: addon\globalPlugins\onlineOCR\__init__.py:142
 msgid "Open &OnlineImageDescriber settings"
 msgstr "打开在线图像描述设置(&O)"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:142
+#: addon\globalPlugins\onlineOCR\__init__.py:143
 msgid "Open settings dialog for OnlineImageDescriber"
 msgstr "打开在线图像描述设置窗口"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:159
+#: addon\globalPlugins\onlineOCR\__init__.py:160
 msgid ""
 "Describe the content of the current navigator object with online image "
 "describer."
 msgstr "使用在线图像描述引擎识别当前导航对象的内容。"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:171
+#: addon\globalPlugins\onlineOCR\__init__.py:172
 msgid "Describe clipboard images with online image describer."
 msgstr "使用在线图像描述引擎识别剪贴板内的图像。"
 
 #. Translators: Reported when PIL cannot grab image from clipboard
-#: addon\globalPlugins\onlineOCR\__init__.py:174
+#: addon\globalPlugins\onlineOCR\__init__.py:175
 msgid "No image in clipboard"
 msgstr "剪贴板中没有图像"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:188
+#: addon\globalPlugins\onlineOCR\__init__.py:189
 msgid ""
 "Recognizes the content of the current navigator object with online OCR "
 "engine."
 msgstr "使用在线 OCR 引擎识别当前导航对象的内容。"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:201
+#: addon\globalPlugins\onlineOCR\__init__.py:202
 msgid "Recognizes the text in clipboard images with online OCR engine."
 msgstr "使用在线OCR引擎识别剪贴板内的图像。"
 
 #. Translators: Online Image Describer command name in input gestures dialog
-#: addon\globalPlugins\onlineOCR\__init__.py:213
+#: addon\globalPlugins\onlineOCR\__init__.py:214
 msgid "Show previous recognition result, if any."
 msgstr "显示上一次识别结果。"
 
 #. Translators: Reported when there is no previous result.
-#: addon\globalPlugins\onlineOCR\__init__.py:226
+#: addon\globalPlugins\onlineOCR\__init__.py:227
 msgid "No previous result"
 msgstr "没有以前的结果"
 
 #. Translators: Online Image Describer command name in input gestures dialog
-#: addon\globalPlugins\onlineOCR\__init__.py:230
+#: addon\globalPlugins\onlineOCR\__init__.py:231
 msgid "Cancel current recognition if there is any."
 msgstr "取消正在进行的识别操作。"
 
 #. Translators: Reported when cancelling recognition
-#: addon\globalPlugins\onlineOCR\__init__.py:239
-#: addon\globalPlugins\onlineOCR\__init__.py:247
+#: addon\globalPlugins\onlineOCR\__init__.py:240
+#: addon\globalPlugins\onlineOCR\__init__.py:248
 msgid "OCR cancelled"
 msgstr "OCR已取消"
 
 #. Translators: Reported when cancelling recognition
-#: addon\globalPlugins\onlineOCR\__init__.py:243
+#: addon\globalPlugins\onlineOCR\__init__.py:244
 msgid "Image describe cancelled"
 msgstr "图像描述已取消"
 
 #. Translators: Reported when cancelling recognition
-#: addon\globalPlugins\onlineOCR\__init__.py:252
+#: addon\globalPlugins\onlineOCR\__init__.py:253
 msgid "There is no recognition ongoing."
 msgstr "没有可以取消的图像识别操作。"
 
 #. Translators: Online Image Describer command name in input gestures dialog
-#: addon\globalPlugins\onlineOCR\__init__.py:256
+#: addon\globalPlugins\onlineOCR\__init__.py:257
 msgid "Recognize image according to engine and source in settings"
-msgstr "根据设置中的引擎和来源识别图像"
+msgstr "根据设置的引擎和来源识别图像"
 
 #. Translators: Online Image Describer command name in input gestures dialog
-#: addon\globalPlugins\onlineOCR\__init__.py:289
+#: addon\globalPlugins\onlineOCR\__init__.py:290
 msgid "Cycle through types of recognition engine"
 msgstr "切换识别图像的引擎"
 
 #. Translators: Reported when the user cycles through recognition engine type
 #. %s will be replaced with the engine type: e.g. Online OCR Windows 10 Offline OCR
-#: addon\globalPlugins\onlineOCR\__init__.py:301
+#: addon\globalPlugins\onlineOCR\__init__.py:302
 #, python-format
 msgid "%s as recognition engine"
 msgstr "%s 引擎"
 
 #. Translators: Online Image Describer command name in input gestures dialog
-#: addon\globalPlugins\onlineOCR\__init__.py:305
+#: addon\globalPlugins\onlineOCR\__init__.py:306
 msgid "Cycle through types of recognition source"
 msgstr "切换识别图像的来源"
 
 #. Translators: Reported when the user cycles through source types
 #. which determine source of content recognition
 #. %s will be replaced with the source type: e.g. Clipboard image, foreground window
-#: addon\globalPlugins\onlineOCR\__init__.py:318
+#: addon\globalPlugins\onlineOCR\__init__.py:319
 #, python-format
 msgid "%s as source"
 msgstr "%s作为图像来源"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:348
+#: addon\globalPlugins\onlineOCR\__init__.py:349
 msgid "Error occurred while getting pasted file."
 msgstr "获取粘贴文件时出错。"
 
 #. Translators: Reported when text in clipboard is not a valid path
-#: addon\globalPlugins\onlineOCR\__init__.py:388
+#: addon\globalPlugins\onlineOCR\__init__.py:389
 msgid "Text in clipboard is the name of a directory."
 msgstr "剪贴板中的文本是目录的名称。"
 
 #. Translators: Reported when text in clipboard is not a valid path
-#: addon\globalPlugins\onlineOCR\__init__.py:391
+#: addon\globalPlugins\onlineOCR\__init__.py:392
 msgid "Text in clipboard is not a valid path."
 msgstr "剪贴板中的文本不是有效的路径."
 
 #. Translators: Reported when cannot get content of the path specified
-#: addon\globalPlugins\onlineOCR\__init__.py:394
+#: addon\globalPlugins\onlineOCR\__init__.py:395
 msgid "The file specified in clipboard is not an image"
 msgstr "剪贴板中指定的文件不是图像"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:417
+#: addon\globalPlugins\onlineOCR\__init__.py:418
 msgid "Current window position is invalid."
 msgstr "当前窗口位置无效。"
 
 #. Translators: Reported when source is not correct.
-#: addon\globalPlugins\onlineOCR\__init__.py:446
+#: addon\globalPlugins\onlineOCR\__init__.py:447
 #, python-format
 msgid "Unknown source: %s"
 msgstr "未知来源： %s"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:472
+#: addon\globalPlugins\onlineOCR\__init__.py:473
 msgid "Please disable screen curtain before recognition."
 msgstr "请在识别之前关闭黑屏。"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:476
+#: addon\globalPlugins\onlineOCR\__init__.py:477
 msgid "Cannot get recognition engine"
 msgstr "无法调用识别引擎"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:485
+#: addon\globalPlugins\onlineOCR\__init__.py:486
 msgid "Clipboard URL source is not implemented."
 msgstr "未实现剪贴板 URL 源。"
 
 #. Translators: Reported when content recognition begins.
-#: addon\globalPlugins\onlineOCR\__init__.py:489
+#: addon\globalPlugins\onlineOCR\__init__.py:490
 msgid "Recognizing"
 msgstr "正在识别"
 
-#: addon\globalPlugins\onlineOCR\__init__.py:496
+#: addon\globalPlugins\onlineOCR\__init__.py:497
 msgid ""
 "Error occurred, when trying to start recognition, Please change source or "
 "engine and try again."

@@ -73,9 +73,10 @@ from onlineOCRHandler import (
 )
 
 _ = lambda x: x
-# We need to initialize translation and localization support:
 addonHandler.initTranslation()
 category_name = _(u"Online Image Describer")
+# We need to initialize translation and localization support:
+
 
 generalConfigSpec = {
 	"copyToClipboard": "boolean(default=false)",
@@ -502,3 +503,4 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			gui.mainFrame.sysTrayIcon.preferencesMenu.Remove(self.ocrSettingMenuItem)
 		except Exception:
 			pass
+
